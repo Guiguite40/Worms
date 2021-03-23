@@ -1,0 +1,129 @@
+{
+    "account": [
+        {
+            "nickname": "",
+            "dmVictory": 1,
+            "dmLoses": 2,
+            "fortVictory": 2,
+            "fortLoses": 0,
+            "team": [
+                {
+                    "teamName": "empty",
+                    "character": [
+                        {
+                            "name": "name00",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name01",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name02",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name03",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name04",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name05",
+                            "skinIndex": 0
+                        }
+                    ]
+                },
+                {
+                    "teamName": "empty",
+                    "character": [
+                        {
+                            "name": "name10",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name11",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name12",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name13",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name14",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name15",
+                            "skinIndex": 0
+                        }
+                    ]
+                },
+                {
+                    "teamName": "empty",
+                    "character": [
+                        {
+                            "name": "name20",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name21",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name22",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name23",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name24",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name25",
+                            "skinIndex": 0
+                        }
+                    ]
+                },
+                {
+                    "teamName": "empty",
+                    "character": [
+                        {
+                            "name": "name30",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name31",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name32",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name33",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name34",
+                            "skinIndex": 0
+                        },
+                        {
+                            "name": "name35",
+                            "skinIndex": 0
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
