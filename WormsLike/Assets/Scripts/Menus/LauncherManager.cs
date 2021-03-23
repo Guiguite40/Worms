@@ -20,14 +20,22 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     [Space(10)]
     [SerializeField] private Text textLoginPseudo;
     [SerializeField] private Text textLoginMdp;
+    [Space(4)]
+    [SerializeField] private Text textLoginPseudoError;
+    [SerializeField] private Text textLoginMdpError;
     [Space(6)]
     [SerializeField] private Text textSignUpPseudo;
     [SerializeField] private Text textSignUpMdp;
     [SerializeField] private Text textSignUpMdpConfirm;
+    [Space(4)]
+    [SerializeField] private Text textSignUpPseudoError;
+    [SerializeField] private Text textSignUpMdpConfirmError;
+    [SerializeField] private Text textColorError;
 
     string accountsFilePath = "";
     string nickname = "";
     int accountColorIndex = -1;
+    bool[] accountCreationStep;
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     List<InputField> listInputFieldsLogin = new List<InputField>();
     List<InputField> listInputFieldsSignUp = new List<InputField>();
@@ -38,12 +46,18 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         canvas.Add("login", goLogin);
         canvas.Add("signUp", goSignUp);
 
+        accountCreationStep = new bool[3];
+        for (int i = 0; i < 3; i++)
+            accountCreationStep[i] = false;
+
         listInputFieldsLogin.Add(ifLoginPseudo);
         listInputFieldsLogin.Add(ifLoginMdp);
 
         listInputFieldsSignUp.Add(ifSignUpPseudo);
         listInputFieldsSignUp.Add(ifSignUpMdp);
         listInputFieldsSignUp.Add(ifSignUpMdpConfirm);
+
+        DesactiveErrorLogin();
 
         if (!File.Exists(Application.dataPath + "/Assets/Resources/Accounts.txt"))
 		{
@@ -70,12 +84,23 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 
     public void OpenCanvas(string _keyName)
 	{
+        DesactiveErrorLogin();
+
         canvas["choose"].SetActive(false);
         canvas["login"].SetActive(false);
         canvas["signUp"].SetActive(false);
 
         canvas[_keyName].SetActive(true);
         ResetInputsFields();
+    }
+
+    void DesactiveErrorLogin()
+	{
+        textLoginPseudoError.gameObject.SetActive(false);
+        textLoginMdpError.gameObject.SetActive(false);
+        textSignUpPseudoError.gameObject.SetActive(false);
+        textSignUpMdpConfirmError.gameObject.SetActive(false);
+        textColorError.gameObject.SetActive(false);
     }
 
     void NextInputFieldActivate()
@@ -105,6 +130,8 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < 3; i++)
             listInputFieldsSignUp[i].text = "";
+
+        accountColorIndex = -1;
     }
 
     public void OnClickLogin()
@@ -127,63 +154,116 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 	{
         PhotonNetwork.LocalPlayer.NickName = nickname;
         PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.LoadLevel("Menu");
+        PhotonNetwork.LoadLevel("MainMenu");
     }
 
     bool AccountCreation()
 	{
+        string[] line = File.ReadAllLines(accountsFilePath);
 
-
-        return true;
-	}
-
-	bool LoginAccountIsExist()
-	{
-        //if (File.Exists(Application.dataPath + "/Assets/Resources/Accounts.txt"))
-        //{
-            bool isPseudoFind = false;
-            string[] line = File.ReadAllLines(accountsFilePath);
-            for (int i = 0; i < line.Length; i++)
+        for (int i = 0; i < line.Length; i++)
+        {
+            string pseudo = line[i].Substring(0, line[i].IndexOf(':'));
+            if (textSignUpPseudo.text == pseudo)
             {
-                string pseudo = line[i].Substring(0, line[i].IndexOf(':'));
-                string mdp = line[i].Substring(line[i].IndexOf(':')+1, line[i].IndexOf('/') - line[i].IndexOf(':')-1);
-                string imgIndexStr = line[i].Substring(line[i].IndexOf('/')+1);
-                int imgIndex = int.Parse(imgIndexStr);
-
-                //print("pseudo : " + pseudo);
-                //print("mdp : " + mdp);
-                //print("img index : " + imgIndex);
-
-                if (textLoginPseudo.text == pseudo)
-                    isPseudoFind = true;
-
-                if (textLoginPseudo.text == pseudo && textLoginMdp.text == mdp)
-				{
-                    print("account find : pseudo : " + pseudo + ", mdp : " + mdp + ", img index : " + imgIndex.ToString());
-                    nickname = pseudo;
-                    return true;
-				}
-            }
-
-            if (isPseudoFind)
-            {
-                print("mot de passe incorrect");
-                ifLoginMdp.text = "";
+                textSignUpPseudoError.gameObject.SetActive(true);
+                accountCreationStep[0] = false;
+                break;
             }
             else
             {
-                print("pseudo introuvable");
-                ifLoginPseudo.text = "";
-                ifLoginMdp.text = "";
-            }
-            return false;
-        /*}
+                textSignUpPseudoError.gameObject.SetActive(false);
+                accountCreationStep[0] = true;
+            }    
+        }
+
+        if (textSignUpMdp.text != textSignUpMdpConfirm.text)
+        {
+            textSignUpMdpConfirmError.gameObject.SetActive(true);
+            accountCreationStep[1] = false;
+        }
         else
         {
-            print("accounts file not exist, create one...");
-            File.Create(Application.dataPath + "/Assets/Resources/Accounts.txt");
-            return false;
-        }*/
+            textSignUpMdpConfirmError.gameObject.SetActive(false);
+            accountCreationStep[1] = true;
+        }
+
+        if (accountColorIndex == -1)
+        {
+            textColorError.gameObject.SetActive(true);
+            accountCreationStep[2] = false;
+        }
+        else
+        {
+            textColorError.gameObject.SetActive(false);
+            accountCreationStep[2] = true;
+        }
+
+        if (accountCreationStep[0] && accountCreationStep[1] && accountCreationStep[2])
+        {
+            WriteFileNewAccount();
+            return true;
+        }
+
+        ResetAccountCreationStep();
+        return false;
+	}
+
+    public void SetImgColorIndex(int _index)
+	{
+        accountColorIndex = _index;
+	}
+
+    void ResetAccountCreationStep()
+	{
+        for (int i = 0; i < 3; i++)
+            accountCreationStep[i] = false;
+    }
+
+    void WriteFileNewAccount()
+	{
+        string strToWrite = textSignUpPseudo.text + ":" + textSignUpMdp.text + "/" + accountColorIndex;
+        File.AppendAllText(accountsFilePath, "\n" + strToWrite);
+    }
+
+	bool LoginAccountIsExist()
+	{
+        bool isPseudoFind = false;
+        string[] line = File.ReadAllLines(accountsFilePath);
+        for (int i = 0; i < line.Length; i++)
+        {
+            string pseudo = line[i].Substring(0, line[i].IndexOf(':'));
+            string mdp = line[i].Substring(line[i].IndexOf(':') + 1, line[i].IndexOf('/') - line[i].IndexOf(':') - 1);
+            string imgIndexStr = line[i].Substring(line[i].IndexOf('/') + 1);
+            int imgIndex = int.Parse(imgIndexStr);
+
+            if (textLoginPseudo.text == pseudo)
+                isPseudoFind = true;
+
+            if (textLoginPseudo.text == pseudo && textLoginMdp.text == mdp)
+            {
+                print("account find : pseudo : " + pseudo + ", mdp : " + mdp + ", img index : " + imgIndex.ToString());
+                DesactiveErrorLogin();
+                nickname = pseudo;
+                return true;
+            }
+        }
+
+        if (isPseudoFind)
+        {
+            print("mot de passe incorrect");
+            textLoginPseudoError.gameObject.SetActive(false);
+            textLoginMdpError.gameObject.SetActive(true);
+            ifLoginMdp.text = "";
+        }
+        else
+        {
+            print("pseudo introuvable");
+            textLoginPseudoError.gameObject.SetActive(true);
+            ifLoginPseudo.text = "";
+            ifLoginMdp.text = "";
+        }
+        return false;
 	}
 
     void SetAccountState(string _pseudo, string _mdp)

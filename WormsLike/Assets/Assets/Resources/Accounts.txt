@@ -1,2 +1,4 @@
 pseudo:mdp/0
 pseudo2:mdp2/1
+tesst:test/0
+aaa:test/0
