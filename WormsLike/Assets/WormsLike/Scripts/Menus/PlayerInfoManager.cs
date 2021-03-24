@@ -211,9 +211,17 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
     }
 
     public void OnClickModify()
-	{
+    {
+        print("current team selected : " + currentTeamSelected);
         canvasTeamManager.SetActive(true);
-	}
+
+        for (int i = 0; i < 6; i++)
+        {
+            listCharacterName[i].text = accountInfo.account[accountIndex].team[currentTeamSelected].character[i].name;
+            print("character : " + i + ", name : " + listCharacterName[i].text);
+        }
+        teamNameEntered.text = accountInfo.account[accountIndex].team[currentTeamSelected].teamName;
+    }
 
     public void OnClickValidateTeam()
     {
