@@ -263,7 +263,7 @@ LightingSettings:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Settings.lighting
-  serializedVersion: 2
+  serializedVersion: 3
   m_GIWorkflowMode: 1
   m_EnableBakedLightmaps: 0
   m_EnableRealtimeLightmaps: 0
@@ -302,7 +302,7 @@ LightingSettings:
   m_PVREnvironmentReferencePointCount: 2048
   m_LightProbeSampleCountMultiplier: 4
   m_PVRBounces: 2
-  m_PVRRussianRouletteStartBounce: 2
+  m_PVRMinBounces: 1
   m_PVREnvironmentMIS: 0
   m_PVRFilteringMode: 2
   m_PVRDenoiserTypeDirect: 0
@@ -360,8 +360,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4af001885c4fabf44bb122b3b693310e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <ChunkCountX>k__BackingField: 128
-  <ChunkCountY>k__BackingField: 128
+  <ChunkCountX>k__BackingField: 64
+  <ChunkCountY>k__BackingField: 64
   chunkTemplate: {fileID: 5194434684234072523, guid: 847a2e425730df3409385592b669f10a, type: 3}
   <OriginalTexture>k__BackingField: {fileID: 2800000, guid: 1793e4b588274184aa3d66a4cc061775, type: 3}
   <PPU>k__BackingField: 32

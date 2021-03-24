@@ -27,6 +27,11 @@ namespace DTerrain
         void Start()
         {
             timer = 0f;
+
+            if (gameObject.name.Contains("BananaChilds"))
+            {
+                rb.AddForce(new Vector2(Random.Range(-3, 3), Random.Range(5, 15)), ForceMode2D.Impulse);
+            }
         }
 
         // Update is called once per frame
@@ -48,7 +53,6 @@ namespace DTerrain
                             Vector3 mPos = gameObject.transform.position;
                             GameObject newBanana = Instantiate(ChildBanane, mPos, new Quaternion(0, 0, 0, 0));
                             newBanana.name = "BananaChilds";
-                            // EXPLO FORCE
                         }
 
                         Destroy(gameObject);
