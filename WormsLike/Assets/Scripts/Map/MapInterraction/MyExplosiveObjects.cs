@@ -6,6 +6,9 @@ namespace DTerrain
 {
     public class MyExplosiveObjects : MonoBehaviour
     {
+        [SerializeField]
+        protected Rigidbody2D rb = null;
+
         [Header("Paramétres")]
         [SerializeField]
         protected int circleSize = 0;
