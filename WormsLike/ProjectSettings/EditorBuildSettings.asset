@@ -6,12 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Launcher.unity
+    path: Assets/WormsLike/Scenes/Launcher.unity
     guid: fd8c1accc28ad2243a0356c81beeadec
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/WormsLike/Scenes/MainMenu.unity
     guid: 673badf33a748ed46ba598246bd741d9
   - enabled: 1
-    path: Assets/Scenes/Test/PlayerTest.unity
+    path: Assets/WormsLike/Scenes/Test/PlayerTest.unity
     guid: 7f4e5bfb76a31ab498b2ec8ba4492fbb
   m_configObjects: {}
