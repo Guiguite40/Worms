@@ -116,7 +116,7 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        saveFilePath = Application.dataPath + "/Assets/Resources/PlayerSaveInfo.json";
+        saveFilePath = Application.dataPath + "/WormsLike/Resources/PlayerSaveInfo.json";
         ReadSaveFile();
         GetActiveAccount();
         SetDeathMatchInfo();
@@ -207,7 +207,21 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
     public void OnClickOnTeam(int _index)
 	{
         canvasModifyTeam.SetActive(true);
-	}
+        currentTeamSelected = _index;
+    }
+
+    public void OnClickModify()
+    {
+        print("current team selected : " + currentTeamSelected);
+        canvasTeamManager.SetActive(true);
+
+        for (int i = 0; i < 6; i++)
+        {
+            listCharacterName[i].text = accountInfo.account[accountIndex].team[currentTeamSelected].character[i].name;
+            print("character : " + i + ", name : " + listCharacterName[i].text);
+        }
+        teamNameEntered.text = accountInfo.account[accountIndex].team[currentTeamSelected].teamName;
+    }
 
     public void OnClickValidateTeam()
     {
