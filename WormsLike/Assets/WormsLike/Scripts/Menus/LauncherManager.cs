@@ -41,7 +41,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     List<InputField> listInputFieldsSignUp = new List<InputField>();
     void Start()
     {
-        accountsFilePath = Application.dataPath + "/Assets/Resources/Accounts.txt";
+        accountsFilePath = Application.dataPath + "/WormsLike/Resources/Accounts.txt";
         canvas.Add("choose", goChoose);
         canvas.Add("login", goLogin);
         canvas.Add("signUp", goSignUp);
@@ -59,10 +59,10 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 
         DesactiveErrorLogin();
 
-        if (!File.Exists(Application.dataPath + "/Assets/Resources/Accounts.txt"))
+        if (!File.Exists(Application.dataPath + "/WormsLike/Resources/Accounts.txt"))
 		{
             print("accounts file not exist, create one...");
-            File.Create(Application.dataPath + "/Assets/Resources/Accounts.txt");
+            File.Create(Application.dataPath + "/WormsLike/Resources/Accounts.txt");
         }
 
         OpenCanvas("choose");
