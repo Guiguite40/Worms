@@ -134,6 +134,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb0910f61045a04a95ef6dd605a6295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circleSize: 50
+  circleSize: 30
   explodeAfterImpact: 0
   delay: 3
