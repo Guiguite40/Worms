@@ -6,32 +6,19 @@ namespace DTerrain
 {
     public class MyExplosiveObjects : MonoBehaviour
     {
-        [SerializeField]
-        protected Rigidbody2D rb = null;
-
         [Header("Paramétres")]
         [SerializeField]
         protected int circleSize = 0;
         [SerializeField]
         protected bool explodeAfterImpact = false;
         [SerializeField]
-        protected float delay = 0f;
-
-        [Header("Prefab weapons")]
-        [SerializeField]
-        protected GameObject ChildBanane = null;
-
+        protected float delay = 0f;       
         private float timer;
 
         // Start is called before the first frame update
         void Start()
         {
-            timer = 0f;
-
-            if (gameObject.name.Contains("BananaChilds"))
-            {
-                rb.AddForce(new Vector2(Random.Range(-3, 3), Random.Range(5, 15)), ForceMode2D.Impulse);
-            }
+            timer = 0f;          
         }
 
         // Update is called once per frame
@@ -48,14 +35,7 @@ namespace DTerrain
 
                     if (gameObject.name.Contains("FirstBanana"))
                     {
-                        for (int i = 0; i < 5; i++)
-                        {
-                            Vector3 mPos = gameObject.transform.position;
-                            GameObject newBanana = Instantiate(ChildBanane, mPos, new Quaternion(0, 0, 0, 0));
-                            newBanana.name = "BananaChilds";
-                        }
-
-                        Destroy(gameObject);
+                        BananeExplosion.firstExplode = true;
                     }
                     else
                     {
@@ -67,7 +47,7 @@ namespace DTerrain
 
         public void OnCollisionEnter2D(Collision2D collision)
         {
-            if (!collision.gameObject.name.Contains("BananaChilds"))
+            if (!collision.gameObject.CompareTag("Bullet"))
             {
                 if (explodeAfterImpact == true)
                 {

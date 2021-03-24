@@ -13,9 +13,10 @@ GameObject:
   - component: {fileID: 4377669944707833703}
   - component: {fileID: 4377669944707833704}
   - component: {fileID: -2347525112904985843}
+  - component: {fileID: 9158427472428630844}
   m_Layer: 0
   m_Name: FirstBanana
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -119,9 +120,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.1, y: 0}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.09
+  m_Radius: 0.1
 --- !u!114 &-2347525112904985843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,8 +135,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb0910f61045a04a95ef6dd605a6295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 4377669944707833703}
   circleSize: 60
   explodeAfterImpact: 0
   delay: 3
+--- !u!114 &9158427472428630844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4377669944707833705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a45c67009427e4a4b9090586f6a03246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 4377669944707833703, guid: 882d0583400869e4c81f38c889395b0b, type: 3}
   ChildBanane: {fileID: 4377669944707833705, guid: 882d0583400869e4c81f38c889395b0b, type: 3}
