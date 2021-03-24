@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public class Slime : MonoBehaviour
+public class Slime : MonoBehaviourPunCallbacks
 {
     [Header("Colliders")]
     [SerializeField] private GameObject feet = null;
@@ -140,11 +141,11 @@ public class Slime : MonoBehaviour
         healthBarDiff.fillAmount = healthDisplayed / maxHealth;
 
         /* COLORS */
-        if (healthDisplayed >= 30 && healthBar.color != greenColor)
+        if (healthDisplayed >= 35 && healthBar.color != greenColor)
         {
             healthBar.color = greenColor;
         }
-        else if (healthDisplayed < 30 && healthBar.color != redColor)
+        else if (healthDisplayed < 35 && healthBar.color != redColor)
         {
             healthBar.color = redColor;
         }

@@ -1,23 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private GameObject slimePrefab = null;
-    [SerializeField] private List<GameObject> slimes = new List<GameObject>();
-    private Inventory inv = null;
+    [SerializeField] GameObject slimePrefab = null;
+    [SerializeField] List<GameObject> slimes = new List<GameObject>();
+    Inventory inv = null;
 
     [HideInInspector] public int slimeLimit = 3;
 
+    public bool phase_building = false;
+    public bool phase_placement = false;
+    public bool phase_game = false;
+
+    public bool isTurn = false;
 
     /***** DEBUG *****/
-    [SerializeField] private GameObject healthBoxPrefab = null;
-    [SerializeField] private GameObject damageBoxPrefab = null;
+    [SerializeField] GameObject healthBoxPrefab = null;
+    [SerializeField] GameObject damageBoxPrefab = null;
 
     // Start is called before the first frame update
     void Start()
     {
+
     }
 
     // Update is called once per frame
@@ -45,13 +52,13 @@ public class Player : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha0)) // Not available for now
         {
             GameObject healthBox = healthBoxPrefab;
-            healthBox.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            healthBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
             Instantiate(healthBox);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha9)) // Not available for now
         {
             GameObject damageBox = damageBoxPrefab;
-            damageBox.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
             Instantiate(damageBox);
         }
 
@@ -66,14 +73,17 @@ public class Player : MonoBehaviour
 
     private void SetCharacterControlled(int _index)
     {
-        foreach (var item in slimes)
+        if (slimes.Count - 1 >= _index)
         {
-            if (item.GetComponent<Slime>().isControlled == true)
+            foreach (var item in slimes)
             {
-                item.GetComponent<Slime>().isControlled = false;
+                if (item.GetComponent<Slime>().isControlled == true)
+                {
+                    item.GetComponent<Slime>().isControlled = false;
+                }
             }
+            slimes[_index].GetComponent<Slime>().isControlled = true;
         }
-        slimes[_index].GetComponent<Slime>().isControlled = true;
     }
 
     private void PlaceCharacter()
@@ -84,6 +94,13 @@ public class Player : MonoBehaviour
             GameObject slime = slimePrefab;
             slime.GetComponent<Slime>().SetPos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             slimes.Add(Instantiate(slime));
+            slimes[slimes.Count - 1].transform.parent = transform;
         }
+    }
+
+
+    Vector3 MousePos()
+    {
+        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 }
