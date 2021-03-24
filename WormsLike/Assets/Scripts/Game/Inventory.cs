@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviourPunCallbacks
 {
     //public List<Item_Weapon> weapons;
     //public List<Item_Defense> defenses;
