@@ -2,17 +2,17 @@
 
 namespace DTerrain
 {
-    public class MouseSpawn : MonoBehaviour
+    public class SpawnWeapon : MonoBehaviour
     {
         [SerializeField]
         private GameObject weapon = null;
 
         void Update()
         {
-            CreateObject();
+            CreateObjectMouse();
         }
 
-        public void CreateObject()
+        public void CreateObjectMouse()
         {
             if (Input.GetKeyDown(KeyCode.B))
             {
