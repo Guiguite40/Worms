@@ -13,11 +13,15 @@ namespace DTerrain
         protected bool explodeAfterImpact = false;
         [SerializeField]
         protected float delay = 0f;       
-        private float timer;
+        private float timer = 0f;
+
+        public static List<GameObject> myGo = new List<GameObject>();
 
         // Start is called before the first frame update
         void Start()
         {
+            myGo.Add(gameObject);
+
             timer = 0f;          
         }
 
@@ -40,6 +44,7 @@ namespace DTerrain
                     else
                     {
                         Destroy(gameObject);
+                        myGo.Remove(gameObject);
                     }
                 }
             }
@@ -54,6 +59,7 @@ namespace DTerrain
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
                     Destroy(gameObject);
+                    myGo.Remove(gameObject);
                 }
             }
         }

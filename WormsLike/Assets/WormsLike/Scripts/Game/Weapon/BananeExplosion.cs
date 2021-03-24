@@ -32,6 +32,7 @@ namespace DTerrain
 
                 firstExplode = false;
                 Destroy(gameObject);
+                MyExplosiveObjects.myGo.Remove(gameObject);
             }
         }
     }
