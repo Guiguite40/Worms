@@ -3557,12 +3557,12 @@ MonoBehaviour:
   canvasModifyTeam: {fileID: 2016600540}
   canvasTeamManager: {fileID: 428639280}
   canvasEnterTeamName: {fileID: 204258708}
-  characterName1: {fileID: 725200182}
-  characterName2: {fileID: 175454182}
-  characterName3: {fileID: 717051106}
-  characterName4: {fileID: 698755058}
-  characterName5: {fileID: 1203839810}
-  characterName6: {fileID: 728093556}
+  characterName1: {fileID: 1359979479}
+  characterName2: {fileID: 1227355876}
+  characterName3: {fileID: 2108149264}
+  characterName4: {fileID: 2029809864}
+  characterName5: {fileID: 1235098411}
+  characterName6: {fileID: 2113338878}
   teamNameEntered: {fileID: 2013354057}
   teamName1: {fileID: 810445785}
   teamName2: {fileID: 1981358521}
