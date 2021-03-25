@@ -31,6 +31,14 @@ namespace DTerrain
                     }
                 }
             }
+
+            foreach (GameObject gameObj in FindObjectsOfType(typeof(GameObject)) as GameObject[])
+            {
+                if (gameObj.name == "AirStrike(Clone)" && gameObj.transform.childCount == 0)
+                {
+                    Destroy(gameObj);
+                }
+            }
         }
     }
 }
