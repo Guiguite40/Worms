@@ -24,46 +24,82 @@ namespace DTerrain
         public static List<int> ExplosiveObjectsSize = new List<int>();
 
         [Header("MapDeathMove")]
-        private float timer = 0f;
         [SerializeField]
         protected GameObject LeftMapKiller = null;
         [SerializeField]
         protected GameObject RightMapKiller = null;
+        [SerializeField]
+        protected GameObject LeftLaser = null;
+        [SerializeField]
+        protected GameObject RightLaser = null;
+
         private bool mapTurn = false;
-        private float leftPosX = 0f, RightPosX = 0f;
+        private bool shipDescent = false;
+        private float leftPosX = 0f, RightPosX = 0f, PosY = 0f;
 
         void Start()
         {
-            
+
         }
 
         void Update()
         {
-            timer += Time.deltaTime;
-
-            if (timer > 5f && mapTurn == false)
+            if (Input.GetKeyDown(KeyCode.Space) && mapTurn == false)
             {
                 mapTurn = true;
+                shipDescent = true;
 
                 leftPosX = LeftMapKiller.transform.position.x;
                 RightPosX = RightMapKiller.transform.position.x;
+
+                PosY = LeftMapKiller.transform.position.y;
             }
 
             if (mapTurn)
-            {               
-                if (leftPosX + 5f >= LeftMapKiller.transform.position.x)
-                    LeftMapKiller.transform.position += Vector3.right * 5f * Time.deltaTime;
-
-                if (RightPosX - 5f <= RightMapKiller.transform.position.x)
-                    RightMapKiller.transform.position += Vector3.left * 5f * Time.deltaTime;
-
-                //DestroyMapRect(LeftMapKiller.transform.position, 150, 1080);
-                //DestroyMapRect(RightMapKiller.transform.position, 150, 1080);
-
-                if (RightPosX - 5f >= RightMapKiller.transform.position.x && leftPosX + 5f <= LeftMapKiller.transform.position.x)
+            {
+                if (shipDescent == true)
                 {
-                    timer = 0f;
-                    mapTurn = false;
+                    if (PosY - 10f <= LeftMapKiller.transform.position.y)
+                        LeftMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
+
+                    if (PosY - 10f <= RightMapKiller.transform.position.y)
+                        RightMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
+
+                    if (PosY - 10f >= RightMapKiller.transform.position.y && PosY - 10f >= LeftMapKiller.transform.position.y)
+                    {
+                        shipDescent = false;
+                    }
+                }
+                else
+                {
+                    LeftLaser.SetActive(true);
+                    RightLaser.SetActive(true);
+
+                    if (leftPosX + 5f >= LeftMapKiller.transform.position.x)
+                        LeftMapKiller.transform.position += Vector3.right * 5f * Time.deltaTime;
+
+                    if (RightPosX - 5f <= RightMapKiller.transform.position.x)
+                        RightMapKiller.transform.position += Vector3.left * 5f * Time.deltaTime;
+
+                    DestroyMapRect(LeftMapKiller.transform.position, 10, 1080);
+                    DestroyMapRect(RightMapKiller.transform.position, 10, 1080);
+
+                    if (RightPosX - 5f >= RightMapKiller.transform.position.x && leftPosX + 5f <= LeftMapKiller.transform.position.x)
+                    {
+                        LeftLaser.SetActive(false);
+                        RightLaser.SetActive(false);
+
+                        if (PosY >= LeftMapKiller.transform.position.y)
+                            LeftMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
+
+                        if (PosY >= RightMapKiller.transform.position.y)
+                            RightMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
+
+                        if (PosY <= RightMapKiller.transform.position.y && PosY <= LeftMapKiller.transform.position.y)
+                        {
+                            mapTurn = false;
+                        }
+                    }
                 }
             }
 
@@ -81,9 +117,9 @@ namespace DTerrain
             }
         }
 
-        private void DestroyMap(Vector3 position,int size)
+        private void DestroyMap(Vector3 position, int size)
         {
-            Vector3 p =  position - primaryLayer.transform.position;
+            Vector3 p = position - primaryLayer.transform.position;
 
             primaryLayer?.Paint(new PaintingParameters()
             {
@@ -107,7 +143,7 @@ namespace DTerrain
         private void DestroyMapRect(Vector3 position, int width, int height)
         {
             destroyCircle = Shape.GenerateShapeRect(width, height);
-            outlineCircle = Shape.GenerateShapeRect(width, height + outlineSize);
+            outlineCircle = Shape.GenerateShapeRect(width, height);
 
             Vector3 p = position - primaryLayer.transform.position;
 
