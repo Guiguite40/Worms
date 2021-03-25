@@ -10,19 +10,24 @@ namespace DTerrain
         [SerializeField]
         protected int circleSize = 0;
         [SerializeField]
+        protected bool explodeVelocityNull = false;
+        [SerializeField]
         protected bool explodeAfterImpact = false;
         [SerializeField]
         protected float delay = 0f;       
         private float timer = 0f;
 
+        private Rigidbody2D rb = null;
         public static List<GameObject> myGo = new List<GameObject>();
 
         // Start is called before the first frame update
         void Start()
         {
-            myGo.Add(gameObject);
+            rb = gameObject.GetComponent<Rigidbody2D>();
+            rb.velocity = new Vector2(0f, -1f); // Debug
 
             timer = 0f;          
+            myGo.Add(gameObject);
         }
 
         // Update is called once per frame
@@ -30,7 +35,7 @@ namespace DTerrain
         {
             timer += Time.deltaTime;
 
-            if (explodeAfterImpact == false)
+            if (explodeAfterImpact == false && explodeVelocityNull == false)
             {
                 if (delay <= timer)
                 {
@@ -48,13 +53,24 @@ namespace DTerrain
                     }
                 }
             }
+
+            if (explodeVelocityNull == true)
+            {
+                if (rb.velocity == new Vector2(0f,0f))
+                {
+                    MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
+                    MapDestroy.ExplosiveObjectsSize.Add(circleSize);
+                    Destroy(gameObject);
+                    myGo.Remove(gameObject);
+                }
+            }
         }
 
         public void OnCollisionEnter2D(Collision2D collision)
         {
             if (!collision.gameObject.CompareTag("Bullet"))
             {
-                if (explodeAfterImpact == true)
+                if (explodeAfterImpact == true && explodeVelocityNull == false)
                 {
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
