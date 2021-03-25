@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviourPunCallbacks
 {
+    public static MenuManager instance;
+
     [SerializeField] private GameObject canvasCreateGame;
     [SerializeField] private GameObject canvasListServer;
     [SerializeField] private GameObject canvasParameter;
@@ -17,9 +19,13 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     bool isGamePrivate = false;
+    List<ServerInfo> listServer = new List<ServerInfo>();
 
     private void Awake()
     {
+        if (instance == null)
+            instance = this;
+
         PhotonNetwork.JoinLobby();
     }
 
@@ -33,7 +39,10 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        
+        /*if (FindObjectOfType<ServerInfo>())
+            listServer.Add(FindObjectOfType<ServerInfo>());
+
+        print("nb server : " + listServer.Count);*/
     }
 
     void OpenCanvas(string _keyName)
@@ -136,7 +145,40 @@ public class MenuManager : MonoBehaviourPunCallbacks
         OpenCanvas("join");
     }
 
-	public override void OnJoinedRoom()
+    public void OnClickOnServer()
+	{
+        print("cliick on server");
+    }
+
+    public void UndrawAllServer()
+	{
+        for (int i = 0; i < listServer.Count; i++)
+        {
+            listServer[i].UndrawBackground();
+        }
+    }
+
+    public void OnClickJoinServer()
+	{
+        //PhotonNetwork.JoinRoom();
+	}
+
+    public void OnClickOnRefresh()
+	{
+        listServer.Clear();
+        ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
+        for (int y = 0; y < currentServersFind.Length; y++)
+            listServer.Add(currentServersFind[y]);
+
+        print("nb server : " + listServer.Count);
+    }
+
+    public void OnClickQuikJoin()
+    {
+        PhotonNetwork.JoinRandomRoom();
+    }
+
+    public override void OnJoinedRoom()
 	{
         SendText("join", "<color=#00ff00> Room joined, loading lobby </color>");
         if (canvasCreateGame.activeSelf)
