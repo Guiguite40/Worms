@@ -6,27 +6,23 @@ namespace DTerrain
 {
     public class MyExplosiveObjects : MonoBehaviour
     {
-        [SerializeField]
-        protected Rigidbody2D rb = null;
-
         [Header("Paramétres")]
         [SerializeField]
         protected int circleSize = 0;
         [SerializeField]
         protected bool explodeAfterImpact = false;
         [SerializeField]
-        protected float delay = 0f;
+        protected float delay = 0f;       
+        private float timer = 0f;
 
-        [Header("Prefab weapons")]
-        [SerializeField]
-        protected GameObject ChildBanane = null;
-
-        private float timer;
+        public static List<GameObject> myGo = new List<GameObject>();
 
         // Start is called before the first frame update
         void Start()
         {
-            timer = 0f;
+            myGo.Add(gameObject);
+
+            timer = 0f;          
         }
 
         // Update is called once per frame
@@ -43,19 +39,12 @@ namespace DTerrain
 
                     if (gameObject.name.Contains("FirstBanana"))
                     {
-                        for (int i = 0; i < 5; i++)
-                        {
-                            Vector3 mPos = gameObject.transform.position;
-                            GameObject newBanana = Instantiate(ChildBanane, mPos, new Quaternion(0, 0, 0, 0));
-                            newBanana.name = "BananaChilds";
-                            // EXPLO FORCE
-                        }
-
-                        Destroy(gameObject);
+                        BananeExplosion.firstExplode = true;
                     }
                     else
                     {
                         Destroy(gameObject);
+                        myGo.Remove(gameObject);
                     }
                 }
             }
@@ -63,13 +52,14 @@ namespace DTerrain
 
         public void OnCollisionEnter2D(Collision2D collision)
         {
-            if (!collision.gameObject.name.Contains("BananaChilds"))
+            if (!collision.gameObject.CompareTag("Bullet"))
             {
                 if (explodeAfterImpact == true)
                 {
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
                     Destroy(gameObject);
+                    myGo.Remove(gameObject);
                 }
             }
         }

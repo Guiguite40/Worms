@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 4377669944707833704}
   - component: {fileID: -2347525112904985843}
   m_Layer: 0
-  m_Name: Rocket
-  m_TagString: Untagged
+  m_Name: Grenade
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0.5943396, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -121,7 +121,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.09
+  m_Radius: 0.1
 --- !u!114 &-2347525112904985843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,8 +134,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb0910f61045a04a95ef6dd605a6295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 4377669944707833703}
   circleSize: 50
-  explodeAfterImpact: 1
-  delay: 0
-  ChildBanane: {fileID: 0}
+  explodeAfterImpact: 0
+  delay: 3
