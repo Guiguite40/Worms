@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 using UnityEngine.UI;
+using Photon.Realtime;
 
 public class MenuManager : MonoBehaviourPunCallbacks
 {
@@ -16,17 +17,21 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [Space(10)]
     [SerializeField] private Text textStateInfoCreate;
     [SerializeField] private Text textStateInfoJoin;
+    [Space(8)]
+    [SerializeField] private GameObject serverPrefab;
 
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     bool isGamePrivate = false;
     List<ServerInfo> listServer = new List<ServerInfo>();
+    List<RoomInfo> listRoom = new List<RoomInfo>();
 
     private void Awake()
     {
         if (instance == null)
             instance = this;
 
-        PhotonNetwork.JoinLobby();
+        PhotonNetwork.ConnectUsingSettings();
+        //PhotonNetwork.JoinLobby();
     }
 
     void Start()
@@ -39,10 +44,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        /*if (FindObjectOfType<ServerInfo>())
-            listServer.Add(FindObjectOfType<ServerInfo>());
-
-        print("nb server : " + listServer.Count);*/
+        print("nb player in rooms : " + PhotonNetwork.CountOfPlayersInRooms);
     }
 
     void OpenCanvas(string _keyName)
@@ -88,8 +90,13 @@ public class MenuManager : MonoBehaviourPunCallbacks
         }
     }
 
-    ////////////////// CREATE GAME //////////////////
-    public void OnClickCreateGame()
+	public override void OnConnectedToMaster()
+	{
+        PhotonNetwork.JoinLobby();
+	}
+
+	////////////////// CREATE GAME //////////////////
+	public void OnClickCreateGame()
 	{
         CloseCanvas("all");
         OpenCanvas("create");
@@ -198,9 +205,38 @@ public class MenuManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LoadLevel("Lobby");
     }
 
-    ////////////////// /////////// //////////////////
+	public override void OnRoomListUpdate(List<RoomInfo> roomList)
+	{
+        print("room list updated");
+        GameObject newServer = Instantiate(serverPrefab);
+        newServer.transform.parent = GameObject.Find("PanelListServer").transform;
+        newServer.transform.localScale = new Vector3(1, 1, 1);
+        ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
+        serverInfo.SetServerInfo(roomList[0].Name);
+        listServer.Add(serverInfo);
+        
+        /*for (int i = 0; i < PhotonNetwork.CountOfRooms; i++)
+        {
+            for (int y = 0; y < listRoom.Count; y++)
+            {
+                if (roomList[i] != listRoom[y])
+                {
+                    print("roomList != listRoom");
+                    GameObject newServer = Instantiate(serverPrefab);
+                    newServer.transform.parent = GameObject.Find("PanelListServer").transform;
+                    ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
+                    serverInfo.SetServerInfo(roomList[i].Name);
+                    listServer.Add(serverInfo);
 
-    public void OnClickParameter()
+                    listRoom.Add(roomList[i]);
+                }
+            }
+        }*/
+	}
+
+	////////////////// /////////// //////////////////
+
+	public void OnClickParameter()
     {
         CloseCanvas("all");
         OpenCanvas("parameter");
