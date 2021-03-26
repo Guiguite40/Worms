@@ -32,6 +32,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
     List<ServerInfo> listServer = new List<ServerInfo>();
     List<RoomInfo> listRoom = new List<RoomInfo>();
 
+    List<string> listRoomName = new List<string>();
+
     int serverId = 0;
     int serverIdSelected;
     byte nbPlayerMax = 4;
@@ -289,12 +291,26 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void OnClickOnRefresh()
 	{
-        listServer.Clear();
+        /*listServer.Clear();
         ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
         for (int y = 0; y < currentServersFind.Length; y++)
             listServer.Add(currentServersFind[y]);
 
-        print("nb server : " + listServer.Count);
+        print("nb server : " + listServer.Count);*/
+
+        /*ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
+        for (int y = 0; y < currentServersFind.Length; y++)
+		{
+            listServer[y].SetServerInfo(currentServersFind[y].GetServerId(), currentServersFind[y].GetRoomName(), currentServersFind[y].)
+            currentServersFind
+
+        }*/
+    }
+
+    public ServerInfo[] GetServersInfo()
+	{
+        ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
+        return currentServersFind;
     }
 
     public void OnClickQuikJoin()
@@ -325,11 +341,24 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
 	{
-        //print("room list updated");
+        bool isSameRoom = true;
         if(listRoom.Count <= 0)
 		{
-            //print("room list <= 0");
             listRoom = roomList;
+        }
+
+        if (listRoomName.Count > 0)
+        {
+            print("room list count : " + roomList.Count);
+            print("room list name count : " + listRoomName.Count);
+
+            if (PhotonNetwork.CountOfRooms > listRoomName.Count)
+			{
+                isSameRoom = false;
+            }
+
+            if(isSameRoom)
+                return;
         }
 
         for (int i = 0; i < roomList.Count; i++)
@@ -338,7 +367,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
             {
                 if (roomList[i] != listRoom[y] || listRoom.Count == 1)
                 {
-                    //print("roomList != listRoom || listRoomcount == 1");
                     GameObject newServer = Instantiate(serverPrefab);
                     serverId++;
                     newServer.transform.parent = GameObject.Find("PanelListServer").transform;
@@ -353,6 +381,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
                     serverInfo.SetServerInfo(serverId, roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers, hasPassword);
                     listServer.Add(serverInfo);
+                    listRoomName.Add(roomList[i].Name);
                 }
                 else
                 {

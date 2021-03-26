@@ -94,4 +94,9 @@ public class ServerInfo : MonoBehaviourPunCallbacks
         else
             return false;
 	}
+
+    public byte GetNbPlayerMax()
+	{
+        return nbPlayerMax;
+	}
 }
