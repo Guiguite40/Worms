@@ -13,9 +13,11 @@ GameObject:
   - component: {fileID: 4377669944707833703}
   - component: {fileID: 4377669944707833704}
   - component: {fileID: -2347525112904985843}
-  - component: {fileID: -353112642007628122}
+  - component: {fileID: -3390697679395356702}
+  - component: {fileID: -8412401839064561039}
+  - component: {fileID: -2683802469212090442}
   m_Layer: 0
-  m_Name: ChildBanane
+  m_Name: Rocket
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0.94718194, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.5943396, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -102,7 +104,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: 980ad6345d05fa3408b107a9fccd957c, type: 2}
+  m_Material: {fileID: 6200000, guid: 78edac2424aba9b4c8e676407776bc2b, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -135,10 +137,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb0910f61045a04a95ef6dd605a6295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circleSize: 60
+  circleSize: 30
+  explodeVelocityNull: 0
   explodeAfterImpact: 1
   delay: 0
---- !u!114 &-353112642007628122
+--- !u!114 &-3390697679395356702
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,7 +150,48 @@ MonoBehaviour:
   m_GameObject: {fileID: 4377669944707833705}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cdac1fa3d1ef98429851a520ebe276c, type: 3}
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 4377669944707833703}
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &-8412401839064561039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4377669944707833705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
+--- !u!114 &-2683802469212090442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4377669944707833705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e7cb724808c322458aa4d15f5035fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizeVelocity: 1
+  m_SynchronizeAngularVelocity: 0
+  m_TeleportEnabled: 0
+  m_TeleportIfDistanceGreaterThan: 3

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 namespace DTerrain
 {
-    public class MapDestroy : MonoBehaviour
+    public class MapDestroy : MonoBehaviourPunCallbacks, IPunObservable
     {
         private int outlineSize = 4;
 
@@ -110,7 +112,9 @@ namespace DTerrain
                     destroyCircle = Shape.GenerateShapeCircle(ExplosiveObjectsSize[i]);
                     outlineCircle = Shape.GenerateShapeCircle(ExplosiveObjectsSize[i] + outlineSize);
 
-                    DestroyMap(ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
+                    photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
+                  
+                    //DestroyMap(ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
                     ExplosiveObjectsPosition.RemoveAt(i);
                     ExplosiveObjectsSize.RemoveAt(i);
                 }
@@ -166,13 +170,14 @@ namespace DTerrain
             });
         }
 
-        private void OnLeftMouseButtonClick()
+        [PunRPC]
+        public void MapSync(Vector3 pos, int size)
         {
-            destroyCircle = Shape.GenerateShapeCircle(16);
-            outlineCircle = Shape.GenerateShapeCircle(16 + outlineSize);
+            DestroyMap(pos, size);
+        }
 
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            DestroyMap(mousePos, 16);
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
         }
     }
 }
