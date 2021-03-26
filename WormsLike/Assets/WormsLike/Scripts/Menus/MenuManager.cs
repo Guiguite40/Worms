@@ -12,8 +12,11 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject canvasCreateGame;
     [SerializeField] private GameObject canvasListServer;
     [SerializeField] private GameObject canvasParameter;
+    [SerializeField] private GameObject canvasEnterPassword;
     [SerializeField] private InputField impFieldRoomName;
     [SerializeField] private GameObject impFieldPassword;
+    [SerializeField] private InputField impFieldPasswordText;
+    [SerializeField] private InputField impFieldPasswordToEnter;
     [Space(10)]
     [SerializeField] private Text textStateInfoCreate;
     [SerializeField] private Text textStateInfoJoin;
@@ -32,13 +35,14 @@ public class MenuManager : MonoBehaviourPunCallbacks
     int serverId = 0;
     int serverIdSelected;
     byte nbPlayerMax = 4;
+
+    bool isRoomCreatedHasPassword = false;
     private void Awake()
     {
         if (instance == null)
             instance = this;
 
         PhotonNetwork.ConnectUsingSettings();
-        //PhotonNetwork.JoinLobby();
     }
 
     void Start()
@@ -47,6 +51,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
         canvas.Add("join", canvasListServer);
         canvas.Add("parameter", canvasParameter);
         CloseCanvas("all");
+
+        canvasEnterPassword.SetActive(false);
     }
 
     void Update()
@@ -54,6 +60,15 @@ public class MenuManager : MonoBehaviourPunCallbacks
         //print("nb player in rooms : " + PhotonNetwork.CountOfPlayersInRooms);
         if(canvasCreateGame.activeSelf)
             UpdateButtonNbPlayer();
+    }
+
+    void SetupCustomProperty()
+    {
+        //Hashtable hash = new Hashtable();
+        //hash.Add("password", impFieldPasswordText.text);
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        hash.Add("password", impFieldPasswordText.text);
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
     }
 
     void OpenCanvas(string _keyName)
@@ -82,7 +97,14 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void OnClickCloseCanvas()
     {
-        CloseCanvas("all");
+        if (canvasEnterPassword.activeSelf)
+        {
+            impFieldPasswordToEnter.text = "";
+            canvasEnterPassword.SetActive(false);
+        }
+        else
+            CloseCanvas("all");
+
     }
 
     void SendText(string _textToModify, string _textToSend)
@@ -178,13 +200,25 @@ public class MenuManager : MonoBehaviourPunCallbacks
             return;
         }
 
-        PhotonNetwork.CreateRoom(impFieldRoomName.text);
+        RoomOptions roomOption = new RoomOptions();
+        roomOption.MaxPlayers = nbPlayerMax;
+
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        hash.Add("pm", nbPlayerMax);
+        hash.Add("pw", impFieldPasswordText.text);
+        roomOption.CustomRoomProperties = hash;
+
+        string[] lobbySettings = new string[2];
+        lobbySettings[0] = "pm";
+        lobbySettings[1] = "pw";
+        roomOption.CustomRoomPropertiesForLobby = lobbySettings;
+
+        PhotonNetwork.CreateRoom(impFieldRoomName.text, roomOption);
 	}
 
 	public override void OnCreatedRoom()
     {
         SendText("create", "<color=#00ff00> Room created, joining room </color>");
-        PhotonNetwork.CurrentRoom.MaxPlayers = nbPlayerMax;
     }
 
 	public override void OnCreateRoomFailed(short returnCode, string message)
@@ -222,7 +256,25 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void OnClickJoinServer()
 	{
-        //PhotonNetwork.JoinRoom();
+        bool isCadenasToActivate = false;
+        ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
+        for (int y = 0; y < currentServersFind.Length; y++)
+        {
+            if (serverIdSelected == currentServersFind[y].GetServerId())
+            {
+                if (currentServersFind[y].IsCadenasActive())
+                    isCadenasToActivate = true;
+            }
+        }
+
+        if (isCadenasToActivate)
+            canvasEnterPassword.SetActive(true);
+        else
+            JoinSelectedRoom();
+    }
+
+    public void JoinSelectedRoom()
+	{
         ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
         for (int y = 0; y < currentServersFind.Length; y++)
         {
@@ -255,6 +307,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         SendText("join", "<color=#00ff00> Room joined, loading lobby </color>");
         if (canvasCreateGame.activeSelf)
             SendText("create", "<color=#00ff00> Room joined, loading lobby </color>");
+        SetupCustomProperty();
         LaunchLobby();
     }
 
@@ -272,18 +325,10 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
 	{
-        print("room list updated");
-        /*GameObject newServer = Instantiate(serverPrefab);
-        newServer.transform.parent = GameObject.Find("PanelListServer").transform;
-        newServer.transform.localScale = new Vector3(1, 1, 1);
-        ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
-
-        serverInfo.SetServerInfo(roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers);
-        listServer.Add(serverInfo);*/
-
+        //print("room list updated");
         if(listRoom.Count <= 0)
 		{
-            print("room list <= 0");
+            //print("room list <= 0");
             listRoom = roomList;
         }
 
@@ -293,44 +338,29 @@ public class MenuManager : MonoBehaviourPunCallbacks
             {
                 if (roomList[i] != listRoom[y] || listRoom.Count == 1)
                 {
-                    print("roomList != listRoom || listRoomcount == 1");
+                    //print("roomList != listRoom || listRoomcount == 1");
                     GameObject newServer = Instantiate(serverPrefab);
                     serverId++;
                     newServer.transform.parent = GameObject.Find("PanelListServer").transform;
                     newServer.transform.localScale = new Vector3(1, 1, 1);
-                    ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
 
-                    serverInfo.SetServerInfo(serverId, roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers);
+                    ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
+                    print("room custom password : " + (string)roomList[0].CustomProperties["pw"]);
+                    string password = (string)roomList[0].CustomProperties["pw"];
+                    bool hasPassword = false;
+                    if (password != "")
+                        hasPassword = true;
+
+                    serverInfo.SetServerInfo(serverId, roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers, hasPassword);
                     listServer.Add(serverInfo);
                 }
                 else
                 {
                     //if(listRoom.Count == 1)
-                    print("roomList == listRoom");
+                    //print("roomList == listRoom");
                 }
             }
         }
-
-        //PhotonNetwork.CurrentRoom.SetCustomProperties();
-        //roomList[0].CustomProperties.Add();
-
-        /*for (int i = 0; i < PhotonNetwork.CountOfRooms; i++)
-        {
-            for (int y = 0; y < listRoom.Count; y++)
-            {
-                if (roomList[i] != listRoom[y])
-                {
-                    print("roomList != listRoom");
-                    GameObject newServer = Instantiate(serverPrefab);
-                    newServer.transform.parent = GameObject.Find("PanelListServer").transform;
-                    ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
-                    serverInfo.SetServerInfo(roomList[i].Name);
-                    listServer.Add(serverInfo);
-
-                    listRoom.Add(roomList[i]);
-                }
-            }
-        }*/
     }
 
 	////////////////// /////////// //////////////////
@@ -344,5 +374,15 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public void OnClickQuit()
 	{
         Application.Quit();
+	}
+
+    public string GetRoomPassword()
+	{
+        return impFieldPasswordText.text;
+	}
+
+    public bool GetIsRoomCreatedHasPassword()
+	{
+        return isRoomCreatedHasPassword;
 	}
 }
