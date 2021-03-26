@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class ServerInfo : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Image background;
-
+    [SerializeField] private Text textRoomName;
 
     float currentAlphaBg;
     void Start()
@@ -35,4 +35,9 @@ public class ServerInfo : MonoBehaviourPunCallbacks
 	{
         background.color = new Color(background.color.r, background.color.g, background.color.b, 0);
     }
+
+    public void SetServerInfo(string _roomName)
+	{
+        textRoomName.text = _roomName;
+	}
 }

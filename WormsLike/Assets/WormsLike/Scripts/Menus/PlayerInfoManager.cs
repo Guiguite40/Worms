@@ -116,7 +116,11 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+#if UNITY_EDITOR
         saveFilePath = Application.dataPath + "/WormsLike/Resources/PlayerSaveInfo.json";
+#elif UNITY_STANDALONE_WIN
+        saveFilePath = Application.dataPath + "/Resources/PlayerSaveInfo.json";
+#endif
         ReadSaveFile();
         GetActiveAccount();
         SetDeathMatchInfo();
