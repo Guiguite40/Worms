@@ -386,6 +386,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   background: {fileID: 4140240784256568293}
+  textRoomName: {fileID: 4140240785282746043}
+  textNbPlayer: {fileID: 4140240784288827017}
 --- !u!1 &4140240784256568283
 GameObject:
   m_ObjectHideFlags: 0

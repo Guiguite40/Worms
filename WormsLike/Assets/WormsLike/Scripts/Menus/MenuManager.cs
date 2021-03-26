@@ -18,6 +18,10 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text textStateInfoCreate;
     [SerializeField] private Text textStateInfoJoin;
     [Space(8)]
+    [SerializeField] private Button buttonPlus;
+    [SerializeField] private Button buttonMinus;
+    [SerializeField] private Text textNbPlayerMax;
+    [Space(8)]
     [SerializeField] private GameObject serverPrefab;
 
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
@@ -25,6 +29,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
     List<ServerInfo> listServer = new List<ServerInfo>();
     List<RoomInfo> listRoom = new List<RoomInfo>();
 
+    int serverId = 0;
+    int serverIdSelected;
+    byte nbPlayerMax = 4;
     private void Awake()
     {
         if (instance == null)
@@ -44,7 +51,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        print("nb player in rooms : " + PhotonNetwork.CountOfPlayersInRooms);
+        //print("nb player in rooms : " + PhotonNetwork.CountOfPlayersInRooms);
+        if(canvasCreateGame.activeSelf)
+            UpdateButtonNbPlayer();
     }
 
     void OpenCanvas(string _keyName)
@@ -116,6 +125,45 @@ public class MenuManager : MonoBehaviourPunCallbacks
         }
     }
 
+    public void OnClickButtonNbPlayer(bool _isPlus)
+	{
+        UpdateButtonNbPlayer();
+        if (_isPlus)
+        {
+            if (nbPlayerMax < 5)
+            {
+                nbPlayerMax+=2;
+            }
+        }
+        else
+        {
+            if (nbPlayerMax > 3)
+            {
+                nbPlayerMax-=2;
+            }
+        }
+    }
+
+    void UpdateButtonNbPlayer()
+	{
+        if(nbPlayerMax == 2)
+            textNbPlayerMax.text =  "1v1 (" + nbPlayerMax.ToString() + ")";
+        if (nbPlayerMax == 4)
+            textNbPlayerMax.text = "2v2 (" + nbPlayerMax.ToString() + ")";
+        if (nbPlayerMax == 6)
+            textNbPlayerMax.text = "3v3 (" + nbPlayerMax.ToString() + ")";
+
+        if (nbPlayerMax < 6)
+            buttonPlus.interactable = true;
+        else
+            buttonPlus.interactable = false;
+
+        if (nbPlayerMax > 2)
+            buttonMinus.interactable = true;
+        else
+            buttonMinus.interactable = false;
+    }
+
     public void OnClickCreateLobby()
 	{
         if(PhotonNetwork.InRoom)
@@ -136,6 +184,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
 	public override void OnCreatedRoom()
     {
         SendText("create", "<color=#00ff00> Room created, joining room </color>");
+        PhotonNetwork.CurrentRoom.MaxPlayers = nbPlayerMax;
     }
 
 	public override void OnCreateRoomFailed(short returnCode, string message)
@@ -155,6 +204,12 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public void OnClickOnServer()
 	{
         print("cliick on server");
+        ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
+        for (int y = 0; y < currentServersFind.Length; y++)
+            if (currentServersFind[y].IsSelected())
+                serverIdSelected = currentServersFind[y].GetServerId();
+
+        print("server id selected : " + serverIdSelected);
     }
 
     public void UndrawAllServer()
@@ -168,7 +223,17 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public void OnClickJoinServer()
 	{
         //PhotonNetwork.JoinRoom();
-	}
+        ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
+        for (int y = 0; y < currentServersFind.Length; y++)
+        {
+            if (serverIdSelected == currentServersFind[y].GetServerId())
+            {
+                string roomName = currentServersFind[y].GetRoomName();
+                PhotonNetwork.JoinRoom(roomName);
+                print("joining room name : " + roomName);
+            }
+        }
+    }
 
     public void OnClickOnRefresh()
 	{
@@ -208,13 +273,47 @@ public class MenuManager : MonoBehaviourPunCallbacks
 	public override void OnRoomListUpdate(List<RoomInfo> roomList)
 	{
         print("room list updated");
-        GameObject newServer = Instantiate(serverPrefab);
+        /*GameObject newServer = Instantiate(serverPrefab);
         newServer.transform.parent = GameObject.Find("PanelListServer").transform;
         newServer.transform.localScale = new Vector3(1, 1, 1);
         ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
-        serverInfo.SetServerInfo(roomList[0].Name);
-        listServer.Add(serverInfo);
-        
+
+        serverInfo.SetServerInfo(roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers);
+        listServer.Add(serverInfo);*/
+
+        if(listRoom.Count <= 0)
+		{
+            print("room list <= 0");
+            listRoom = roomList;
+        }
+
+        for (int i = 0; i < roomList.Count; i++)
+        {
+            for (int y = 0; y < listRoom.Count; y++)
+            {
+                if (roomList[i] != listRoom[y] || listRoom.Count == 1)
+                {
+                    print("roomList != listRoom || listRoomcount == 1");
+                    GameObject newServer = Instantiate(serverPrefab);
+                    serverId++;
+                    newServer.transform.parent = GameObject.Find("PanelListServer").transform;
+                    newServer.transform.localScale = new Vector3(1, 1, 1);
+                    ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
+
+                    serverInfo.SetServerInfo(serverId, roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers);
+                    listServer.Add(serverInfo);
+                }
+                else
+                {
+                    //if(listRoom.Count == 1)
+                    print("roomList == listRoom");
+                }
+            }
+        }
+
+        //PhotonNetwork.CurrentRoom.SetCustomProperties();
+        //roomList[0].CustomProperties.Add();
+
         /*for (int i = 0; i < PhotonNetwork.CountOfRooms; i++)
         {
             for (int y = 0; y < listRoom.Count; y++)
@@ -232,7 +331,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
                 }
             }
         }*/
-	}
+    }
 
 	////////////////// /////////// //////////////////
 
