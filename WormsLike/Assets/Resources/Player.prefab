@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7873787539829125233}
   - component: {fileID: 5807082896305680187}
   - component: {fileID: 279911152031525321}
+  - component: {fileID: -6890893481750907789}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -45,15 +46,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff886848b5447eb4caf56e031cfa50a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slimePrefab: {fileID: 3845015423529556887, guid: 16e3143616958a447aedf79b921d77a7, type: 3}
+  slimePrefab: {fileID: 3845015423529556887, guid: 2a44fb03f147f5249be98eb76e2d49a7, type: 3}
   slimes: []
   slimeLimit: 3
-  phase_building: 0
+  team: 0
   phase_placement: 0
-  phase_game: 0
-  isTurn: 0
-  healthBoxPrefab: {fileID: 6309667246824479687, guid: 182c996e0c62a7141a4fed65778a04b9, type: 3}
-  damageBoxPrefab: {fileID: 1363721780923859905, guid: dd42205a1d6d3844dbf16e0824688409, type: 3}
+  phase_game: 1
+  isTurn: 1
+  healthBoxPrefab: {fileID: 6309667246824479687, guid: 1a51c14f547c3174597d07d245877697, type: 3}
+  damageBoxPrefab: {fileID: 1363721780923859905, guid: a9ff06611642eff4b9fa622152286a24, type: 3}
 --- !u!114 &5807082896305680187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,6 +91,35 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 5807082896305680187}
-  sceneViewId: 0
+  sceneViewId: 2
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &-6890893481750907789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7873787539829125232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1bd904ef1111484bae51e5cb6406659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ui_Inventory: {fileID: 0}
+  items:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

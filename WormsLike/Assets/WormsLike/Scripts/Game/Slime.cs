@@ -7,20 +7,21 @@ using Photon.Pun;
 public class Slime : MonoBehaviourPunCallbacks
 {
     [Header("Colliders")]
+    [SerializeField] private GameObject head = null;
     [SerializeField] private GameObject feet = null;
     [SerializeField] private SpriteRenderer SpRenderer = null;
     [SerializeField] private ContactFilter2D filter; // ramps
-    [SerializeField] private Rigidbody2D rb = null;
+    [SerializeField] public Rigidbody2D rb = null;
 
     /*** SPEED & VELOCITY ***/
     [Header("Speed & Velocity")]
-    private bool isGrounded = false;
-    [SerializeField] private float jumpForce = 0;
-    [SerializeField] private float maxSpeed = 0;
-    [SerializeField] private float moveAcceleration = 0;
-    private Vector2 velocity = Vector2.zero;
+    public bool isGrounded = false;
+    [SerializeField] public float jumpForce = 0;
+    [SerializeField] public float maxSpeed = 0;
+    [SerializeField] public float moveAcceleration = 0;
+    public Vector2 velocity = Vector2.zero;
     private Vector2 dir = Vector2.right;
-    private float move = 0;
+    public float move = 0;
 
     /******** HEALTH ********/
     [Header("Health")]
@@ -32,18 +33,29 @@ public class Slime : MonoBehaviourPunCallbacks
     float healthDisplayed = 0;
     float healthCd = 0;
     public bool isDead = false;
+    [SerializeField] Color blueColor = Color.clear;
     [SerializeField] Color greenColor = Color.clear;
     [SerializeField] Color orangeColor = Color.clear;
     [SerializeField] Color redColor = Color.clear;
 
     [SerializeField] Color characterColor = Color.clear;
     public bool isControlled = false;
+    public int team = 0;
 
     // Start is called before the first frame update
     void Start()
     {
         curHealth = maxHealth;
         healthDisplayed = curHealth;
+
+        if (team == 1)
+        {
+            healthText.color = blueColor;
+        }
+        else if (team == 2)
+            healthText.color = redColor;
+        else
+            healthText.color = greenColor;
     }
 
     // Update is called once per frame
@@ -68,28 +80,46 @@ public class Slime : MonoBehaviourPunCallbacks
 
     void Movement()
     {
-        if (!isDead)
-        {
-            if (isControlled)
-            {
-                move = Input.GetAxisRaw("Horizontal");
-            }
-            else
-            {
-                if (move != 0)
-                    move = 0;
-            }
-        }
-        else
-        {
-            if (move != 0)
-                move = 0;
-        }
+        //if (!isDead)
+        //{
+        //    if (isControlled)
+        //    {
+        //        move = Input.GetAxisRaw("Horizontal");
+        //        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded && !isDead)
+        //            rb.velocity = new Vector2(0, jumpForce);
+        //    }
+        //    else
+        //        if (move != 0)
+        //        move = 0;
+        //}
+        //else
+        //    if (move != 0)
+        //    move = 0;
 
         Flip();
 
-        velocity.x = Mathf.MoveTowards(velocity.x, maxSpeed * move, moveAcceleration * Time.deltaTime);
-        rb.velocity = new Vector2(velocity.x, rb.velocity.y);
+        //velocity.x = Mathf.MoveTowards(velocity.x, maxSpeed * move, moveAcceleration * Time.deltaTime);
+        //rb.velocity = new Vector2(velocity.x, rb.velocity.y);
+    }
+
+    public void SetMove(float _move)
+    {
+        if (!isDead)
+        if (isControlled && !isDead)
+        {
+            move = _move;
+        }
+    }
+
+    public void Jump(bool _value)
+    {
+        if (_value)
+        {
+            if (isGrounded && !isDead)
+            {
+                rb.velocity = new Vector2(0, jumpForce);
+            }
+        }
     }
 
     private void Flip()
@@ -171,30 +201,34 @@ public class Slime : MonoBehaviourPunCallbacks
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground")
-        {
+        if (collision.gameObject.tag == "Jumpable" && collision.gameObject != head.gameObject)
             isGrounded = true;
-        }
-        else if (collision.gameObject.tag != "Ground")
+
+        if (collision.gameObject.tag == "DamageBox")
         {
-            isGrounded = false;
+            Debug.Log("damage");
+            curHealth -= 25;
+            Destroy(collision.gameObject);
         }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Jumpable" && collision.gameObject != head.gameObject)
+            isGrounded = false;
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+
         if (collision.gameObject.tag == "HealBox")
         {
             if (curHealth != maxHealth)
             {
+                Debug.Log("heal");
                 curHealth += 20;
                 Destroy(collision.gameObject);
             }
-        }
-        if (collision.gameObject.tag == "DamageBox")
-        {
-            curHealth -= 25;
-            Destroy(collision.gameObject);
         }
     }
 

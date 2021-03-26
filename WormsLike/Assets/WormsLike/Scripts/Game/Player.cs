@@ -11,11 +11,13 @@ public class Player : MonoBehaviourPunCallbacks
 
     [HideInInspector] public int slimeLimit = 3;
 
-    public bool phase_building = false;
+    public int team = 0;
+
     public bool phase_placement = false;
     public bool phase_game = false;
 
     public bool isTurn = false;
+
 
     /***** DEBUG *****/
     [SerializeField] GameObject healthBoxPrefab = null;
@@ -24,7 +26,8 @@ public class Player : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-
+        // DEBUG
+        team = 1;
     }
 
     // Update is called once per frame
@@ -41,6 +44,7 @@ public class Player : MonoBehaviourPunCallbacks
                 break;
             }
         }
+        ControlCharacter();
     }
 
     void Debuging()
@@ -95,9 +99,35 @@ public class Player : MonoBehaviourPunCallbacks
             slime.GetComponent<Slime>().SetPos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             slimes.Add(Instantiate(slime));
             slimes[slimes.Count - 1].transform.parent = transform;
+            slimes[slimes.Count - 1].GetComponent<Slime>().team = team;
         }
     }
 
+    private void ControlCharacter()
+    {
+        float move = 0;
+        foreach (var item in slimes)
+        {
+            if (!item.GetComponent<Slime>().isDead)
+            {
+                if (item.GetComponent<Slime>().isControlled)
+                {
+                    move = Input.GetAxisRaw("Horizontal");
+                    if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
+                        item.GetComponent<Slime>().rb.velocity = new Vector2(0, item.GetComponent<Slime>().jumpForce); ;
+                }
+                else
+                    if (move != 0)
+                    move = 0;
+            }
+            else
+                if (move != 0)
+                move = 0;
+
+            item.GetComponent<Slime>().velocity.x = Mathf.MoveTowards(item.GetComponent<Slime>().velocity.x, item.GetComponent<Slime>().maxSpeed * move, item.GetComponent<Slime>().moveAcceleration * Time.deltaTime);
+            item.GetComponent<Slime>().rb.velocity = new Vector2(item.GetComponent<Slime>().velocity.x, item.GetComponent<Slime>().rb.velocity.y);
+        }
+    }
 
     Vector3 MousePos()
     {

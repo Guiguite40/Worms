@@ -154,7 +154,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 	{
         PhotonNetwork.LocalPlayer.NickName = nickname;
         PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.LoadLevel("MainMenu");
+        PhotonNetwork.LoadLevel("MenuSample");
     }
 
     bool AccountCreation()
