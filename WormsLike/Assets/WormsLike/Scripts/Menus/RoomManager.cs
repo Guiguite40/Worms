@@ -11,15 +11,21 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text textPlayerMax;
     [SerializeField] private Text textGamemode;
     [SerializeField] private Text textMap;
-
+    [Space(10)]
     [SerializeField] private Button buttonPlusPlayerMax;
     [SerializeField] private Button buttonMinusPlayerMax;
+    [Space(10)]
+    [SerializeField] private GameObject RoomPlayer;
 
 
     byte playerMax;
+    GameObject currentPlayer;
     void Start()
     {
         playerMax = PhotonNetwork.CurrentRoom.MaxPlayers;
+        currentPlayer = PhotonNetwork.Instantiate("RoomPlayer", Vector3.zero, Quaternion.identity);
+        currentPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
+        currentPlayer.transform.localScale = new Vector3(1, 1, 1);
         SetRoomInfo();
     }
 
@@ -96,5 +102,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
             }
         }
+    }
+
+    public void OnClickJoinTeam(string _colorTeam)
+	{
+        if (_colorTeam == "blue")
+            currentPlayer.transform.parent = GameObject.Find("PanelPlayersBlue").transform;
+        else if (_colorTeam == "red")
+            currentPlayer.transform.parent = GameObject.Find("PanelPlayersRed").transform;
     }
 }
