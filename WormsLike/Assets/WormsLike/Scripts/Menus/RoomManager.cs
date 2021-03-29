@@ -5,7 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 
-public class RoomManager : MonoBehaviourPunCallbacks
+public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     public static RoomManager instance;
 
@@ -17,10 +17,16 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [Space(10)]
     [SerializeField] private Button buttonPlusPlayerMax;
     [SerializeField] private Button buttonMinusPlayerMax;
+    [Space(5)]
+    [SerializeField] private Button buttonPlusGamemode;
+    [SerializeField] private Button buttonMinusGamemode;
+    [Space(5)]
+    [SerializeField] private Button buttonPlusMap;
+    [SerializeField] private Button buttonMinusMap;
     [Space(10)]
     [SerializeField] private GameObject RoomPlayer;
 
-
+    int indexGamemode;
     byte playerMax;
     GameObject currentPlayer;
     List<Photon.Realtime.Player> listPlayer = new List<Photon.Realtime.Player>();
@@ -80,6 +86,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     void Update()
     {
         UpdateParameters();
+        print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
     }
 
     void SetRoomInfo()
@@ -91,12 +98,40 @@ public class RoomManager : MonoBehaviourPunCallbacks
             textRoomPassword.text = MenuManager.instance.GetRoomPassword();
         else
             textRoomPassword.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["pw"];
+
+        if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 0)
+            indexGamemode = 0;
+        else if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 1)
+            indexGamemode = 1;
     }
 
     void UpdateParameters()
 	{
         UpdateButtons();
-        //textPlayerMax.text = playerMax.ToString();
+
+        textPlayerMax.text = PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
+
+        if (indexGamemode == 0)
+        {
+            textGamemode.text = "Team deathmatch";
+            print("gamemode = 0 : " + textGamemode.text);
+        }
+        else if (indexGamemode == 1)
+        {
+            textGamemode.text = "Forts";
+            print("gamemode = 1 : " + textGamemode.text);
+        }
+
+        /*if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 0)
+        {
+            textGamemode.text = "Team deathmatch";
+            print("gamemode = 0 : " + textGamemode.text);
+        }
+        else if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 1)
+        {
+            textGamemode.text = "Forts";
+            print("gamemode = 1 : " + textGamemode.text);
+        }*/
     }
 
     public void UpdateButtons()
@@ -111,8 +146,16 @@ public class RoomManager : MonoBehaviourPunCallbacks
         else
             buttonMinusPlayerMax.interactable = true;
 
-        textPlayerMax.text = PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
-        //textPlayerMax.text = PhotonNetwork.CurrentRoom.CustomProperties["mp"].ToString();
+        if (indexGamemode == 0)
+        {
+            buttonMinusGamemode.interactable = false;
+            buttonPlusGamemode.interactable = true;
+        }
+        else if (indexGamemode == 1)
+		{
+            buttonMinusGamemode.interactable = true;
+            buttonPlusGamemode.interactable = false;
+        }
     }
 
     public void IncrementPlayerMax()
@@ -133,6 +176,32 @@ public class RoomManager : MonoBehaviourPunCallbacks
         UpdateServerInfo();
     }
 
+    public void SwitchGamemode()
+	{
+        if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 0)
+        {
+            PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 1;
+            indexGamemode = 0;
+        }
+        else if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 1)
+        {
+            PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 0;
+            indexGamemode = 1;
+        }
+
+        UpdateServerInfo();
+    }
+
+    public void NextMap()
+	{
+
+    }
+
+    public void PreviousMap()
+	{
+
+	}
+
     public void UpdateServerInfo()
     {
         ServerInfo[] currentServersFind = MenuManager.instance.GetServersInfo();
@@ -146,7 +215,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
                 else
                     hasPassword = true;
 
-                currentServersFind[y].SetServerInfo(currentServersFind[y].GetServerId(), PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CurrentRoom.PlayerCount, playerMax, hasPassword);
+                currentServersFind[y].SetServerInfo(currentServersFind[y].GetServerId(), PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CurrentRoom.PlayerCount, playerMax, hasPassword, 
+                    currentServersFind[y].GetPassword(), indexGamemode);
 
             }
         }
@@ -191,4 +261,17 @@ public class RoomManager : MonoBehaviourPunCallbacks
             print("players team updated");
 		}
 	}
+
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+        if (stream.IsWriting)
+        {
+            int gm = indexGamemode;
+            stream.SendNext(gm);
+        }
+        else
+        {
+            indexGamemode = (int)stream.ReceiveNext();
+        }
+    }
 }

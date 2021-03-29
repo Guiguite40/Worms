@@ -10,12 +10,16 @@ public class ServerInfo : MonoBehaviourPunCallbacks
     [SerializeField] private Image cadenas;
     [SerializeField] private Text textRoomName;
     [SerializeField] private Text textNbPlayer;
+    [SerializeField] private Text textGamemode;
 
     string roomName;
     int nbPlayer;
     byte nbPlayerMax;
     float currentAlphaBg;
     int id = 0;
+    string password;
+
+    int gamemode;
 
     bool hasPassword = false;
     void Start()
@@ -47,7 +51,7 @@ public class ServerInfo : MonoBehaviourPunCallbacks
         background.color = new Color(background.color.r, background.color.g, background.color.b, 0);
     }
 
-    public void SetServerInfo(int _id, string _roomName, int _nbPlayer, byte _nbPlayerMax, bool _hasPassword)
+    public void SetServerInfo(int _id, string _roomName, int _nbPlayer, byte _nbPlayerMax, bool _hasPassword, string _password, int _indexGamemode)
 	{
         id = _id;
         nbPlayer = _nbPlayer;
@@ -62,6 +66,13 @@ public class ServerInfo : MonoBehaviourPunCallbacks
             cadenas.gameObject.SetActive(true);
         else
             cadenas.gameObject.SetActive(false);
+
+        password = _password;
+        gamemode = _indexGamemode;
+        if (gamemode == 0)
+            textGamemode.text = "Team deathmatch";
+        else if (gamemode == 1)
+            textGamemode.text = "Forts";
     }
 
     public int GetServerId()
@@ -98,5 +109,10 @@ public class ServerInfo : MonoBehaviourPunCallbacks
     public byte GetNbPlayerMax()
 	{
         return nbPlayerMax;
+	}
+
+    public string GetPassword()
+	{
+        return password;
 	}
 }
