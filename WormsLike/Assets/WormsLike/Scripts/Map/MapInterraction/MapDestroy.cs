@@ -108,21 +108,20 @@ namespace DTerrain
             if (ExplosiveObjectsPosition.Count() != 0)
             {
                 for (int i = 0; i < ExplosiveObjectsPosition.Count(); i++)
-                {
-                    destroyCircle = Shape.GenerateShapeCircle(ExplosiveObjectsSize[i]);
-                    outlineCircle = Shape.GenerateShapeCircle(ExplosiveObjectsSize[i] + outlineSize);
-
+                {                 
                     photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
-                  
-                    //DestroyMap(ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
+
                     ExplosiveObjectsPosition.RemoveAt(i);
                     ExplosiveObjectsSize.RemoveAt(i);
                 }
             }
         }
 
-        private void DestroyMap(Vector3 position, int size)
+        private void DestroyMapCircle(Vector3 position, int size)
         {
+            destroyCircle = Shape.GenerateShapeCircle(size);
+            outlineCircle = Shape.GenerateShapeCircle(size + outlineSize);
+
             Vector3 p = position - primaryLayer.transform.position;
 
             primaryLayer?.Paint(new PaintingParameters()
@@ -173,7 +172,7 @@ namespace DTerrain
         [PunRPC]
         public void MapSync(Vector3 pos, int size)
         {
-            DestroyMap(pos, size);
+            DestroyMapCircle(pos, size);
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
