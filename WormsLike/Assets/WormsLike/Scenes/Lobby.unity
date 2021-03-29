@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.42344362, g: 0.47082424, b: 0.51312023, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -232,6 +232,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1834811184}
     m_Modifications:
+    - target: {fileID: 627743191493106265, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
+      propertyPath: sceneViewId
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7786860209479960680, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
       propertyPath: m_Name
       value: RoomPlayer
@@ -2142,6 +2146,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 209196794}
     m_Modifications:
+    - target: {fileID: 627743191493106265, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
+      propertyPath: sceneViewId
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7786860209479960680, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
       propertyPath: m_Name
       value: RoomPlayer
@@ -3131,7 +3139,7 @@ MonoBehaviour:
   textMap: {fileID: 487439015}
   buttonPlusPlayerMax: {fileID: 8310183080675570415}
   buttonMinusPlayerMax: {fileID: 8310183080675570414}
-  RoomPlayer: {fileID: 2492270689155552196, guid: fa827f2ce541c984ea944ea8a85d755b, type: 3}
+  RoomPlayer: {fileID: 7786860209479960680, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
 --- !u!4 &1673142669
 Transform:
   m_ObjectHideFlags: 0
@@ -3891,6 +3899,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1667221793}
     m_Modifications:
+    - target: {fileID: 627743191493106265, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
+      propertyPath: sceneViewId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7786860209479960680, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
       propertyPath: m_Name
       value: RoomPlayer
