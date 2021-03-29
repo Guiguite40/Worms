@@ -684,7 +684,7 @@ GameObject:
   - component: {fileID: 317155148}
   - component: {fileID: 317155147}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ButtonSend
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -753,7 +753,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 317155148}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1673142668}
+        m_TargetAssemblyTypeName: RoomManager, Assembly-CSharp
+        m_MethodName: OnClickSendMessage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &317155148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3223,6 +3235,8 @@ MonoBehaviour:
   buttonPlusMap: {fileID: 1770880172}
   buttonMinusMap: {fileID: 1770880171}
   RoomPlayer: {fileID: 7786860209479960680, guid: 711dd51d16bfddb458dc0a634fd5958c, type: 3}
+  chatMessage: {fileID: 7149967967249137942, guid: fe52d1f6c3a2bf447bdf33648b7b8858, type: 3}
+  inputFieldChatMessage: {fileID: 1821286633}
 --- !u!4 &1673142669
 Transform:
   m_ObjectHideFlags: 0

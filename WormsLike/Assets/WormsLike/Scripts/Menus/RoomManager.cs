@@ -25,6 +25,9 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private Button buttonMinusMap;
     [Space(10)]
     [SerializeField] private GameObject RoomPlayer;
+    [Space(5)]
+    [SerializeField] private GameObject chatMessage;
+    [SerializeField] private InputField inputFieldChatMessage;
 
     int indexGamemode;
     int mapIndex = 0;
@@ -34,7 +37,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     GameObject currentPlayer;
     List<Photon.Realtime.Player> listPlayer = new List<Photon.Realtime.Player>();
     List<GameObject> listGoPlayer = new List<GameObject>();
-
+    List<GameObject> listChatMessage = new List<GameObject>();
     public enum TeamState
 	{
         SPECTATE = 0,
@@ -273,4 +276,17 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
             mapIndex = (int)stream.ReceiveNext();
         }
     }
+
+    public void OnClickSendMessage()
+	{
+        photonView.RPC("CreateChatMessage", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName, inputFieldChatMessage.text);
+    }
+
+    [PunRPC]
+    void CreateChatMessage(string _senderName, string _message)
+	{
+        GameObject newMessage = Instantiate(chatMessage);
+        newMessage.GetComponent<ChatMessage>().SetupMessage(_senderName, _message);
+        listChatMessage.Add(newMessage);
+	}
 }
