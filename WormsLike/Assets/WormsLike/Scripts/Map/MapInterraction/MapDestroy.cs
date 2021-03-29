@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
 namespace DTerrain
 {
-    public class MapDestroy : MonoBehaviour
+    public class MapDestroy : MonoBehaviourPunCallbacks, IPunObservable
     {
         private int outlineSize = 4;
 
@@ -106,19 +108,20 @@ namespace DTerrain
             if (ExplosiveObjectsPosition.Count() != 0)
             {
                 for (int i = 0; i < ExplosiveObjectsPosition.Count(); i++)
-                {
-                    destroyCircle = Shape.GenerateShapeCircle(ExplosiveObjectsSize[i]);
-                    outlineCircle = Shape.GenerateShapeCircle(ExplosiveObjectsSize[i] + outlineSize);
+                {                 
+                    photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
 
-                    DestroyMap(ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
                     ExplosiveObjectsPosition.RemoveAt(i);
                     ExplosiveObjectsSize.RemoveAt(i);
                 }
             }
         }
 
-        private void DestroyMap(Vector3 position, int size)
+        private void DestroyMapCircle(Vector3 position, int size)
         {
+            destroyCircle = Shape.GenerateShapeCircle(size);
+            outlineCircle = Shape.GenerateShapeCircle(size + outlineSize);
+
             Vector3 p = position - primaryLayer.transform.position;
 
             primaryLayer?.Paint(new PaintingParameters()
@@ -166,13 +169,14 @@ namespace DTerrain
             });
         }
 
-        private void OnLeftMouseButtonClick()
+        [PunRPC]
+        public void MapSync(Vector3 pos, int size)
         {
-            destroyCircle = Shape.GenerateShapeCircle(16);
-            outlineCircle = Shape.GenerateShapeCircle(16 + outlineSize);
+            DestroyMapCircle(pos, size);
+        }
 
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            DestroyMap(mousePos, 16);
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
         }
     }
 }

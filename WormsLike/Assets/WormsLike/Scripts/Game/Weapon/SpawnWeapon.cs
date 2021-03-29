@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Photon.Pun;
 
 namespace DTerrain
 {
@@ -18,7 +19,7 @@ namespace DTerrain
             {
                 Vector3 mPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mPos.z = 0;
-                Instantiate(weapon, mPos, new Quaternion(0, 0, 0, 0));
+                PhotonNetwork.Instantiate("Weapon/" + weapon.name, mPos, new Quaternion(0, 0, 0, 0));
             }
         }
     }

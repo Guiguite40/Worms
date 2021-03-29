@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace DTerrain
 {
@@ -23,11 +24,14 @@ namespace DTerrain
         {
             if (firstExplode == true)
             {
-                for (int i = 0; i < 5; i++)
+                if (PhotonNetwork.IsMasterClient)
                 {
-                    Vector3 mPos = gameObject.transform.position;
-                    GameObject newBanana = Instantiate(ChildBanane, mPos, new Quaternion(0, 0, 0, 0));
-                    newBanana.name = "BananaChilds";
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Vector3 mPos = gameObject.transform.position;
+                        GameObject newBanana = PhotonNetwork.InstantiateRoomObject("Weapon/" + ChildBanane.name, mPos, new Quaternion(0, 0, 0, 0));
+                        newBanana.name = "BananaChilds";
+                    }
                 }
 
                 firstExplode = false;
