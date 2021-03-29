@@ -13,11 +13,8 @@ public class Inventory : MonoBehaviourPunCallbacks
     [SerializeField] GameObject ui_Inventory = null;
     [SerializeField] List<Button> items = null;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    [SerializeField] public GameObject RocketPrefab = null;
 
-    }
 
     // Update is called once per frame
     void Update()

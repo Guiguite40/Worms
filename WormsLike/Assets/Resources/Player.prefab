@@ -48,13 +48,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slimePrefab: {fileID: 3845015423529556887, guid: 2a44fb03f147f5249be98eb76e2d49a7, type: 3}
   slimes: []
+  inv: {fileID: -6890893481750907789}
   slimeLimit: 3
-  team: 0
+  team: 1
   phase_placement: 0
   phase_game: 1
   isTurn: 1
   healthBoxPrefab: {fileID: 6309667246824479687, guid: 1a51c14f547c3174597d07d245877697, type: 3}
   damageBoxPrefab: {fileID: 1363721780923859905, guid: a9ff06611642eff4b9fa622152286a24, type: 3}
+  currentCharacter: {fileID: 0}
+  strenght: {x: 15, y: 15}
+  speed: 5
 --- !u!114 &5807082896305680187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -123,3 +127,4 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  RocketPrefab: {fileID: 2630013520201876711, guid: 184bb5867a503a443bad3cc771f8c4fd, type: 3}

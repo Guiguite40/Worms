@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (timer < 0)
             timer = 60;
         timerText.text = timer.ToString("0");
-
     }
 
     public override void OnConnectedToMaster()
@@ -51,10 +50,10 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         Debug.Log("Lobby joined");
-        if (PhotonNetwork.CountOfRooms < 1)
-            PhotonNetwork.CreateRoom("roomTest");
-        else
-            PhotonNetwork.JoinRandomRoom();
+        //if (PhotonNetwork.CountOfRooms < 1)
+        PhotonNetwork.CreateRoom("roomTest");
+        //else
+        //    PhotonNetwork.JoinRandomRoom();
     }
 
     public override void OnJoinedRoom()
@@ -65,15 +64,14 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     IEnumerator InstantiatePlayer()
     {
-        Debug.Log("Waiting other players");
-        yield return new WaitWhile(() => waitOtherPlayers);
-        if (waitOtherPlayers)
-            waitOtherPlayers = false;
+        //Debug.Log("Waiting other players");
+        yield return new WaitForSeconds(1);
 
         Debug.Log("Players instantiate");
         GameObject newPlayer = playerPrefab;
         newPlayer.GetComponent<Player>().isTurn = true;
         newPlayer.GetComponent<Player>().phase_game = true;
+        newPlayer.GetComponent<Player>().team = 1;
         PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
     }
 

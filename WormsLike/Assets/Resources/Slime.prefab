@@ -454,7 +454,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3845015423529556887}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.8611114, y: 2.8877778, z: 0}
+  m_LocalPosition: {x: 2.564815, y: 2.7766666, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1241201631941553922}
@@ -555,13 +555,13 @@ MonoBehaviour:
   maxHealth: 100
   curHealth: 0
   isDead: 0
-  blueColor: {r: 0, g: 0, b: 0, a: 0}
+  blueColor: {r: 0.41037738, g: 0.6886743, b: 1, a: 1}
   greenColor: {r: 0.35294116, g: 1, b: 0.4316222, a: 1}
   orangeColor: {r: 1, g: 0.76470596, b: 0.3529412, a: 1}
   redColor: {r: 1, g: 0.36078432, b: 0.3529412, a: 1}
-  characterColor: {r: 0, g: 0, b: 0, a: 0}
+  characterColor: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
   isControlled: 0
-  team: 0
+  team: 1
 --- !u!70 &3845015423529556883
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -733,7 +733,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1241201631941553922
 Transform:
   m_ObjectHideFlags: 0

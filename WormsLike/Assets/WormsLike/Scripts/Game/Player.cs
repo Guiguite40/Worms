@@ -7,7 +7,7 @@ public class Player : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject slimePrefab = null;
     [SerializeField] List<GameObject> slimes = new List<GameObject>();
-    Inventory inv = null;
+    [SerializeField] Inventory inv = null;
 
     [HideInInspector] public int slimeLimit = 3;
 
@@ -18,16 +18,18 @@ public class Player : MonoBehaviourPunCallbacks
 
     public bool isTurn = false;
 
-
     /***** DEBUG *****/
     [SerializeField] GameObject healthBoxPrefab = null;
     [SerializeField] GameObject damageBoxPrefab = null;
 
+    [SerializeField] GameObject currentCharacter = null;
+
+    [SerializeField] Vector2 strenght = Vector2.zero;
+    [SerializeField] float speed = 0;
+
     // Start is called before the first frame update
     void Start()
     {
-        // DEBUG
-        team = 1;
     }
 
     // Update is called once per frame
@@ -45,6 +47,7 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
         ControlCharacter();
+        Rocket();
     }
 
     void Debuging()
@@ -77,6 +80,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     private void SetCharacterControlled(int _index)
     {
+        currentCharacter = null;
         if (slimes.Count - 1 >= _index)
         {
             foreach (var item in slimes)
@@ -87,6 +91,7 @@ public class Player : MonoBehaviourPunCallbacks
                 }
             }
             slimes[_index].GetComponent<Slime>().isControlled = true;
+            currentCharacter = slimes[_index].gameObject;
         }
     }
 
@@ -96,10 +101,10 @@ public class Player : MonoBehaviourPunCallbacks
         {
             Debug.Log(slimes.Count);
             GameObject slime = slimePrefab;
+            slime.GetComponent<Slime>().team = team;
             slime.GetComponent<Slime>().SetPos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
             slimes.Add(Instantiate(slime));
             slimes[slimes.Count - 1].transform.parent = transform;
-            slimes[slimes.Count - 1].GetComponent<Slime>().team = team;
         }
     }
 
@@ -126,6 +131,27 @@ public class Player : MonoBehaviourPunCallbacks
 
             item.GetComponent<Slime>().velocity.x = Mathf.MoveTowards(item.GetComponent<Slime>().velocity.x, item.GetComponent<Slime>().maxSpeed * move, item.GetComponent<Slime>().moveAcceleration * Time.deltaTime);
             item.GetComponent<Slime>().rb.velocity = new Vector2(item.GetComponent<Slime>().velocity.x, item.GetComponent<Slime>().rb.velocity.y);
+        }
+    }
+
+    void Rocket()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (currentCharacter != null)
+            {
+                Debug.Log("Shooooott");
+                Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                targetPos.z = 0;
+
+                GameObject rocket = inv.RocketPrefab;
+                rocket.GetComponent<Rocket>().shooter = currentCharacter.gameObject;
+                rocket.GetComponent<Rocket>().startPos = currentCharacter.transform.position;
+                Debug.Log(currentCharacter.transform.position);
+                rocket.GetComponent<Rocket>().targetPos = targetPos;
+                rocket.GetComponent<Rocket>().strenght = strenght;
+                Instantiate(rocket);
+            }
         }
     }
 

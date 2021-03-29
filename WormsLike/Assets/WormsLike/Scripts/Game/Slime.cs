@@ -61,7 +61,7 @@ public class Slime : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        Movement();
+        Flip();
         Health_Management();
 
 
@@ -76,30 +76,6 @@ public class Slime : MonoBehaviourPunCallbacks
         {
             curHealth = 0;
         }
-    }
-
-    void Movement()
-    {
-        //if (!isDead)
-        //{
-        //    if (isControlled)
-        //    {
-        //        move = Input.GetAxisRaw("Horizontal");
-        //        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded && !isDead)
-        //            rb.velocity = new Vector2(0, jumpForce);
-        //    }
-        //    else
-        //        if (move != 0)
-        //        move = 0;
-        //}
-        //else
-        //    if (move != 0)
-        //    move = 0;
-
-        Flip();
-
-        //velocity.x = Mathf.MoveTowards(velocity.x, maxSpeed * move, moveAcceleration * Time.deltaTime);
-        //rb.velocity = new Vector2(velocity.x, rb.velocity.y);
     }
 
     public void SetMove(float _move)
@@ -234,7 +210,12 @@ public class Slime : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
+        if (collision.gameObject.tag == "Rocket" && collision.gameObject.GetComponent<Rocket>().shooter != this.gameObject)
+        {
+            Debug.Log("Player hited");
+            curHealth -= 20;
+            Destroy(collision.gameObject);
+        }
     }
 }
 
