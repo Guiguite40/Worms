@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine.UI;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
+    public static RoomManager instance;
+
     [SerializeField] private Text textRoomName;
     [SerializeField] private Text textRoomPassword;
     [SerializeField] private Text textPlayerMax;
@@ -20,14 +23,59 @@ public class RoomManager : MonoBehaviourPunCallbacks
 
     byte playerMax;
     GameObject currentPlayer;
+    List<Photon.Realtime.Player> listPlayer = new List<Photon.Realtime.Player>();
+    List<GameObject> listGoPlayer = new List<GameObject>();
+
+    public enum TeamState
+	{
+        SPECTATE = 0,
+        BLUE,
+        RED
+	}
+
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+    }
+
     void Start()
     {
+        PhotonNetwork.AutomaticallySyncScene = true;
         playerMax = PhotonNetwork.CurrentRoom.MaxPlayers;
+
         currentPlayer = PhotonNetwork.Instantiate("RoomPlayer", Vector3.zero, Quaternion.identity);
         currentPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
         currentPlayer.transform.localScale = new Vector3(1, 1, 1);
+
+        currentPlayer.GetComponent<LobbyPlayer>().SetupPlayerInfo(PhotonNetwork.LocalPlayer.NickName);
+
         SetRoomInfo();
     }
+
+    //[PunRPC]
+    /*void CreateRoomPlayer(string _team)
+	{
+        GameObject newGoPlayer = Instantiate(RoomPlayer);
+
+        if(_team == "spectate")
+            newGoPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
+        else if(_team == "blue")
+            newGoPlayer.transform.parent = GameObject.Find("PanelPlayersBlue").transform;
+        else if (_team == "red")
+            newGoPlayer.transform.parent = GameObject.Find("PanelPlayersRed").transform;
+
+        newGoPlayer.transform.localScale = new Vector3(1, 1, 1);
+        listGoPlayer.Add(newGoPlayer);
+    }
+
+    void CreateRoomPlayer()
+    {
+        GameObject newGoPlayer = Instantiate(RoomPlayer);
+        newGoPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
+        newGoPlayer.transform.localScale = new Vector3(1, 1, 1);
+        listGoPlayer.Add(newGoPlayer);
+    }*/
 
     void Update()
     {
@@ -42,15 +90,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
             textRoomPassword.text = MenuManager.instance.GetRoomPassword();
         else
-            textRoomPassword.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["password"];
-
-
+            textRoomPassword.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["pw"];
     }
 
     void UpdateParameters()
 	{
         UpdateButtons();
-        textPlayerMax.text = playerMax.ToString();
+        //textPlayerMax.text = playerMax.ToString();
     }
 
     public void UpdateButtons()
@@ -65,6 +111,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         else
             buttonMinusPlayerMax.interactable = true;
 
+        textPlayerMax.text = PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
+        //textPlayerMax.text = PhotonNetwork.CurrentRoom.CustomProperties["mp"].ToString();
     }
 
     public void IncrementPlayerMax()
@@ -107,8 +155,40 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public void OnClickJoinTeam(string _colorTeam)
 	{
         if (_colorTeam == "blue")
-            currentPlayer.transform.parent = GameObject.Find("PanelPlayersBlue").transform;
+        {
+            currentPlayer.GetComponent<LobbyPlayer>().SetCurrentTeam((int)TeamState.BLUE);
+        }
         else if (_colorTeam == "red")
-            currentPlayer.transform.parent = GameObject.Find("PanelPlayersRed").transform;
+        {
+            currentPlayer.GetComponent<LobbyPlayer>().SetCurrentTeam((int)TeamState.RED);
+        }
     }
+
+	public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
+	{
+        print("player entered room");
+        //CreateRoomPlayer("spectate");
+        //CreateRoomPlayer();
+        listPlayer.Add(newPlayer);
+	}
+
+	public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+	{
+		if(changedProps.ContainsKey("team"))
+		{
+            /*for(int i = 0; i < listPlayer.Count; i++)
+			{
+                if((string)listPlayer[i].CustomProperties["team"] == "blue")
+				{
+                    listGoPlayer[i].transform.parent = GameObject.Find("PanelPlayersBlue").transform;
+                }
+                else if ((string)listPlayer[i].CustomProperties["team"] == "red")
+                {
+                    listGoPlayer[i].transform.parent = GameObject.Find("PanelPlayersRed").transform;
+                }
+            }*/
+
+            print("players team updated");
+		}
+	}
 }
