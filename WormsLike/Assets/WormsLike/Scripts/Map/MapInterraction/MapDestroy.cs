@@ -46,7 +46,7 @@ namespace DTerrain
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && mapTurn == false)
+            if (Input.GetKeyDown(KeyCode.Space) && mapTurn == false && PhotonNetwork.IsMasterClient)
             {
                 mapTurn = true;
                 shipDescent = true;
@@ -55,60 +55,19 @@ namespace DTerrain
                 RightPosX = RightMapKiller.transform.position.x;
 
                 PosY = LeftMapKiller.transform.position.y;
+                
+                photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
             }
 
-            if (mapTurn)
+            if (mapTurn == true)
             {
-                if (shipDescent == true)
-                {
-                    if (PosY - 10f <= LeftMapKiller.transform.position.y)
-                        LeftMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
-
-                    if (PosY - 10f <= RightMapKiller.transform.position.y)
-                        RightMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
-
-                    if (PosY - 10f >= RightMapKiller.transform.position.y && PosY - 10f >= LeftMapKiller.transform.position.y)
-                    {
-                        shipDescent = false;
-                    }
-                }
-                else
-                {
-                    LeftLaser.SetActive(true);
-                    RightLaser.SetActive(true);
-
-                    if (leftPosX + 5f >= LeftMapKiller.transform.position.x)
-                        LeftMapKiller.transform.position += Vector3.right * 5f * Time.deltaTime;
-
-                    if (RightPosX - 5f <= RightMapKiller.transform.position.x)
-                        RightMapKiller.transform.position += Vector3.left * 5f * Time.deltaTime;
-
-                    DestroyMapRect(LeftMapKiller.transform.position, 10, 1080);
-                    DestroyMapRect(RightMapKiller.transform.position, 10, 1080);
-
-                    if (RightPosX - 5f >= RightMapKiller.transform.position.x && leftPosX + 5f <= LeftMapKiller.transform.position.x)
-                    {
-                        LeftLaser.SetActive(false);
-                        RightLaser.SetActive(false);
-
-                        if (PosY >= LeftMapKiller.transform.position.y)
-                            LeftMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
-
-                        if (PosY >= RightMapKiller.transform.position.y)
-                            RightMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
-
-                        if (PosY <= RightMapKiller.transform.position.y && PosY <= LeftMapKiller.transform.position.y)
-                        {
-                            mapTurn = false;
-                        }
-                    }
-                }
+                MapMortSubite();               
             }
 
             if (ExplosiveObjectsPosition.Count() != 0)
             {
                 for (int i = 0; i < ExplosiveObjectsPosition.Count(); i++)
-                {                 
+                {
                     photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
 
                     ExplosiveObjectsPosition.RemoveAt(i);
@@ -169,10 +128,76 @@ namespace DTerrain
             });
         }
 
+        public void MapMortSubite()
+        {
+            if (shipDescent == true)
+            {
+                if (PosY - 10f <= LeftMapKiller.transform.position.y)
+                    LeftMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
+
+                if (PosY - 10f <= RightMapKiller.transform.position.y)
+                    RightMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
+
+                if (PosY - 10f >= RightMapKiller.transform.position.y && PosY - 10f >= LeftMapKiller.transform.position.y)
+                {
+                    shipDescent = false;
+                }
+            }
+            else
+            {
+                LeftLaser.SetActive(true);
+                RightLaser.SetActive(true);
+
+                if (leftPosX + 5f >= LeftMapKiller.transform.position.x)
+                    LeftMapKiller.transform.position += Vector3.right * 5f * Time.deltaTime;
+
+                if (RightPosX - 5f <= RightMapKiller.transform.position.x)
+                    RightMapKiller.transform.position += Vector3.left * 5f * Time.deltaTime;
+
+                photonView.RPC("MapSyncMortSubite", RpcTarget.AllBuffered, LeftMapKiller.transform.position, 10, 1080);
+                photonView.RPC("MapSyncMortSubite", RpcTarget.AllBuffered, RightMapKiller.transform.position, 10, 1080);
+
+                if (RightPosX - 5f >= RightMapKiller.transform.position.x && leftPosX + 5f <= LeftMapKiller.transform.position.x)
+                {
+                    LeftLaser.SetActive(false);
+                    RightLaser.SetActive(false);
+
+                    if (PosY >= LeftMapKiller.transform.position.y)
+                        LeftMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
+
+                    if (PosY >= RightMapKiller.transform.position.y)
+                        RightMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
+
+                    if (PosY <= RightMapKiller.transform.position.y && PosY <= LeftMapKiller.transform.position.y)
+                    {
+                        mapTurn = false;
+                    }
+                }
+            }
+        }
+
         [PunRPC]
         public void MapSync(Vector3 pos, int size)
         {
             DestroyMapCircle(pos, size);
+        }
+
+        [PunRPC]
+        public void MapSyncMortSubite(Vector3 pos, int width, int height)
+        {
+            DestroyMapRect(pos, width, height);
+        }
+
+        [PunRPC]
+        public void SyncMortSubite()
+        {
+            mapTurn = true;
+            shipDescent = true;
+
+            leftPosX = LeftMapKiller.transform.position.x;
+            RightPosX = RightMapKiller.transform.position.x;
+
+            PosY = LeftMapKiller.transform.position.y;
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
