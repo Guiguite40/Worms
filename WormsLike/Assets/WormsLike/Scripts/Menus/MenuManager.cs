@@ -26,6 +26,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text textNbPlayerMax;
     [Space(8)]
     [SerializeField] private GameObject serverPrefab;
+    [SerializeField] private GameObject panelServers;
 
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     bool isGamePrivate = false;
@@ -389,7 +390,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
                 {
                     GameObject newServer = Instantiate(serverPrefab);
                     serverId++;
-                    newServer.transform.parent = GameObject.Find("PanelListServer").transform;
+                    //newServer.transform.parent = GameObject.Find("PanelListServer").transform;
+                    newServer.transform.parent = panelServers.transform;
                     newServer.transform.localScale = new Vector3(1, 1, 1);
 
                     ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();

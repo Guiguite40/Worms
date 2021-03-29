@@ -48,17 +48,13 @@ public class RoomManager : MonoBehaviourPunCallbacks
         currentPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
         currentPlayer.transform.localScale = new Vector3(1, 1, 1);
 
-        /*for(int i = 0; i < PhotonNetwork.CurrentRoom.PlayerCount; i++)
-		{
-            //CreateRoomPlayer((string)PhotonNetwork.CurrentRoom.Players[i].CustomProperties["team"]);
-            CreateRoomPlayer();
-        }*/
+        currentPlayer.GetComponent<LobbyPlayer>().SetupPlayerInfo(PhotonNetwork.LocalPlayer.NickName);
 
         SetRoomInfo();
     }
 
     //[PunRPC]
-    void CreateRoomPlayer(string _team)
+    /*void CreateRoomPlayer(string _team)
 	{
         GameObject newGoPlayer = Instantiate(RoomPlayer);
 
@@ -79,7 +75,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
         newGoPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
         newGoPlayer.transform.localScale = new Vector3(1, 1, 1);
         listGoPlayer.Add(newGoPlayer);
-    }
+    }*/
 
     void Update()
     {
@@ -100,7 +96,7 @@ public class RoomManager : MonoBehaviourPunCallbacks
     void UpdateParameters()
 	{
         UpdateButtons();
-        textPlayerMax.text = playerMax.ToString();
+        //textPlayerMax.text = playerMax.ToString();
     }
 
     public void UpdateButtons()
@@ -115,6 +111,8 @@ public class RoomManager : MonoBehaviourPunCallbacks
         else
             buttonMinusPlayerMax.interactable = true;
 
+        textPlayerMax.text = PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
+        //textPlayerMax.text = PhotonNetwork.CurrentRoom.CustomProperties["mp"].ToString();
     }
 
     public void IncrementPlayerMax()
@@ -158,15 +156,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
 	{
         if (_colorTeam == "blue")
         {
-            //currentPlayer.transform.parent = GameObject.Find("PanelPlayersBlue").transform;
             currentPlayer.GetComponent<LobbyPlayer>().SetCurrentTeam((int)TeamState.BLUE);
-            //PhotonNetwork.LocalPlayer.CustomProperties["team"] = "blue";
         }
         else if (_colorTeam == "red")
         {
-            //currentPlayer.transform.parent = GameObject.Find("PanelPlayersRed").transform;
             currentPlayer.GetComponent<LobbyPlayer>().SetCurrentTeam((int)TeamState.RED);
-            //PhotonNetwork.LocalPlayer.CustomProperties["team"] = "red";
         }
     }
 

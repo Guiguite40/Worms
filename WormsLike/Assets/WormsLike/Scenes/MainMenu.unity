@@ -5558,6 +5558,7 @@ MonoBehaviour:
   buttonMinus: {fileID: 1886497384}
   textNbPlayerMax: {fileID: 1196694485}
   serverPrefab: {fileID: 4140240784153625383, guid: 66e83db5ef81bcc4092c5eac8dffda96, type: 3}
+  panelServers: {fileID: 844482948}
 --- !u!4 &810353872
 Transform:
   m_ObjectHideFlags: 0

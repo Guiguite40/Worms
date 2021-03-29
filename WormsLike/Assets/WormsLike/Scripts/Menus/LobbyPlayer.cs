@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using UnityEngine.UI;
 
 public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 {
+	[SerializeField] private Text textName;
+
 	int oldTeam;
 	int currentTeam;
+	string name;
 
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 	{
@@ -14,10 +18,13 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 		{
 			int team = currentTeam;
 			stream.SendNext(team);
+			stream.SendNext(name);
 		}
 		else
 		{
 			currentTeam = (int)stream.ReceiveNext();
+			name = (string)stream.ReceiveNext();
+			UpdateInfo();
 		}
 	}
 
@@ -31,12 +38,18 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        if(currentTeam != oldTeam)
+
+    }
+
+	void UpdateInfo()
+	{
+		textName.text = name;
+		if (currentTeam != oldTeam)
 		{
 			UpdateTeam();
 			oldTeam = currentTeam;
 		}
-    }
+	}
 
 	void UpdateTeam()
 	{
@@ -52,5 +65,11 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 	{
 		currentTeam = _index;
 		UpdateTeam();
+	}
+
+	public void SetupPlayerInfo(string _name)
+	{
+		name = _name;
+		textName.text = name;
 	}
 }
