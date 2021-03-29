@@ -27,6 +27,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [Space(8)]
     [SerializeField] private GameObject serverPrefab;
     [SerializeField] private GameObject panelServers;
+    [SerializeField] private Text textErrorMdpToEnter;
 
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     bool isGamePrivate = false;
@@ -300,10 +301,27 @@ public class MenuManager : MonoBehaviourPunCallbacks
         {
             if (serverIdSelected == currentServersFind[y].GetServerId())
             {
-                //SetupPlayerCustomProperties();
-                string roomName = currentServersFind[y].GetRoomName();
-                PhotonNetwork.JoinRoom(roomName);
-                print("joining room name : " + roomName);
+                if (!canvasEnterPassword.activeSelf)
+                {
+                    string roomName = currentServersFind[y].GetRoomName();
+                    PhotonNetwork.JoinRoom(roomName);
+                    print("joining room name : " + roomName);
+                }
+                else
+				{
+                    if(impFieldPasswordToEnter.text == GetRoomPassword()) //to modify
+					{
+                        string roomName = currentServersFind[y].GetRoomName();
+                        PhotonNetwork.JoinRoom(roomName);
+                        print("joining room name : " + roomName);
+                    }
+                    else
+					{
+                        impFieldPasswordToEnter.text = "";
+                        impFieldPasswordToEnter.ActivateInputField();
+                        textErrorMdpToEnter.text = "ERRRROR";
+                    }
+				}
             }
         }
     }
