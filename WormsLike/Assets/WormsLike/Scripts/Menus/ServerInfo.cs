@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class ServerInfo : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Image background;
+    [SerializeField] private Image cadenas;
     [SerializeField] private Text textRoomName;
     [SerializeField] private Text textNbPlayer;
 
@@ -15,8 +16,11 @@ public class ServerInfo : MonoBehaviourPunCallbacks
     byte nbPlayerMax;
     float currentAlphaBg;
     int id = 0;
+
+    bool hasPassword = false;
     void Start()
     {
+        //cadenas.gameObject.SetActive(false);
         currentAlphaBg = background.color.a;
         DrawBackground();
     }
@@ -43,16 +47,22 @@ public class ServerInfo : MonoBehaviourPunCallbacks
         background.color = new Color(background.color.r, background.color.g, background.color.b, 0);
     }
 
-    public void SetServerInfo(int _id, string _roomName, int _nbPlayer, byte _nbPlayerMax)
+    public void SetServerInfo(int _id, string _roomName, int _nbPlayer, byte _nbPlayerMax, bool _hasPassword)
 	{
         id = _id;
         nbPlayer = _nbPlayer;
         nbPlayerMax = _nbPlayerMax;
         roomName = _roomName;
+        hasPassword = _hasPassword;
 
         textRoomName.text = roomName;
         textNbPlayer.text = nbPlayer.ToString() + "/" + nbPlayerMax.ToString();
-	}
+
+        if (hasPassword)
+            cadenas.gameObject.SetActive(true);
+        else
+            cadenas.gameObject.SetActive(false);
+    }
 
     public int GetServerId()
 	{
@@ -70,5 +80,23 @@ public class ServerInfo : MonoBehaviourPunCallbacks
     public string GetRoomName()
 	{
         return roomName;
+	}
+
+    public void SetCadenas()
+	{
+        cadenas.gameObject.SetActive(true);
+	}
+
+    public bool IsCadenasActive()
+	{
+        if (cadenas.gameObject.activeSelf)
+            return true;
+        else
+            return false;
+	}
+
+    public byte GetNbPlayerMax()
+	{
+        return nbPlayerMax;
 	}
 }
