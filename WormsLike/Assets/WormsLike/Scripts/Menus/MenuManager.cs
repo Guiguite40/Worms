@@ -55,6 +55,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
         CloseCanvas("all");
 
         canvasEnterPassword.SetActive(false);
+
+        SetupPlayerCustomProperties();
     }
 
     void Update()
@@ -68,9 +70,10 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         //Hashtable hash = new Hashtable();
         //hash.Add("password", impFieldPasswordText.text);
-        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        /*ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
         hash.Add("password", impFieldPasswordText.text);
-        PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
+        //hash.Add("Team", "spectate");
+        PhotonNetwork.CurrentRoom.SetCustomProperties(hash);*/
     }
 
     void OpenCanvas(string _keyName)
@@ -202,20 +205,26 @@ public class MenuManager : MonoBehaviourPunCallbacks
             return;
         }
 
+        //SetupPlayerCustomProperties();
+
         RoomOptions roomOption = new RoomOptions();
         roomOption.MaxPlayers = nbPlayerMax;
 
         ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
         hash.Add("pm", nbPlayerMax);
         hash.Add("pw", impFieldPasswordText.text);
+        //hash.Add("tm", "spectate");
         roomOption.CustomRoomProperties = hash;
 
         string[] lobbySettings = new string[2];
         lobbySettings[0] = "pm";
         lobbySettings[1] = "pw";
+        //lobbySettings[2] = "tm";
         roomOption.CustomRoomPropertiesForLobby = lobbySettings;
 
         PhotonNetwork.CreateRoom(impFieldRoomName.text, roomOption);
+
+        print("room created");
 	}
 
 	public override void OnCreatedRoom()
@@ -225,10 +234,18 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
 	public override void OnCreateRoomFailed(short returnCode, string message)
 	{
-        SendText("create", "<color=#00ff00> Room creation failed, error code : " + returnCode + "</color>"); 
+        SendText("create", "<color=#ff0000> Room creation failed, error code : " + returnCode + "</color>"); 
 	}
 
 	////////////////// /////////// //////////////////
+
+    void SetupPlayerCustomProperties()
+	{
+        ExitGames.Client.Photon.Hashtable playerHash = new ExitGames.Client.Photon.Hashtable();
+        playerHash.Add("team", "spectate");
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playerHash);
+        //PhotonNetwork.SetPlayerCustomProperties(playerHash);
+    }
 
 	////////////////// JOIN GAME //////////////////
 	public void OnClickJoinGame()
@@ -282,6 +299,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         {
             if (serverIdSelected == currentServersFind[y].GetServerId())
             {
+                //SetupPlayerCustomProperties();
                 string roomName = currentServersFind[y].GetRoomName();
                 PhotonNetwork.JoinRoom(roomName);
                 print("joining room name : " + roomName);
@@ -315,6 +333,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void OnClickQuikJoin()
     {
+        //SetupPlayerCustomProperties();
         PhotonNetwork.JoinRandomRoom();
     }
 
@@ -323,7 +342,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
         SendText("join", "<color=#00ff00> Room joined, loading lobby </color>");
         if (canvasCreateGame.activeSelf)
             SendText("create", "<color=#00ff00> Room joined, loading lobby </color>");
-        SetupCustomProperty();
+        //SetupCustomProperty();
+        //SetupPlayerCustomProperties();
         LaunchLobby();
     }
 
