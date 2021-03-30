@@ -49,8 +49,6 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
         ControlCharacter();
-
-        UseItem(Enums.ItemsList.RocketLauncher);
     }
 
     void Debuging()
@@ -167,10 +165,12 @@ public class Player : MonoBehaviourPunCallbacks
         Debug.Log("ChargeCalculation");
         while (!Input.GetMouseButtonUp(0))
         {
-            timeToRelease += Time.deltaTime;
+            timeToRelease += Time.deltaTime * 6f;
+            Debug.Log(Mathf.Clamp(timeToRelease + 3, 3f, 20f));
+            yield return null;
         }
-        charge = timeToRelease + 1;
-       StartCoroutine(LaunchAttackCharged(_attack, charge));
+        charge = Mathf.Clamp(timeToRelease + 3, 3f, 20);
+        StartCoroutine(LaunchAttackCharged(_attack, charge));
         timeToRelease = 0;
         charge = 0;
 

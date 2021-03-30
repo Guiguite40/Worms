@@ -25,8 +25,7 @@ public class Rocket : MonoBehaviourPunCallbacks
         direction = targetPos - transform.position;
         angle = Vector3.SignedAngle(Vector3.right, targetPos - transform.position, Vector3.forward);
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
-
-        rb.AddForce(direction.normalized * speed, ForceMode2D.Impulse);
+        rb.AddForce(direction.normalized * charge, ForceMode2D.Impulse);
     }
 
     private void Update()
@@ -39,7 +38,7 @@ public class Rocket : MonoBehaviourPunCallbacks
             Destroy(gameObject);
         }
 
-        angle = Vector3.SignedAngle(Vector3.right, rb.velocity * charge, Vector3.forward);
+        angle = Vector3.SignedAngle(Vector3.right, rb.velocity, Vector3.forward);
         transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
     }
 

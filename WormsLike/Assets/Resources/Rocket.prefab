@@ -102,8 +102,8 @@ MonoBehaviour:
   shooter: {fileID: 0}
   startPos: {x: -4.4351854, y: 1.5049459, z: 0}
   targetPos: {x: -1.6944447, y: 2.850741, z: 0}
-  speed: 5
-  strenght: {x: 15, y: 15}
+  speed: 2
+  charge: 1
 --- !u!68 &3688189866709884239
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -151,7 +151,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 0.7
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 0.5
   m_Material: {fileID: 0}
   m_Interpolate: 0
