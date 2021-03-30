@@ -26,6 +26,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     [Space(10)]
     [SerializeField] private GameObject RoomPlayer;
     [Space(5)]
+    [SerializeField] private GameObject chatMessageParent;
     [SerializeField] private GameObject chatMessage;
     [SerializeField] private InputField inputFieldChatMessage;
 
@@ -69,6 +70,11 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         UpdateParameters();
         print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
+        if(inputFieldChatMessage.IsActive())
+		{
+            if (Input.GetKeyDown(KeyCode.Return))
+                OnClickSendMessage();
+        }
     }
 
     void SetRoomInfo()
@@ -280,6 +286,8 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     public void OnClickSendMessage()
 	{
         photonView.RPC("CreateChatMessage", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName, inputFieldChatMessage.text);
+        inputFieldChatMessage.text = "";
+        inputFieldChatMessage.ActivateInputField();
     }
 
     [PunRPC]
@@ -287,6 +295,8 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 	{
         GameObject newMessage = Instantiate(chatMessage);
         newMessage.GetComponent<ChatMessage>().SetupMessage(_senderName, _message);
+        newMessage.transform.parent = chatMessageParent.transform;
+        newMessage.transform.localScale = new Vector3(1, 1, 1);
         listChatMessage.Add(newMessage);
 	}
 }
