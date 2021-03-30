@@ -14,6 +14,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private Text textPlayerMax;
     [SerializeField] private Text textGamemode;
     [SerializeField] private Text textMap;
+    [SerializeField] private Text textNbPlayerMax;
     [Space(10)]
     [SerializeField] private Button buttonPlusPlayerMax;
     [SerializeField] private Button buttonMinusPlayerMax;
@@ -68,6 +69,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
+        UpdateNbPlayerText();
         UpdateParameters();
         print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
         if(inputFieldChatMessage.IsActive())
@@ -299,4 +301,9 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
         newMessage.transform.localScale = new Vector3(1, 1, 1);
         listChatMessage.Add(newMessage);
 	}
+
+    void UpdateNbPlayerText()
+	{
+        textNbPlayerMax.text = "Players in lobby : " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
+    }
 }
