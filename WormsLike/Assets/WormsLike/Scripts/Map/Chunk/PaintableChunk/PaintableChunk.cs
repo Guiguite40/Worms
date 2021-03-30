@@ -23,6 +23,7 @@ namespace DTerrain
             TextureSource.SetUpToRenderer(SpriteRenderer);
 
             SpriteRenderer.sortingLayerID = SortingLayerID;
+            gameObject.tag = "Jumpable";
         }
 
         public virtual bool Paint(RectInt r, PaintingParameters pp)

@@ -15,7 +15,7 @@ namespace DTerrain
 
         public void CreateObjectMouse()
         {
-            if (Input.GetKeyDown(KeyCode.B))
+            if (Input.GetKeyDown(KeyCode.B) && PhotonNetwork.IsMasterClient)
             {
                 Vector3 mPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mPos.z = 0;

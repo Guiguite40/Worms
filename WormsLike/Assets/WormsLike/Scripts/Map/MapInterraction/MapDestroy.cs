@@ -68,7 +68,8 @@ namespace DTerrain
             {
                 for (int i = 0; i < ExplosiveObjectsPosition.Count(); i++)
                 {
-                    photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
+                    if (PhotonNetwork.IsMasterClient)
+                        photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
 
                     ExplosiveObjectsPosition.RemoveAt(i);
                     ExplosiveObjectsSize.RemoveAt(i);
