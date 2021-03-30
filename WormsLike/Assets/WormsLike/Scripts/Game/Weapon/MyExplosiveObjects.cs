@@ -24,7 +24,6 @@ namespace DTerrain
         void Start()
         {
             rb = gameObject.GetComponent<Rigidbody2D>();
-            rb.velocity = new Vector2(0f, -1f); // Debug
 
             timer = 0f;          
             myGo.Add(gameObject);
@@ -66,9 +65,9 @@ namespace DTerrain
             }
         }
 
-        public void OnCollisionEnter2D(Collision2D collision)
+        public void OnTriggerEnter2D(Collider2D collision)
         {
-            if (!collision.gameObject.CompareTag("Bullet"))
+            if (!collision.gameObject.CompareTag("Bullet") && !collision.gameObject.CompareTag("Player"))
             {
                 if (explodeAfterImpact == true && explodeVelocityNull == false)
                 {
