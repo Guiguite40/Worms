@@ -8,6 +8,9 @@ TagManager:
   - Ground
   - HealBox
   - DamageBox
+  - Jumpable
+  - UI_Inventory
+  - Rocket
   layers:
   - Default
   - TransparentFX
@@ -15,8 +18,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - opo
+  - kluhl
   - 
   - 
   - 
