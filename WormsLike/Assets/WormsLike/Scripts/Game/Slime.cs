@@ -64,14 +64,12 @@ public class Slime : MonoBehaviourPunCallbacks
         Flip();
         Health_Management();
 
-
         /* DEBUG */
         if (isControlled)
         {
             if (Input.GetKeyDown(KeyCode.Space))
                 curHealth -= 10;
         }
-
         if (transform.position.y < -2)
         {
             curHealth = 0;

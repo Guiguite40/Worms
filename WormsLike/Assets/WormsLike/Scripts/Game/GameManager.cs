@@ -69,10 +69,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
         Debug.Log("Players instantiate");
         GameObject newPlayer = playerPrefab;
+        PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
         newPlayer.GetComponent<Player>().isTurn = true;
         newPlayer.GetComponent<Player>().phase_game = true;
         newPlayer.GetComponent<Player>().team = 1;
-        PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
     }
 
     public float GetTimer()

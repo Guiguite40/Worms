@@ -19,13 +19,13 @@ public class Rocket : MonoBehaviour
     void Start()
     {
         rb = GetComponentInChildren<Rigidbody2D>();
-
         transform.position = startPos;
+        Debug.Log(targetPos + "    " + transform.position);
         direction = targetPos - transform.position;
-        angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
+        angle = Vector3.SignedAngle(Vector3.right, targetPos - transform.position, Vector3.forward);
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-        rb.AddForce(targetPos * speed, ForceMode2D.Impulse);
+        rb.AddForce(direction.normalized * speed, ForceMode2D.Impulse);
     }
 
     private void Update()
@@ -37,6 +37,9 @@ public class Rocket : MonoBehaviour
             Debug.Log("destroy");
             Destroy(gameObject);
         }
+
+        angle = Vector3.SignedAngle(Vector3.right, rb.velocity, Vector3.forward);
+        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

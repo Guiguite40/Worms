@@ -27,13 +27,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2630013520201876711}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.14, y: 0.32, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7804960674509641648
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -98,8 +98,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shooter: {fileID: 0}
-  startPos: {x: -3.2129633, y: 1.504923, z: 0}
-  targetPos: {x: 5.1759267, y: 0.31370378, z: 0}
+  startPos: {x: -4.4351854, y: 1.5049459, z: 0}
+  targetPos: {x: -1.6944447, y: 2.850741, z: 0}
   speed: 5
   strenght: {x: 15, y: 15}
 --- !u!68 &3688189866709884239

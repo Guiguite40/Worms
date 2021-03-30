@@ -6,7 +6,7 @@ using Photon.Pun;
 public class Player : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject slimePrefab = null;
-    [SerializeField] List<GameObject> slimes = new List<GameObject>();
+    [SerializeField] List<Slime> slimes = new List<Slime>();
     [SerializeField] Inventory inv = null;
 
     [HideInInspector] public int slimeLimit = 3;
@@ -22,7 +22,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] GameObject healthBoxPrefab = null;
     [SerializeField] GameObject damageBoxPrefab = null;
 
-    [SerializeField] GameObject currentCharacter = null;
+    [SerializeField] Slime currentCharacter = null;
 
     [SerializeField] Vector2 strenght = Vector2.zero;
     [SerializeField] float speed = 0;
@@ -56,19 +56,16 @@ public class Player : MonoBehaviourPunCallbacks
         {
             PlaceCharacter();
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha0)) // Not available for now
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            GameObject healthBox = healthBoxPrefab;
+            GameObject healthBox = Instantiate(healthBoxPrefab);
             healthBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
-            Instantiate(healthBox);
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha9)) // Not available for now
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
         {
-            GameObject damageBox = damageBoxPrefab;
+            GameObject damageBox = Instantiate(damageBoxPrefab);
             damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
-            Instantiate(damageBox);
         }
-
         if (Input.GetKeyDown(KeyCode.Alpha1))
             SetCharacterControlled(0);
         else if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -77,7 +74,6 @@ public class Player : MonoBehaviourPunCallbacks
             SetCharacterControlled(2);
     }
 
-
     private void SetCharacterControlled(int _index)
     {
         currentCharacter = null;
@@ -85,13 +81,23 @@ public class Player : MonoBehaviourPunCallbacks
         {
             foreach (var item in slimes)
             {
-                if (item.GetComponent<Slime>().isControlled == true)
+                if (item.isControlled == true)
                 {
-                    item.GetComponent<Slime>().isControlled = false;
+                    item.isControlled = false;
                 }
             }
-            slimes[_index].GetComponent<Slime>().isControlled = true;
-            currentCharacter = slimes[_index].gameObject;
+            slimes[_index].isControlled = true;
+            currentCharacter = slimes[_index];
+        }
+    }
+
+    private void UnSetCharacterControlled()
+    {
+        currentCharacter = null;
+        foreach (var item in slimes)
+        {
+            if (item.isControlled == true)
+                item.isControlled = false;
         }
     }
 
@@ -99,11 +105,10 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (slimes.Count < slimeLimit)
         {
-            Debug.Log(slimes.Count);
-            GameObject slime = slimePrefab;
-            slime.GetComponent<Slime>().team = team;
-            slime.GetComponent<Slime>().SetPos(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            slimes.Add(Instantiate(slime));
+            //Debug.Log(slimes.Count);
+            slimes.Add(Instantiate(slimePrefab).GetComponent<Slime>());
+            slimes[slimes.Count - 1].team = team;
+            slimes[slimes.Count - 1].SetPos(MousePos());
             slimes[slimes.Count - 1].transform.parent = transform;
         }
     }
@@ -113,13 +118,13 @@ public class Player : MonoBehaviourPunCallbacks
         float move = 0;
         foreach (var item in slimes)
         {
-            if (!item.GetComponent<Slime>().isDead)
+            if (!item.isDead)
             {
-                if (item.GetComponent<Slime>().isControlled)
+                if (item.isControlled)
                 {
                     move = Input.GetAxisRaw("Horizontal");
                     if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
-                        item.GetComponent<Slime>().rb.velocity = new Vector2(0, item.GetComponent<Slime>().jumpForce); ;
+                        item.rb.velocity = new Vector2(0, item.jumpForce);
                 }
                 else
                     if (move != 0)
@@ -129,8 +134,8 @@ public class Player : MonoBehaviourPunCallbacks
                 if (move != 0)
                 move = 0;
 
-            item.GetComponent<Slime>().velocity.x = Mathf.MoveTowards(item.GetComponent<Slime>().velocity.x, item.GetComponent<Slime>().maxSpeed * move, item.GetComponent<Slime>().moveAcceleration * Time.deltaTime);
-            item.GetComponent<Slime>().rb.velocity = new Vector2(item.GetComponent<Slime>().velocity.x, item.GetComponent<Slime>().rb.velocity.y);
+            item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
+            item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
         }
     }
 
@@ -140,17 +145,15 @@ public class Player : MonoBehaviourPunCallbacks
         {
             if (currentCharacter != null)
             {
-                Debug.Log("Shooooott");
-                Vector3 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 targetPos = MousePos();
                 targetPos.z = 0;
 
-                GameObject rocket = inv.RocketPrefab;
-                rocket.GetComponent<Rocket>().shooter = currentCharacter.gameObject;
-                rocket.GetComponent<Rocket>().startPos = currentCharacter.transform.position;
-                Debug.Log(currentCharacter.transform.position);
-                rocket.GetComponent<Rocket>().targetPos = targetPos;
-                rocket.GetComponent<Rocket>().strenght = strenght;
-                Instantiate(rocket);
+
+                Rocket rocket = Instantiate(inv.RocketPrefab).GetComponent<Rocket>();
+                rocket.shooter = currentCharacter.gameObject;
+                rocket.startPos = currentCharacter.transform.position;
+                rocket.targetPos = targetPos;
+                rocket.strenght = strenght;
             }
         }
     }

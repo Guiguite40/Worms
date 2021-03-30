@@ -10,6 +10,7 @@ TagManager:
   - DamageBox
   - Jumpable
   - UI_Inventory
+  - Rocket
   layers:
   - Default
   - TransparentFX
