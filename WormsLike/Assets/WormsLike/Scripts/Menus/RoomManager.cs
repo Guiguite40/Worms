@@ -5,7 +5,7 @@ using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine.UI;
 
-public class RoomManager : MonoBehaviourPunCallbacks
+public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     public static RoomManager instance;
 
@@ -17,15 +17,27 @@ public class RoomManager : MonoBehaviourPunCallbacks
     [Space(10)]
     [SerializeField] private Button buttonPlusPlayerMax;
     [SerializeField] private Button buttonMinusPlayerMax;
+    [Space(5)]
+    [SerializeField] private Button buttonPlusGamemode;
+    [SerializeField] private Button buttonMinusGamemode;
+    [Space(5)]
+    [SerializeField] private Button buttonPlusMap;
+    [SerializeField] private Button buttonMinusMap;
     [Space(10)]
     [SerializeField] private GameObject RoomPlayer;
+    [Space(5)]
+    [SerializeField] private GameObject chatMessage;
+    [SerializeField] private InputField inputFieldChatMessage;
 
-
+    int indexGamemode;
+    int mapIndex = 0;
+    int lastMapIndex = 3;
     byte playerMax;
+    bool isClientButtonSetup = false;
     GameObject currentPlayer;
     List<Photon.Realtime.Player> listPlayer = new List<Photon.Realtime.Player>();
     List<GameObject> listGoPlayer = new List<GameObject>();
-
+    List<GameObject> listChatMessage = new List<GameObject>();
     public enum TeamState
 	{
         SPECTATE = 0,
@@ -53,33 +65,10 @@ public class RoomManager : MonoBehaviourPunCallbacks
         SetRoomInfo();
     }
 
-    //[PunRPC]
-    /*void CreateRoomPlayer(string _team)
-	{
-        GameObject newGoPlayer = Instantiate(RoomPlayer);
-
-        if(_team == "spectate")
-            newGoPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
-        else if(_team == "blue")
-            newGoPlayer.transform.parent = GameObject.Find("PanelPlayersBlue").transform;
-        else if (_team == "red")
-            newGoPlayer.transform.parent = GameObject.Find("PanelPlayersRed").transform;
-
-        newGoPlayer.transform.localScale = new Vector3(1, 1, 1);
-        listGoPlayer.Add(newGoPlayer);
-    }
-
-    void CreateRoomPlayer()
-    {
-        GameObject newGoPlayer = Instantiate(RoomPlayer);
-        newGoPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
-        newGoPlayer.transform.localScale = new Vector3(1, 1, 1);
-        listGoPlayer.Add(newGoPlayer);
-    }*/
-
     void Update()
     {
         UpdateParameters();
+        print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
     }
 
     void SetRoomInfo()
@@ -91,12 +80,58 @@ public class RoomManager : MonoBehaviourPunCallbacks
             textRoomPassword.text = MenuManager.instance.GetRoomPassword();
         else
             textRoomPassword.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["pw"];
+
+        if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 0)
+            indexGamemode = 0;
+        else if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 1)
+            indexGamemode = 1;
     }
 
     void UpdateParameters()
 	{
-        UpdateButtons();
-        //textPlayerMax.text = playerMax.ToString();
+        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            UpdateButtons();
+        else
+        {
+            if (!isClientButtonSetup)
+            {
+                SetAllButtonIninteractable();
+                isClientButtonSetup = true;
+            }
+        }
+
+        textPlayerMax.text = PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
+
+        UpdateGamemode();
+        UpdateMap();
+    }
+
+    void UpdateMap()
+	{
+        if (mapIndex == 0)
+            textMap.text = "map 1";
+        if (mapIndex == 1)
+            textMap.text = "map 2";
+        if (mapIndex == 2)
+            textMap.text = "map 3";
+        if (mapIndex == lastMapIndex)
+            textMap.text = "map 4";
+    }
+
+    void UpdateGamemode()
+	{
+        if (indexGamemode == 0)
+        {
+            textGamemode.text = "Team deathmatch";
+            PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 0;
+            print("gamemode = 0 : " + textGamemode.text);
+        }
+        else if (indexGamemode == 1)
+        {
+            textGamemode.text = "Forts";
+            PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 1;
+            print("gamemode = 1 : " + textGamemode.text);
+        }
     }
 
     public void UpdateButtons()
@@ -111,8 +146,36 @@ public class RoomManager : MonoBehaviourPunCallbacks
         else
             buttonMinusPlayerMax.interactable = true;
 
-        textPlayerMax.text = PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
-        //textPlayerMax.text = PhotonNetwork.CurrentRoom.CustomProperties["mp"].ToString();
+        if (indexGamemode == 0)
+        {
+            buttonMinusGamemode.interactable = false;
+            buttonPlusGamemode.interactable = true;
+        }
+        else if (indexGamemode == 1)
+		{
+            buttonMinusGamemode.interactable = true;
+            buttonPlusGamemode.interactable = false;
+        }
+
+        if(mapIndex == lastMapIndex)
+            buttonPlusMap.interactable = false;
+        else
+            buttonPlusMap.interactable = true;
+
+        if (mapIndex == 0)
+            buttonMinusMap.interactable = false;
+        else
+            buttonMinusMap.interactable = true;
+    }
+
+    void SetAllButtonIninteractable()
+	{
+        buttonPlusPlayerMax.interactable = false;
+        buttonMinusPlayerMax.interactable = false;
+        buttonPlusGamemode.interactable = false;
+        buttonMinusGamemode.interactable = false;
+        buttonPlusMap.interactable = false;
+        buttonMinusMap.interactable = false;
     }
 
     public void IncrementPlayerMax()
@@ -133,6 +196,32 @@ public class RoomManager : MonoBehaviourPunCallbacks
         UpdateServerInfo();
     }
 
+    public void SwitchGamemode()
+	{
+        if (indexGamemode == 0)
+        {
+            indexGamemode = 1;
+        }
+        else if (indexGamemode == 1)
+        {
+            indexGamemode = 0;
+        }
+
+        UpdateServerInfo();
+    }
+
+    public void NextMap()
+	{
+        if (mapIndex < lastMapIndex)
+            mapIndex++;
+    }
+
+    public void PreviousMap()
+    {
+        if (mapIndex > 0)
+            mapIndex--;
+    }
+
     public void UpdateServerInfo()
     {
         ServerInfo[] currentServersFind = MenuManager.instance.GetServersInfo();
@@ -140,13 +229,15 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             if(currentServersFind[y].GetRoomName() == PhotonNetwork.CurrentRoom.Name)
 			{
+                print("uptade server info, name : " + currentServersFind[y].GetRoomName());
                 bool hasPassword;
                 if (textRoomPassword.text == "")
                     hasPassword = false;
                 else
                     hasPassword = true;
 
-                currentServersFind[y].SetServerInfo(currentServersFind[y].GetServerId(), PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CurrentRoom.PlayerCount, playerMax, hasPassword);
+                currentServersFind[y].SetServerInfo(currentServersFind[y].GetServerId(), PhotonNetwork.CurrentRoom.Name, PhotonNetwork.CurrentRoom.PlayerCount, playerMax, hasPassword, 
+                    currentServersFind[y].GetPassword(), indexGamemode);
 
             }
         }
@@ -167,28 +258,35 @@ public class RoomManager : MonoBehaviourPunCallbacks
 	public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
 	{
         print("player entered room");
-        //CreateRoomPlayer("spectate");
-        //CreateRoomPlayer();
         listPlayer.Add(newPlayer);
 	}
 
-	public override void OnPlayerPropertiesUpdate(Photon.Realtime.Player targetPlayer, ExitGames.Client.Photon.Hashtable changedProps)
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 	{
-		if(changedProps.ContainsKey("team"))
-		{
-            /*for(int i = 0; i < listPlayer.Count; i++)
-			{
-                if((string)listPlayer[i].CustomProperties["team"] == "blue")
-				{
-                    listGoPlayer[i].transform.parent = GameObject.Find("PanelPlayersBlue").transform;
-                }
-                else if ((string)listPlayer[i].CustomProperties["team"] == "red")
-                {
-                    listGoPlayer[i].transform.parent = GameObject.Find("PanelPlayersRed").transform;
-                }
-            }*/
+        if (stream.IsWriting)
+        {
+            int gm = indexGamemode;
+            int map = mapIndex;
+            stream.SendNext(gm);
+            stream.SendNext(map);
+        }
+        else
+        {
+            indexGamemode = (int)stream.ReceiveNext();
+            mapIndex = (int)stream.ReceiveNext();
+        }
+    }
 
-            print("players team updated");
-		}
+    public void OnClickSendMessage()
+	{
+        photonView.RPC("CreateChatMessage", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName, inputFieldChatMessage.text);
+    }
+
+    [PunRPC]
+    void CreateChatMessage(string _senderName, string _message)
+	{
+        GameObject newMessage = Instantiate(chatMessage);
+        newMessage.GetComponent<ChatMessage>().SetupMessage(_senderName, _message);
+        listChatMessage.Add(newMessage);
 	}
 }

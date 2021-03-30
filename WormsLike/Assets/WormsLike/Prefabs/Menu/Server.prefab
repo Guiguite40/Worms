@@ -232,7 +232,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Team deathmatch
+  m_Text: Sameple gamemode
 --- !u!1 &4140240784153625383
 GameObject:
   m_ObjectHideFlags: 0
@@ -389,6 +389,7 @@ MonoBehaviour:
   cadenas: {fileID: 4140240783882637428}
   textRoomName: {fileID: 4140240785282746043}
   textNbPlayer: {fileID: 4140240784288827017}
+  textGamemode: {fileID: 4140240784084804319}
 --- !u!1 &4140240784256568283
 GameObject:
   m_ObjectHideFlags: 0

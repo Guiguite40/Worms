@@ -215,13 +215,15 @@ public class MenuManager : MonoBehaviourPunCallbacks
         ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
         hash.Add("pm", nbPlayerMax);
         hash.Add("pw", impFieldPasswordText.text);
-        //hash.Add("tm", "spectate");
+        hash.Add("gm", 0);
+        hash.Add("m", 0);
         roomOption.CustomRoomProperties = hash;
 
-        string[] lobbySettings = new string[2];
+        string[] lobbySettings = new string[4];
         lobbySettings[0] = "pm";
         lobbySettings[1] = "pw";
-        //lobbySettings[2] = "tm";
+        lobbySettings[2] = "gm";
+        lobbySettings[3] = "m";
         roomOption.CustomRoomPropertiesForLobby = lobbySettings;
 
         PhotonNetwork.CreateRoom(impFieldRoomName.text, roomOption);
@@ -309,7 +311,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
                 }
                 else
 				{
-                    if(impFieldPasswordToEnter.text == GetRoomPassword()) //to modify
+                    if(impFieldPasswordToEnter.text == currentServersFind[y].GetPassword()) //to modify
 					{
                         string roomName = currentServersFind[y].GetRoomName();
                         PhotonNetwork.JoinRoom(roomName);
@@ -419,7 +421,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
                     if (password != "")
                         hasPassword = true;
 
-                    serverInfo.SetServerInfo(serverId, roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers, hasPassword);
+                    serverInfo.SetServerInfo(serverId, roomList[0].Name, roomList[0].PlayerCount, roomList[0].MaxPlayers, hasPassword, (string)roomList[0].CustomProperties["pw"], (int)roomList[0].CustomProperties["gm"]);
                     listServer.Add(serverInfo);
                     listRoomName.Add(roomList[i].Name);
                 }
