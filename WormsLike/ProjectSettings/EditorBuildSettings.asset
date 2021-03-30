@@ -15,6 +15,12 @@ EditorBuildSettings:
     path: Assets/WormsLike/Scenes/Test/MenuSample.unity
     guid: 1385c3acee9e713428f1c4c080ce93c1
   - enabled: 1
+    path: Assets/WormsLike/Scenes/Lobby.unity
+    guid: 000be07ee7d4d6746a16a5946dec6edb
+  - enabled: 0
     path: Assets/WormsLike/Scenes/Test/PlayerTest.unity
     guid: 7f4e5bfb76a31ab498b2ec8ba4492fbb
+  - enabled: 0
+    path: Assets/WormsLike/Scenes/Test/MapTest.unity
+    guid: 33101ad0e60303240a0d39e08382d6b2
   m_configObjects: {}

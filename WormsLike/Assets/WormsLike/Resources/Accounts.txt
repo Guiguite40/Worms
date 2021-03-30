@@ -3,5 +3,7 @@ pseudo2:mdp2/1
 tesst:test/0
 aaa:test/0
 Yato:patate/0
-yato:p/0
-p:p/0
+coucou:test/3
+a:a/1
+b:b/2
+c:c/3

@@ -16,12 +16,12 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject canvasTeamManager;
     [SerializeField] private GameObject canvasEnterTeamName;
     [Space(10)]
-    [SerializeField] private Text characterName1;
-    [SerializeField] private Text characterName2;
-    [SerializeField] private Text characterName3;
-    [SerializeField] private Text characterName4;
-    [SerializeField] private Text characterName5;
-    [SerializeField] private Text characterName6;
+    [SerializeField] private InputField characterName1;
+    [SerializeField] private InputField characterName2;
+    [SerializeField] private InputField characterName3;
+    [SerializeField] private InputField characterName4;
+    [SerializeField] private InputField characterName5;
+    [SerializeField] private InputField characterName6;
     [Space(8)]
     [SerializeField] private Text teamNameEntered;
     [Space(5)]
@@ -30,7 +30,7 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text teamName3;
     [SerializeField] private Text teamName4;
 
-    List<Text> listCharacterName = new List<Text>();
+    List<InputField> listCharacterName = new List<InputField>();
     List<Text> listTeamName = new List<Text>();
     string saveFilePath;
     int accountIndex = 0;
@@ -116,7 +116,11 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+#if UNITY_EDITOR
         saveFilePath = Application.dataPath + "/WormsLike/Resources/PlayerSaveInfo.json";
+#elif UNITY_STANDALONE_WIN
+        saveFilePath = Application.dataPath + "/Resources/PlayerSaveInfo.json";
+#endif
         ReadSaveFile();
         GetActiveAccount();
         SetDeathMatchInfo();
