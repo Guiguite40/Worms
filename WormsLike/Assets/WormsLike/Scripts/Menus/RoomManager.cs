@@ -36,6 +36,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     int lastMapIndex = 3;
     byte playerMax;
     bool isClientButtonSetup = false;
+    string playerTeam = "none";
     GameObject currentPlayer;
     List<Photon.Realtime.Player> listPlayer = new List<Photon.Realtime.Player>();
     List<GameObject> listGoPlayer = new List<GameObject>();
@@ -64,6 +65,10 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 
         currentPlayer.GetComponent<LobbyPlayer>().SetupPlayerInfo(PhotonNetwork.LocalPlayer.NickName);
 
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        hash.Add("t", playerTeam);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
         SetRoomInfo();
     }
 
@@ -71,7 +76,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         UpdateNbPlayerText();
         UpdateParameters();
-        print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
+        //print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
         if(inputFieldChatMessage.IsActive())
 		{
             if (Input.GetKeyDown(KeyCode.Return))
@@ -81,7 +86,6 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void SetRoomInfo()
 	{
-        print("room info set");
         textRoomName.text = PhotonNetwork.CurrentRoom.Name;
         textPlayerMax.text = PhotonNetwork.CurrentRoom.MaxPlayers.ToString();
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
@@ -132,13 +136,13 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
         {
             textGamemode.text = "Team deathmatch";
             PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 0;
-            print("gamemode = 0 : " + textGamemode.text);
+            //print("gamemode = 0 : " + textGamemode.text);
         }
         else if (indexGamemode == 1)
         {
             textGamemode.text = "Forts";
             PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 1;
-            print("gamemode = 1 : " + textGamemode.text);
+            //print("gamemode = 1 : " + textGamemode.text);
         }
     }
 
@@ -256,10 +260,20 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
         if (_colorTeam == "blue")
         {
             currentPlayer.GetComponent<LobbyPlayer>().SetCurrentTeam((int)TeamState.BLUE);
+
+            playerTeam = "blue";
+            ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+            hash.Add("t", playerTeam);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
         }
         else if (_colorTeam == "red")
         {
             currentPlayer.GetComponent<LobbyPlayer>().SetCurrentTeam((int)TeamState.RED);
+
+            playerTeam = "red";
+            ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+            hash.Add("t", playerTeam);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
         }
     }
 
@@ -305,5 +319,10 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     void UpdateNbPlayerText()
 	{
         textNbPlayerMax.text = "Players in lobby : " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
+    }
+
+    public void LaunchGame()
+    {
+        PhotonNetwork.LoadLevel("TurnSystemTest");
     }
 }

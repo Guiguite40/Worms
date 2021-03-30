@@ -4,11 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class GameManager : MonoBehaviourPunCallbacks
+public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     [SerializeField] GameObject playerPrefab = null;
 
-    bool connected = false;
+    //bool connected = false;
 
     public bool phase_placement = false;
     public bool phase_game = false;
@@ -16,24 +16,146 @@ public class GameManager : MonoBehaviourPunCallbacks
     [SerializeField] Text timerText;
     float timer = 0;
 
-    // Start is called before the first frame update
+    float timerStart = 3f;
+    enum GamePhaseState
+	{
+        START = 0,
+        POINT_PLACEMENT,
+        SLIME_PLACEMENT,
+        GAME,
+        END_GAME
+	} GamePhaseState gamePhaseState = GamePhaseState.START;
+
+    enum TurnState
+	{
+        TEAM,
+        MAP
+	} TurnState turnState = TurnState.TEAM;
+
+    enum PlayerPhaseState
+    {
+        START_PHASE,
+        ACTION,
+        MOVEMENTS_LEFT,
+        DAMAGE
+    } PlayerPhaseState playerPhaseState = PlayerPhaseState.START_PHASE;
+
+    [SerializeField] Text currentGameStateText;
+    [SerializeField] Text currentTurnStateText;
+
+    int currentBluePlayerIndex = 0;
+    int currentRedPlayerIndex = 0;
+    int startTeamIndex = 0;
+    List<Photon.Realtime.Player> listPlayerBlue = new List<Photon.Realtime.Player>();
+    List<Photon.Realtime.Player> listPlayerRed = new List<Photon.Realtime.Player>();
     void Start()
     {
-        PhotonNetwork.LocalPlayer.NickName = "test" + Random.Range(0, 1000);
-        PhotonNetwork.ConnectUsingSettings();
-        Debug.Log("Connection to master..");
+        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
+        for (int i = 0; i < players.Length; i++)
+        {
+            if ((string)players[i].CustomProperties["t"] == "blue")
+            {
+                listPlayerBlue.Add(players[i]);
+                print("player no : " + i + ", added to list player blue");
+            }
+
+            if ((string)players[i].CustomProperties["t"] == "red")
+            {
+                listPlayerRed.Add(players[i]);
+                print("player no : " + i + ", added to list player red");
+            }
+        }
+    }
+
+    void nextStateinputs()
+	{
+        if (Input.GetKeyDown(KeyCode.Keypad7))
+            gamePhaseState--;
+        if (Input.GetKeyDown(KeyCode.Keypad9))
+            gamePhaseState++;
+        if (Input.GetKeyDown(KeyCode.Keypad4))
+            turnState--;
+        if (Input.GetKeyDown(KeyCode.Keypad6))
+            turnState++;
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+            playerPhaseState--;
+        if (Input.GetKeyDown(KeyCode.Keypad3))
+            playerPhaseState++;
     }
 
     // Update is called once per frame
     void Update()
     {
-        timer -= Time.deltaTime;
+        nextStateinputs();
+
+        switch (gamePhaseState)
+		{
+			case GamePhaseState.START:
+                currentGameStateText.text = "start";
+                if (timerStart <= 0)
+                {
+                    gamePhaseState = GamePhaseState.POINT_PLACEMENT;
+                    timerStart = 3f;
+                }
+                else
+                    if(PhotonNetwork.LocalPlayer.IsMasterClient)
+                        timerStart -= Time.deltaTime;
+
+				break;
+			case GamePhaseState.POINT_PLACEMENT:
+                currentGameStateText.text = "point placement";
+                break;
+			case GamePhaseState.SLIME_PLACEMENT:
+                currentGameStateText.text = "slime placement";
+                break;
+			case GamePhaseState.GAME:
+                currentGameStateText.text = "game";
+                switch (turnState)
+				{
+					case TurnState.TEAM:
+
+						switch (playerPhaseState)
+						{
+							case PlayerPhaseState.START_PHASE:
+                                currentTurnStateText.text = "start";
+                                break;
+							case PlayerPhaseState.ACTION:
+                                currentTurnStateText.text = "actions";
+                                break;
+							case PlayerPhaseState.MOVEMENTS_LEFT:
+                                currentTurnStateText.text = "movements left";
+                                break;
+							case PlayerPhaseState.DAMAGE:
+                                currentTurnStateText.text = "damage";
+                                break;
+							default:
+								break;
+						}
+
+						break;
+					case TurnState.MAP:
+                        currentTurnStateText.text = "map";
+                        break;
+					default:
+						break;
+				}
+
+				break;
+			case GamePhaseState.END_GAME:
+                currentGameStateText.text = "end game";
+                break;
+			default:
+				break;
+		}
+
+
+		/*timer -= Time.deltaTime;
         if (timer < 0)
             timer = 60;
-        timerText.text = timer.ToString("0");
-    }
+        timerText.text = timer.ToString("0");*/
+	}
 
-    public override void OnConnectedToMaster()
+    /*public override void OnConnectedToMaster()
     {
         Debug.Log("Connected to master");
         PhotonNetwork.JoinLobby();
@@ -53,7 +175,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Room joined");
         StartCoroutine(InstantiatePlayer());
-    }
+    }*/
 
     IEnumerator InstantiatePlayer()
     {
@@ -72,4 +194,29 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         return timer;
     }
+
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		if(stream.IsWriting)
+		{
+            if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (gamePhaseState == GamePhaseState.START)
+                {
+                    float masterTimerStart = timerStart;
+                    stream.SendNext(masterTimerStart);
+                }
+            }
+		}
+        else
+		{
+            if (!PhotonNetwork.LocalPlayer.IsMasterClient)
+            {
+                if (gamePhaseState == GamePhaseState.START)
+                {
+                    timerStart = (float)stream.ReceiveNext();
+                }
+            }
+		}
+	}
 }
