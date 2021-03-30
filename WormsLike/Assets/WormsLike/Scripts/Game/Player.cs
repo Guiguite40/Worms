@@ -107,7 +107,7 @@ public class Player : MonoBehaviourPunCallbacks
         if (slimes.Count < slimeLimit)
         {
             //Debug.Log(slimes.Count);
-            slimes.Add(Instantiate(slimePrefab).GetComponent<Slime>());
+            slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
             slimes[slimes.Count - 1].transform.parent = transform;
             slimes[slimes.Count - 1].SetPos(MousePos());
             slimes[slimes.Count - 1].team = team;
@@ -188,7 +188,7 @@ public class Player : MonoBehaviourPunCallbacks
                 Vector3 targetPos = MousePos();
                 targetPos.z = 0;
 
-                Rocket rocket = Instantiate(inv.RocketPrefab).GetComponent<Rocket>();
+                Rocket rocket = PhotonNetwork.Instantiate(inv.RocketPrefab.name, currentCharacter.transform.position, Quaternion.identity).GetComponent<Rocket>();
                 rocket.shooter = currentCharacter.gameObject;
                 rocket.startPos = currentCharacter.transform.position;
                 rocket.targetPos = targetPos;
@@ -202,17 +202,6 @@ public class Player : MonoBehaviourPunCallbacks
         Debug.Log("LaunchAttack");
         if (currentCharacter != null)
         {
-            if (_attack == Enums.ItemsList.RocketLauncher)
-            {
-                Vector3 targetPos = MousePos();
-                targetPos.z = 0;
-
-                Rocket rocket = Instantiate(inv.RocketPrefab).GetComponent<Rocket>();
-                rocket.shooter = currentCharacter.gameObject;
-                rocket.startPos = currentCharacter.transform.position;
-                rocket.targetPos = targetPos;
-                rocket.charge = 1;
-            }
         }
         yield return null;
     }

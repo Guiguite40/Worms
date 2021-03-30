@@ -57,7 +57,7 @@ MonoBehaviour:
   healthBoxPrefab: {fileID: 6309667246824479687, guid: 1a51c14f547c3174597d07d245877697, type: 3}
   damageBoxPrefab: {fileID: 1363721780923859905, guid: a9ff06611642eff4b9fa622152286a24, type: 3}
   currentCharacter: {fileID: 0}
-  strenght: {x: 15, y: 15}
+  charge: 0
   speed: 5
 --- !u!114 &5807082896305680187
 MonoBehaviour:

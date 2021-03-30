@@ -32,11 +32,11 @@ public class Rocket : MonoBehaviourPunCallbacks
     {
         //rb.velocity = transform.up * strenght;
 
-        if (transform.position.y < -5)
-        {
-            Debug.Log("destroy");
-            Destroy(gameObject);
-        }
+        //if (transform.position.y < -5)
+        //{
+        //    Debug.Log("destroy");
+        //    Destroy(gameObject);
+        //}
 
         angle = Vector3.SignedAngle(Vector3.right, rb.velocity, Vector3.forward);
         transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
@@ -44,19 +44,19 @@ public class Rocket : MonoBehaviourPunCallbacks
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Jumpable")
-        {
-            Debug.Log("destroy");
-            Destroy(gameObject);
-        }
+        //if (collision.gameObject.tag == "Jumpable")
+        //{
+        //    Debug.Log("destroy");
+        //    Destroy(gameObject);
+        //}
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Jumpable")
-        {
-            Debug.Log("destroy");
-            Destroy(gameObject);
-        }
+        //if (collision.gameObject.tag == "Jumpable")
+        //{
+        //    Debug.Log("destroy");
+        //    Destroy(gameObject);
+        //}
     }
 }
