@@ -8,8 +8,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject playerPrefab = null;
 
-    bool connected = false;
-
     public bool phase_placement = false;
     public bool phase_game = false;
 
@@ -43,10 +41,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         Debug.Log("Lobby joined");
-        //if (PhotonNetwork.CountOfRooms < 1)
         PhotonNetwork.CreateRoom("roomTest");
-        //else
-        //    PhotonNetwork.JoinRandomRoom();
     }
 
     public override void OnJoinedRoom()
@@ -56,16 +51,19 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
 
     IEnumerator InstantiatePlayer()
-    {
+    { 
+        Debug.Log("Player instantiation1");
         //Debug.Log("Waiting other players");
         yield return new WaitForSeconds(1);
+        Debug.Log("Player instantiation2");
 
-        Debug.Log("Players instantiate");
         GameObject newPlayer = playerPrefab;
         PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
         newPlayer.GetComponent<Player>().isTurn = true;
         newPlayer.GetComponent<Player>().phase_game = true;
         newPlayer.GetComponent<Player>().team = 1;
+
+        yield return null;
     }
 
     public float GetTimer()
