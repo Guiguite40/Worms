@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class Rocket : MonoBehaviour
+public class Rocket : MonoBehaviourPunCallbacks
 {
-    [HideInInspector] public GameObject shooter = null;
     Rigidbody2D rb = null;
+    [HideInInspector] public GameObject shooter = null;
     [HideInInspector] public Vector3 startPos = Vector3.zero;
     [HideInInspector] public Vector3 targetPos = Vector3.zero;
     public float speed = 0;
 
+    public float charge = 1;
+
     private Vector2 direction = Vector2.zero;
     private float angle = 0;
-
-    [HideInInspector] public Vector2 strenght = Vector2.zero;
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +39,7 @@ public class Rocket : MonoBehaviour
             Destroy(gameObject);
         }
 
-        angle = Vector3.SignedAngle(Vector3.right, rb.velocity, Vector3.forward);
+        angle = Vector3.SignedAngle(Vector3.right, rb.velocity * charge, Vector3.forward);
         transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
     }
 

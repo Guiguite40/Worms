@@ -17,20 +17,21 @@ public class Player : MonoBehaviourPunCallbacks
 
     public bool isTurn = false;
 
-    bool isShooting = false;
-
     /***** DEBUG *****/
     [SerializeField] GameObject healthBoxPrefab = null;
     [SerializeField] GameObject damageBoxPrefab = null;
 
     [SerializeField] Slime currentCharacter = null;
 
-    [SerializeField] Vector2 strenght = Vector2.zero;
+    [SerializeField] float charge = 0;
     [SerializeField] float speed = 0;
+
+    float timeToRelease = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("player start");
     }
 
     // Update is called once per frame
@@ -48,7 +49,8 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
         ControlCharacter();
-        Rocket();
+
+        UseItem(Enums.ItemsList.RocketLauncher);
     }
 
     void Debuging()
@@ -108,9 +110,9 @@ public class Player : MonoBehaviourPunCallbacks
         {
             //Debug.Log(slimes.Count);
             slimes.Add(Instantiate(slimePrefab).GetComponent<Slime>());
-            slimes[slimes.Count - 1].team = team;
-            slimes[slimes.Count - 1].SetPos(MousePos());
             slimes[slimes.Count - 1].transform.parent = transform;
+            slimes[slimes.Count - 1].SetPos(MousePos());
+            slimes[slimes.Count - 1].team = team;
         }
     }
 
@@ -138,24 +140,20 @@ public class Player : MonoBehaviourPunCallbacks
             item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
             item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
         }
-    }
 
-    void Rocket()
-    {
+
         if (Input.GetMouseButtonDown(0))
         {
-            isShooting = true;
-            if (currentCharacter != null)
-            {
-                Vector3 targetPos = MousePos();
-                targetPos.z = 0;
+            timeToRelease = 0;
+            UseItem(Enums.ItemsList.RocketLauncher);
+        }
+    }
 
-                Rocket rocket = Instantiate(inv.RocketPrefab).GetComponent<Rocket>();
-                rocket.shooter = currentCharacter.gameObject;
-                rocket.startPos = currentCharacter.transform.position;
-                rocket.targetPos = targetPos;
-                rocket.strenght = strenght;
-            }
+    void UseItem(Enums.ItemsList _itemSelected)
+    {
+        if (_itemSelected == Enums.ItemsList.RocketLauncher)
+        {
+            StartCoroutine(ChargeCalculation(_itemSelected));
         }
     }
 
@@ -164,16 +162,58 @@ public class Player : MonoBehaviourPunCallbacks
         return Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
-
-    IEnumerator ShootStrenght()
+    IEnumerator ChargeCalculation(Enums.ItemsList _attack)
     {
-        //while (!Input.GetMouseButtonUp(0)) { }
-
-        //yield return WaitWhile(!Input.GetMouseButtonUp(0));
-
+        Debug.Log("ChargeCalculation");
+        while (!Input.GetMouseButtonUp(0))
+        {
+            timeToRelease += Time.deltaTime;
+        }
+        charge = timeToRelease + 1;
+       StartCoroutine(LaunchAttackCharged(_attack, charge));
+        timeToRelease = 0;
+        charge = 0;
 
         yield return null;
+    }
 
+    IEnumerator LaunchAttackCharged(Enums.ItemsList _attack, float _charge)
+    {
+        Debug.Log("LaunchAttackCharged");
 
+        if (currentCharacter != null)
+        {
+            if (_attack == Enums.ItemsList.RocketLauncher)
+            {
+                Vector3 targetPos = MousePos();
+                targetPos.z = 0;
+
+                Rocket rocket = Instantiate(inv.RocketPrefab).GetComponent<Rocket>();
+                rocket.shooter = currentCharacter.gameObject;
+                rocket.startPos = currentCharacter.transform.position;
+                rocket.targetPos = targetPos;
+                rocket.charge = _charge;
+            }
+        }
+        yield return null;
+    }
+    IEnumerator LaunchAttack(Enums.ItemsList _attack)
+    {
+        Debug.Log("LaunchAttack");
+        if (currentCharacter != null)
+        {
+            if (_attack == Enums.ItemsList.RocketLauncher)
+            {
+                Vector3 targetPos = MousePos();
+                targetPos.z = 0;
+
+                Rocket rocket = Instantiate(inv.RocketPrefab).GetComponent<Rocket>();
+                rocket.shooter = currentCharacter.gameObject;
+                rocket.startPos = currentCharacter.transform.position;
+                rocket.targetPos = targetPos;
+                rocket.charge = 1;
+            }
+        }
+        yield return null;
     }
 }
