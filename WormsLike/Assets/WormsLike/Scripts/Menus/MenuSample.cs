@@ -33,12 +33,19 @@ public class MenuSample : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
-        LaunchGame();
+       StartCoroutine(LaunchGame());
     }
 
-    void LaunchGame()
-	{
-        print("game launched");
-        PhotonNetwork.LoadLevel(1);
+    IEnumerator LaunchGame()
+    {
+        yield return new WaitForSeconds(5);
+        print("game launched by coroutine");
+        PhotonNetwork.LoadLevel(2);
     }
+
+    //   void LaunchGame()
+    //{
+    //       print("game launched");
+    //       PhotonNetwork.LoadLevel(2);
+    //   }
 }
