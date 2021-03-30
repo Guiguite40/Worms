@@ -8,7 +8,6 @@ public class GameManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject playerPrefab = null;
 
-    bool waitOtherPlayers = true;
     bool connected = false;
 
     public bool phase_placement = false;
@@ -28,12 +27,6 @@ public class GameManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && waitOtherPlayers)
-        {
-            waitOtherPlayers = false;
-            Debug.Log("Waiting moment stopped");
-        }
-
         timer -= Time.deltaTime;
         if (timer < 0)
             timer = 60;

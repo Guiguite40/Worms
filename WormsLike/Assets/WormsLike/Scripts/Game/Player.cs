@@ -10,13 +10,14 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] Inventory inv = null;
 
     [HideInInspector] public int slimeLimit = 3;
-
     public int team = 0;
 
     public bool phase_placement = false;
     public bool phase_game = false;
 
     public bool isTurn = false;
+
+    bool isShooting = false;
 
     /***** DEBUG *****/
     [SerializeField] GameObject healthBoxPrefab = null;
@@ -143,11 +144,11 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (Input.GetMouseButtonDown(0))
         {
+            isShooting = true;
             if (currentCharacter != null)
             {
                 Vector3 targetPos = MousePos();
                 targetPos.z = 0;
-
 
                 Rocket rocket = Instantiate(inv.RocketPrefab).GetComponent<Rocket>();
                 rocket.shooter = currentCharacter.gameObject;
@@ -161,5 +162,18 @@ public class Player : MonoBehaviourPunCallbacks
     Vector3 MousePos()
     {
         return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+
+    IEnumerator ShootStrenght()
+    {
+        //while (!Input.GetMouseButtonUp(0)) { }
+
+        //yield return WaitWhile(!Input.GetMouseButtonUp(0));
+
+
+        yield return null;
+
+
     }
 }
