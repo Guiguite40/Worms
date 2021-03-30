@@ -194,6 +194,8 @@ public class Slime : MonoBehaviourPunCallbacks
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        if (collision.gameObject.tag == "Jumpable" && collision.gameObject != head.gameObject)
+            isGrounded = true;
 
         if (collision.gameObject.tag == "HealBox")
         {
