@@ -260,7 +260,6 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
     public void OnClickOnServer()
 	{
-        print("cliick on server");
         ServerInfo[] currentServersFind = FindObjectsOfType<ServerInfo>();
         for (int y = 0; y < currentServersFind.Length; y++)
             if (currentServersFind[y].IsSelected())
@@ -415,7 +414,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
                     newServer.transform.localScale = new Vector3(1, 1, 1);
 
                     ServerInfo serverInfo = newServer.GetComponent<ServerInfo>();
-                    print("room custom password : " + (string)roomList[0].CustomProperties["pw"]);
+                    //print("room custom password : " + (string)roomList[0].CustomProperties["pw"]);
                     string password = (string)roomList[0].CustomProperties["pw"];
                     bool hasPassword = false;
                     if (password != "")
