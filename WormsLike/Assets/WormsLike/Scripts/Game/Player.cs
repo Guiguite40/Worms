@@ -106,11 +106,18 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (slimes.Count < slimeLimit)
         {
-            //Debug.Log(slimes.Count);
-            slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
-            slimes[slimes.Count - 1].transform.parent = transform;
-            slimes[slimes.Count - 1].SetPos(MousePos());
-            slimes[slimes.Count - 1].team = team;
+            if (photonView.IsMine == true)
+            {
+                slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
+                slimes[slimes.Count - 1].transform.parent = transform;
+                slimes[slimes.Count - 1].SetPos(MousePos());
+
+                // Debug
+                if (PhotonNetwork.IsMasterClient)
+                    slimes[slimes.Count - 1].team = 1;
+                else
+                    slimes[slimes.Count - 1].team = 2;
+            }
         }
     }
 
@@ -162,7 +169,6 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator ChargeCalculation(Enums.ItemsList _attack)
     {
-        Debug.Log("ChargeCalculation");
         while (!Input.GetMouseButtonUp(0))
         {
             timeToRelease += Time.deltaTime * 6f;
@@ -178,8 +184,6 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator LaunchAttackCharged(Enums.ItemsList _attack, float _charge)
     {
-        Debug.Log("LaunchAttackCharged");
-
         if (currentCharacter != null)
         {
             if (_attack == Enums.ItemsList.RocketLauncher)
