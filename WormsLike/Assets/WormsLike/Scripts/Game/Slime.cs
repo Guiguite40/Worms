@@ -173,10 +173,21 @@ public class Slime : MonoBehaviourPunCallbacks
         }
     }
 
+    private void FallDamage()
+    {
+        //if (velocity.y >)
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Jumpable" && collision.gameObject != head.gameObject)
+        {
+            if (rb.velocity.y < -10)
+            {
+                curHealth -= rb.velocity.y / 2;
+            }
             isGrounded = true;
+        }
 
         if (collision.gameObject.tag == "DamageBox")
         {
@@ -210,7 +221,7 @@ public class Slime : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Bullet" && collision.gameObject.GetComponent<Rocket>().shooter != this.gameObject)
+        if (collision.gameObject.tag == "Bullet" && collision.gameObject.GetComponent<Explosive>().shooter != this.gameObject)
         {
             Debug.Log("Player hited");
             curHealth -= 20;

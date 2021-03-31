@@ -10,15 +10,15 @@ GameObject:
   m_Component:
   - component: {fileID: 7421262603542632147}
   - component: {fileID: 7804960674509641648}
-  - component: {fileID: 6130110367087180789}
   - component: {fileID: -7206566954252768907}
-  - component: {fileID: 3688189866709884239}
+  - component: {fileID: 3912544741507142317}
   - component: {fileID: 8421048982923090364}
   - component: {fileID: 9012808689701673645}
   - component: {fileID: 338117551658692574}
   - component: {fileID: 5998206576751965989}
+  - component: {fileID: 6130110367087180789}
   m_Layer: 0
-  m_Name: Rocket
+  m_Name: Grenade
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 2630013520201876711}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.14, y: 0.32, z: 1}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -78,8 +78,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 34587324d412940a79d530020c957dc0, type: 3}
-  m_Color: {r: 1, g: 0.35084304, b: 0.3254717, a: 1}
+  m_Sprite: {fileID: -2413806693520163455, guid: 4adeaf2d2b1c7417e89f026626d8264f, type: 3}
+  m_Color: {r: 0.06958233, g: 0.754717, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -89,22 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6130110367087180789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2630013520201876711}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac37a23ea060284cafc9d72df1f4126, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 1
-  itemsList: 0
-  ammo: 1
-  selected: 0
 --- !u!114 &-7206566954252768907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,8 +106,8 @@ MonoBehaviour:
   targetPos: {x: -1.6944447, y: 2.850741, z: 0}
   speed: 2
   charge: 1
---- !u!68 &3688189866709884239
-EdgeCollider2D:
+--- !u!58 &3912544741507142317
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -131,30 +115,13 @@ EdgeCollider2D:
   m_GameObject: {fileID: 2630013520201876711}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 78edac2424aba9b4c8e676407776bc2b, type: 2}
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.01}
-  m_EdgeRadius: 0
-  m_Points:
-  - {x: 0.00056201156, y: 0.97960395}
-  - {x: 0.34076035, y: 0.8486451}
-  - {x: 0.46932355, y: 0.5956708}
-  - {x: 0.48131564, y: 0.00017697009}
-  - {x: 0.46959, y: -0.581941}
-  - {x: 0.31847566, y: -0.8626806}
-  - {x: -0.00007970235, y: -0.9969878}
-  - {x: -0.30372217, y: -0.8782318}
-  - {x: -0.47499257, y: -0.5439785}
-  - {x: -0.4816454, y: -0.0005117103}
-  - {x: -0.4795178, y: 0.5827704}
-  - {x: -0.33023158, y: 0.8596192}
-  - {x: -0.00065333385, y: 0.9794006}
-  m_AdjacentStartPoint: {x: 0, y: 0}
-  m_AdjacentEndPoint: {x: 0, y: 0}
-  m_UseAdjacentStartPoint: 0
-  m_UseAdjacentEndPoint: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.50000006
 --- !u!50 &8421048982923090364
 Rigidbody2D:
   serializedVersion: 4
@@ -167,11 +134,11 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.7
+  m_Mass: 0.5
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0.5
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 78edac2424aba9b4c8e676407776bc2b, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -188,10 +155,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb0910f61045a04a95ef6dd605a6295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circleSize: 30
+  circleSize: 45
   explodeVelocityNull: 0
-  explodeAfterImpact: 1
-  delay: 0
+  explodeAfterImpact: 0
+  delay: 5
 --- !u!114 &338117551658692574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,3 +198,19 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &6130110367087180789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2630013520201876711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac37a23ea060284cafc9d72df1f4126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  itemsList: 1
+  ammo: 1
+  selected: 0

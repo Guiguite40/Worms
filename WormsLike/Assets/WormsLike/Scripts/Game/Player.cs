@@ -14,8 +14,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     public bool phase_placement = false;
     public bool phase_game = false;
-
     public bool isTurn = false;
+
+    Enums.ItemsList itemSelected = 0;
 
     /***** DEBUG *****/
     [SerializeField] GameObject healthBoxPrefab = null;
@@ -67,12 +68,33 @@ public class Player : MonoBehaviourPunCallbacks
             GameObject damageBox = Instantiate(damageBoxPrefab);
             damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
             SetCharacterControlled(0);
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
             SetCharacterControlled(1);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
             SetCharacterControlled(2);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SelectWeapon(Enums.ItemsList.RocketLauncher);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SelectWeapon(Enums.ItemsList.Grenade);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SelectWeapon(Enums.ItemsList.SaintGrenade);
+        }
     }
 
     private void SetCharacterControlled(int _index)
@@ -90,6 +112,11 @@ public class Player : MonoBehaviourPunCallbacks
             slimes[_index].isControlled = true;
             currentCharacter = slimes[_index];
         }
+    }
+
+    public void SelectWeapon(Enums.ItemsList _item)
+    {
+        itemSelected = _item;
     }
 
     private void UnSetCharacterControlled()
@@ -143,15 +170,39 @@ public class Player : MonoBehaviourPunCallbacks
         if (Input.GetMouseButtonDown(0))
         {
             timeToRelease = 0;
-            UseItem(Enums.ItemsList.RocketLauncher);
+            UseItem(itemSelected);
         }
     }
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
-        if (_itemSelected == Enums.ItemsList.RocketLauncher)
+        if (inv.items[_itemSelected].ammo > 0)
         {
-            StartCoroutine(ChargeCalculation(_itemSelected));
+            if (inv.items[_itemSelected].itemsList != Enums.ItemsList.RocketLauncher
+                && inv.items[_itemSelected].itemsList != Enums.ItemsList.Grenade)
+                inv.items[_itemSelected].ammo--;
+
+            switch (inv.items[_itemSelected].type)
+            {
+                case Enums.Type.Weapon:
+                    StartCoroutine(LaunchAttack(_itemSelected));
+                    break;
+
+                case Enums.Type.ChargableWeapon:
+                    StartCoroutine(ChargeCalculation(_itemSelected));
+                    break;
+
+                case Enums.Type.Utility:
+                    StartCoroutine(UsingUtilitary(_itemSelected));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            Debug.Log("No ammo");
         }
     }
 
@@ -169,29 +220,31 @@ public class Player : MonoBehaviourPunCallbacks
             yield return null;
         }
         charge = Mathf.Clamp(timeToRelease + 3, 3f, 20);
-        StartCoroutine(LaunchAttackCharged(_attack, charge));
+        StartCoroutine(LaunchExplosiveCharged(_attack, charge));
         timeToRelease = 0;
         charge = 0;
 
         yield return null;
     }
 
-    IEnumerator LaunchAttackCharged(Enums.ItemsList _attack, float _charge)
+    IEnumerator LaunchExplosiveCharged(Enums.ItemsList _attack, float _charge)
     {
         Debug.Log("LaunchAttackCharged");
 
         if (currentCharacter != null)
         {
-            if (_attack == Enums.ItemsList.RocketLauncher)
+            if (_attack == Enums.ItemsList.RocketLauncher
+                || _attack == Enums.ItemsList.Grenade)
             {
                 Vector3 targetPos = MousePos();
                 targetPos.z = 0;
 
-                Rocket rocket = PhotonNetwork.Instantiate(inv.RocketPrefab.name, currentCharacter.transform.position, Quaternion.identity).GetComponent<Rocket>();
-                rocket.shooter = currentCharacter.gameObject;
-                rocket.startPos = currentCharacter.transform.position;
-                rocket.targetPos = targetPos;
-                rocket.charge = _charge;
+                Explosive explosive;
+                explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_attack].name, currentCharacter.transform.position, Quaternion.identity).GetComponent<Explosive>();
+                explosive.shooter = currentCharacter.gameObject;
+                explosive.startPos = currentCharacter.transform.position;
+                explosive.targetPos = targetPos;
+                explosive.charge = _charge;
             }
         }
         yield return null;
@@ -201,7 +254,13 @@ public class Player : MonoBehaviourPunCallbacks
         Debug.Log("LaunchAttack");
         if (currentCharacter != null)
         {
+
         }
+        yield return null;
+    }
+
+    IEnumerator UsingUtilitary(Enums.ItemsList itemsList)
+    {
         yield return null;
     }
 }
