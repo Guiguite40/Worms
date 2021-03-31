@@ -166,7 +166,6 @@ public class Player : MonoBehaviourPunCallbacks
         while (!Input.GetMouseButtonUp(0))
         {
             timeToRelease += Time.deltaTime * 6f;
-            Debug.Log(Mathf.Clamp(timeToRelease + 3, 3f, 20f));
             yield return null;
         }
         charge = Mathf.Clamp(timeToRelease + 3, 3f, 20);
