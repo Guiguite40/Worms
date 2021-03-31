@@ -722,7 +722,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1150746136
 Transform:
   m_ObjectHideFlags: 0
@@ -749,6 +749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e15595a86f4ca44388f8ed92ad08985, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 7873787539829125232, guid: c7254d1815044ea47825975fa64437f0, type: 3}
 --- !u!850595691 &1193366004
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -1358,6 +1359,10 @@ PrefabInstance:
     - target: {fileID: 5979688290120108673, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
       propertyPath: m_Name
       value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5979688290120108673, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5979688290120108674, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
       propertyPath: timerText

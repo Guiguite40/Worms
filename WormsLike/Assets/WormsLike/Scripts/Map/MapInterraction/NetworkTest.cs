@@ -6,6 +6,8 @@ using Photon.Realtime;
 
 public class NetworkTest : MonoBehaviourPunCallbacks, IPunObservable
 {
+    [SerializeField] GameObject playerPrefab = null;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +32,12 @@ public class NetworkTest : MonoBehaviourPunCallbacks, IPunObservable
     public override void OnJoinedRoom()
     {
         Debug.Log("Join " + PhotonNetwork.CurrentRoom.Name + ". Nb joueur : " + PhotonNetwork.CurrentRoom.PlayerCount);
+
+        GameObject newPlayer = playerPrefab;
+        PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
+        newPlayer.GetComponent<Player>().isTurn = true;
+        newPlayer.GetComponent<Player>().phase_game = true;
+        newPlayer.GetComponent<Player>().team = 1;
     }
 
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
