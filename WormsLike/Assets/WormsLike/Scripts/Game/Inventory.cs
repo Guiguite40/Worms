@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviourPunCallbacks
     {
         foreach (GameObject item in itemPrefabs)
         {
-            items.Add(item.GetComponent<Item>().itemsList, item.GetComponent<Item>());
+            items.Add(item.GetComponent<Item>().itemsList, Instantiate(item.GetComponent<Item>()));
         }                
     }
 
