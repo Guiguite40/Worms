@@ -63,46 +63,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     float timerStart = 5f;
     List<Photon.Realtime.Player> listPlayerBlue = new List<Photon.Realtime.Player>();
     List<Photon.Realtime.Player> listPlayerRed = new List<Photon.Realtime.Player>();
-
+    List<Player> listPlayers = new List<Player>();
+    List<Player> listPlayersBlue = new List<Player>();
+    List<Player> listPlayersRed = new List<Player>();
     private void Awake()
     {
         if (instance == null)
             instance = this;
     }
 
-    void Start()
-    {
-        SetupStartValue();
-
-        dataPos.text = "master";
-        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
-        for (int i = 0; i < players.Length; i++)
-        {
-            if ((string)players[i].CustomProperties["t"] == "blue")
-            {
-                listPlayerBlue.Add(players[i]);
-                print("player no : " + i + ", added to list player blue");
-            }
-
-            if ((string)players[i].CustomProperties["t"] == "red")
-            {
-                listPlayerRed.Add(players[i]);
-                print("player no : " + i + ", added to list player red");
-            }
-        }
-
-        if (PhotonNetwork.LocalPlayer.IsMasterClient)
-        {
-            if (currentPlayTeam == "blue")
-                currentlocalPlayerPlayingName = listPlayerBlue[currentBluePlayerIndex].NickName;
-            else if (currentPlayTeam == "red")
-                currentlocalPlayerPlayingName = listPlayerRed[currentRedPlayerIndex].NickName;
-            SendValue("currentPlayer", RpcTarget.OthersBuffered);
-        }
-    }
-
     void SetupStartValue()
-	{
+    {
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
         {
             startTeamIndex = Random.Range(0, 2);
@@ -126,6 +97,49 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         Debug.LogError("nb slimes per player : " + nbSlimePerPlayer);
     }
 
+    void Start()
+    {
+        SetupStartValue();
+
+        dataPos.text = "master";
+        Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
+        for (int i = 0; i < players.Length; i++)
+        {
+            if ((string)players[i].CustomProperties["t"] == "blue")
+            {
+                listPlayerBlue.Add(players[i]);
+
+                GameObject newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
+                Player player = newPlayer.GetComponent<Player>();
+                player.SetupPlayerState("blue", nbSlimePerPlayer);
+                listPlayersBlue.Add(player);
+
+                print("player no : " + i + ", added to list player blue");
+            }
+
+            if ((string)players[i].CustomProperties["t"] == "red")
+            {
+                listPlayerRed.Add(players[i]);
+
+                GameObject newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
+                Player player = newPlayer.GetComponent<Player>();
+                player.SetupPlayerState("red", nbSlimePerPlayer);
+                listPlayersRed.Add(player);
+
+                print("player no : " + i + ", added to list player red");
+            }
+        }
+
+        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
+            if (currentPlayTeam == "blue")
+                currentlocalPlayerPlayingName = listPlayerBlue[currentBluePlayerIndex].NickName;
+            else if (currentPlayTeam == "red")
+                currentlocalPlayerPlayingName = listPlayerRed[currentRedPlayerIndex].NickName;
+            SendValue("currentPlayer", RpcTarget.OthersBuffered);
+        }
+    }  
+
     void nextStateinputs()
 	{
         if (Input.GetKeyDown(KeyCode.Keypad7))
@@ -142,13 +156,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             playerPhaseState++;
     }
 
-    // Update is called once per frame
     void Update()
     {
         nextStateinputs();
 
-        if (PhotonNetwork.LocalPlayer.IsMasterClient)
-            MasterSendToOthers();
+        if (IsLocalPlayerMaster())
+        {
+            MasterSendToOthers("currentPlayer");
+            MasterSendToOthers("currentPlayTeam");
+            MasterSendToOthers("gameState");
+            MasterSendToOthers("bluePointPlaced");
+            MasterSendToOthers("redPointPlaced");
+        }
         Debug.LogError("current player : " + currentlocalPlayerPlayingName);
 
         switch (gamePhaseState)
@@ -158,17 +177,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 currentGameStateText.text = "start";
                 if (timerStart <= 0)
                 {
-                    if(gamemode == 1)
-                        gamePhaseState = GamePhaseState.POINT_PLACEMENT;
+                    if (gamemode == 1)
+                        SetGamePhaseState(GamePhaseState.POINT_PLACEMENT, false);
                     else if (gamemode == 0)
-                        gamePhaseState = GamePhaseState.SLIME_PLACEMENT;
+                        SetGamePhaseState(GamePhaseState.SLIME_PLACEMENT, false);
 
                     timerStart = 5f;
                     dataPos.text = timerStart.ToString();
                 }
                 else
                 {
-                    if (PhotonNetwork.LocalPlayer.IsMasterClient)
+                    if (IsLocalPlayerMaster())
                     {
                         timerStart -= Time.deltaTime;
                         dataPos.text = timerStart.ToString();
@@ -179,40 +198,32 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 			case GamePhaseState.POINT_PLACEMENT:
 
                 currentGameStateText.text = "point placement";
-                if (currentPlayTeam == "blue")
-                {
-                    Debug.LogError("current play team : blue");
-                    if (listPlayerBlue[currentBluePlayerIndex].IsLocal)
-                    {
-                        currentlocalPlayerPlayingName = PhotonNetwork.LocalPlayer.NickName;
-                        if (Input.GetKeyUp(KeyCode.P))
-                        {
-                            currentBluePlayerIndex++;
-                            bluePointPlaced = true;
-                            currentPlayTeam = "red";
-                            SendValueToMaster("currentPlayer");
-                            SendValueToMaster("currentPlayTeam");
-                            Debug.LogError("blue point placed");
+                Debug.LogError("blue point placed : " + bluePointPlaced);
+                Debug.LogError("red point placed : " + redPointPlaced);
 
-                        }
-                    }
-                }
+                if (IsLocalPlayerMaster())
+                    if(bluePointPlaced && redPointPlaced)
+                        SetGamePhaseState(GamePhaseState.SLIME_PLACEMENT, true);
 
-                if (currentPlayTeam == "red")
+                if (IsLocalPlayerTurn())
                 {
-                    Debug.LogError("current play team : red");
-                    if (listPlayerRed[currentRedPlayerIndex].IsLocal)
+                    SetCurrentPlayerPlayingName();
+                    if (Input.GetKeyUp(KeyCode.P))
                     {
-                        currentlocalPlayerPlayingName = PhotonNetwork.LocalPlayer.NickName;
-                        if (Input.GetKeyUp(KeyCode.P))
+                        if (IsRedTurn())
                         {
-                            currentRedPlayerIndex++;
                             redPointPlaced = true;
-                            currentPlayTeam = "blue";
-                            SendValueToMaster("currentPlayer");
-                            SendValueToMaster("currentPlayTeam");
-                            Debug.LogError("red point placed");
+                            SendValueToMaster("redPointPlaced");
                         }
+                        else
+                        {
+                            bluePointPlaced = true;
+                            SendValueToMaster("bluePointPlaced");
+                        }
+                        SetNextPlayerNTeamTurn();
+
+                        SendValueToMaster("currentPlayer");
+                        SendValueToMaster("currentPlayTeam");
                     }
                 }
                 break;
@@ -220,10 +231,23 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 			case GamePhaseState.SLIME_PLACEMENT:
                 currentGameStateText.text = "slime placement";
 
+                if (IsLocalPlayerTurn())
+                {
+                    SetCurrentPlayerPlayingName();
+                    if (Input.GetMouseButtonUp(0))
+                    {
+                        GetCurrentPlayer().PlaceSlime();
+                        SetNextPlayerNTeamTurn();
+
+                        SendValueToMaster("currentPlayer");
+                        SendValueToMaster("currentPlayTeam");
+                    }
+                }
                 break;
 
 			case GamePhaseState.GAME:
                 currentGameStateText.text = "game";
+
                 switch (turnState)
 				{
 					case TurnState.TEAM:
@@ -253,40 +277,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 					default:
 						break;
 				}
-
 				break;
+
 			case GamePhaseState.END_GAME:
                 currentGameStateText.text = "end game";
+
                 break;
+
 			default:
 				break;
 		}
-
-
-		/*timer -= Time.deltaTime;
-        if (timer < 0)
-            timer = 60;
-        timerText.text = timer.ToString("0");*/
 	}
-
-    /*public override void OnConnectedToMaster()
-    {
-        Debug.Log("Connected to master");
-        PhotonNetwork.JoinLobby();
-        Debug.Log("Lobby joining..");
-    }
-
-    public override void OnJoinedLobby()
-    {
-        Debug.Log("Lobby joined");
-        PhotonNetwork.CreateRoom("roomTest");
-    }
-
-    public override void OnJoinedRoom()
-    {
-        Debug.Log("Room joined");
-        StartCoroutine(InstantiatePlayer());
-    }*/
 
     IEnumerator InstantiatePlayer()
     { 
@@ -304,12 +305,32 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         yield return null;
     }
 
+    void SetPlayerTurn(string _playerTeam, int _playerListIndex)
+	{
+        if(_playerTeam == "blue")
+		{
+            listPlayersBlue[_playerListIndex].SetIsTurn(true);
+		}
+        else if(_playerTeam == "red")
+		{
+            listPlayersRed[_playerListIndex].SetIsTurn(true);
+        }
+	}
+
     void SendValueToMaster(string _valueToSend)
 	{
         if (_valueToSend == "currentPlayer")
             photonView.RPC("UpdateCurrentPlayer", RpcTarget.MasterClient, currentlocalPlayerPlayingName);
         if (_valueToSend == "currentPlayTeam")
             photonView.RPC("UpdateCurrentPlayTeam", RpcTarget.MasterClient, currentPlayTeam);
+
+        if (_valueToSend == "gameState")
+            photonView.RPC("UpdateCurrentGameState", RpcTarget.MasterClient, gamePhaseState);
+
+        if (_valueToSend == "bluePointPlaced")
+            photonView.RPC("UpdateBluePointPlaced", RpcTarget.MasterClient, bluePointPlaced);
+        if (_valueToSend == "redPointPlaced")
+            photonView.RPC("UpdateRedPointPlaced", RpcTarget.MasterClient, redPointPlaced);
     }
 
     void SendValue(string _valueToSend, RpcTarget _target)
@@ -318,12 +339,30 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             photonView.RPC("UpdateCurrentPlayer", _target, currentlocalPlayerPlayingName);
         if (_valueToSend == "currentPlayTeam")
             photonView.RPC("UpdateCurrentPlayTeam", _target, currentPlayTeam);
+
+        if (_valueToSend == "gameState")
+            photonView.RPC("UpdateCurrentGameState", _target, gamePhaseState);
+
+        if (_valueToSend == "bluePointPlaced")
+            photonView.RPC("UpdateBluePointPlaced", _target, bluePointPlaced);
+        if (_valueToSend == "redPointPlaced")
+            photonView.RPC("UpdateRedPointPlaced", _target, redPointPlaced);
     }
 
-    void MasterSendToOthers()
+    void MasterSendToOthers(string _valueToSend)
 	{
-        SendValue("currentPlayer", RpcTarget.OthersBuffered);
-        SendValue("currentPlayTeam", RpcTarget.OthersBuffered);
+        if (_valueToSend == "currentPlayer")
+            SendValue("currentPlayer", RpcTarget.OthersBuffered);
+        if (_valueToSend == "currentPlayTeam")
+            SendValue("currentPlayTeam", RpcTarget.OthersBuffered);
+
+        if (_valueToSend == "gameState")
+            SendValue("gameState", RpcTarget.OthersBuffered);
+
+        if (_valueToSend == "bluePointPlaced")
+            SendValue("bluePointPlaced", RpcTarget.OthersBuffered);
+        if (_valueToSend == "redPointPlaced")
+            SendValue("redPointPlaced", RpcTarget.OthersBuffered);
     }
 
     [PunRPC]
@@ -336,6 +375,24 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     void UpdateCurrentPlayTeam(string _currentTeam)
     {
         currentPlayTeam = _currentTeam;
+    }
+
+    [PunRPC]
+    void UpdateCurrentGameState(GamePhaseState _gameState)
+    {
+        gamePhaseState = _gameState;
+    }
+
+    [PunRPC]
+    void UpdateBluePointPlaced(bool _isPlaced)
+    {
+        bluePointPlaced = _isPlaced;
+    }
+
+    [PunRPC]
+    void UpdateRedPointPlaced(bool _isPlaced)
+    {
+        redPointPlaced = _isPlaced;
     }
 
     public float GetTimer()
@@ -380,4 +437,104 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 	}
+
+    bool IsRedTurn()
+    {
+        if (currentPlayTeam == "red")
+            return true;
+        return false;
+    }
+
+    bool IsBlueTurn()
+    {
+        if (currentPlayTeam == "blue")
+            return true;
+        return false;
+    }
+
+    bool IsLocalPlayerTurn()
+	{
+        if (IsRedTurn())
+        {
+            if (listPlayerRed[currentRedPlayerIndex].IsLocal)
+                return true;
+            else
+                return false;
+        }
+        else if (IsBlueTurn())
+        {
+            if (listPlayerBlue[currentBluePlayerIndex].IsLocal)
+                return true;
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+
+    Player GetCurrentPlayer()
+	{
+        if (IsRedTurn())
+            return listPlayersRed[currentRedPlayerIndex];
+        else if (IsBlueTurn())
+            return listPlayersBlue[currentBluePlayerIndex];
+        else
+		{
+            Debug.LogError("is the turn of none");
+            if(strStartTeam == "red")
+                return listPlayersRed[0];
+            else
+                return listPlayersBlue[0];
+        }
+	}
+
+    bool IsLocalPlayerMaster()
+	{
+        if (PhotonNetwork.LocalPlayer.IsMasterClient)
+            return true;
+        else
+            return false;
+    }
+
+    void SetNextPlayerNTeamTurn()
+    {
+        if (IsRedTurn())
+        {
+            if (currentRedPlayerIndex < listPlayerRed.Count - 1)
+                currentRedPlayerIndex++;
+            else
+                currentRedPlayerIndex = 0;
+
+            currentPlayTeam = "blue";
+        }
+        else if (IsBlueTurn())
+        {
+            if (currentBluePlayerIndex < listPlayerBlue.Count - 1)
+                currentBluePlayerIndex++;
+            else
+                currentBluePlayerIndex = 0;
+
+            currentPlayTeam = "red";
+        }
+    }
+
+    void SwitchTeamPlay()
+	{
+        if (IsRedTurn())
+            currentPlayTeam = "blue";
+        else if (IsBlueTurn())
+            currentPlayTeam = "red";
+    }
+
+    void SetCurrentPlayerPlayingName()
+	{
+        currentlocalPlayerPlayingName = PhotonNetwork.LocalPlayer.NickName;
+    }
+
+    void SetGamePhaseState(GamePhaseState _state, bool _sendToOther)
+	{
+        gamePhaseState = _state;
+        if (_sendToOther)
+            MasterSendToOthers("gameState");
+    }
 }
