@@ -11,6 +11,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     [HideInInspector] public int slimeLimit = 3;
     public int team = 0;
+    private string strTeam = "none";
 
     public bool phase_placement = false;
     public bool phase_game = false;
@@ -75,6 +76,22 @@ public class Player : MonoBehaviourPunCallbacks
             SetCharacterControlled(2);
     }
 
+    public void SetupPlayerState(string _currentTeam, int _nbCharacterLimit)
+    {
+        strTeam = _currentTeam;
+        slimeLimit = _nbCharacterLimit;
+    }
+
+    public bool GetIsTurn()
+	{
+        return isTurn;
+	}
+
+    public void SetIsTurn(bool _turnState)
+    {
+        isTurn = _turnState;
+    }
+
     private void SetCharacterControlled(int _index)
     {
         currentCharacter = null;
@@ -119,6 +136,20 @@ public class Player : MonoBehaviourPunCallbacks
                     slimes[slimes.Count - 1].team = 2;
             }
         }
+    }
+
+    public void PlaceSlime()
+	{
+        if (slimes.Count < slimeLimit)
+        {
+            GameObject newGoSlime = PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity);
+            Slime newSlime = newGoSlime.GetComponent<Slime>();
+            newSlime.transform.parent = transform;
+            newSlime.SetPos(MousePos());
+            slimes.Add(newSlime);
+        }
+        else
+            Debug.LogError("all slimes of a player is set");
     }
 
     private void ControlCharacter()
