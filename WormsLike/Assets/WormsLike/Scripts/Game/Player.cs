@@ -56,7 +56,7 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            PlaceCharacter();
+            //PlaceCharacter();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -119,7 +119,7 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    private void PlaceCharacter()
+    /*private void PlaceCharacter()
     {
         if (slimes.Count < slimeLimit)
         {
@@ -136,17 +136,26 @@ public class Player : MonoBehaviourPunCallbacks
                     slimes[slimes.Count - 1].team = 2;
             }
         }
-    }
+    }*/
 
     public void PlaceSlime()
 	{
         if (slimes.Count < slimeLimit)
         {
-            GameObject newGoSlime = PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity);
-            Slime newSlime = newGoSlime.GetComponent<Slime>();
-            newSlime.transform.parent = transform;
-            newSlime.SetPos(MousePos());
-            slimes.Add(newSlime);
+            if (photonView.IsMine == true)
+            {
+                GameObject newGoSlime = PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity);
+                Slime newSlime = newGoSlime.GetComponent<Slime>();
+                newSlime.transform.parent = transform;
+                newSlime.SetPos(MousePos());
+
+                if (strTeam == "blue")
+                    newSlime.team = 1;
+                else if (strTeam == "red")
+                    newSlime.team = 2;
+
+                slimes.Add(newSlime);
+            }
         }
         else
             Debug.LogError("all slimes of a player is set");
