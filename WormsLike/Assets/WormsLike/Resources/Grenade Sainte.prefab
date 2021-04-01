@@ -13,11 +13,12 @@ GameObject:
   - component: {fileID: 4377669944707833703}
   - component: {fileID: 4377669944707833704}
   - component: {fileID: -2347525112904985843}
-  - component: {fileID: 9158427472428630844}
-  - component: {fileID: 773126345182772853}
-  - component: {fileID: -1729864423549968139}
+  - component: {fileID: -4938372259254476987}
+  - component: {fileID: -7846205067512470416}
+  - component: {fileID: -1049810831640061960}
+  - component: {fileID: -2563028502764311707}
   m_Layer: 0
-  m_Name: FirstBanana
+  m_Name: Grenade Sainte
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +79,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0.94718194, g: 1, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -104,7 +105,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 6200000, guid: 980ad6345d05fa3408b107a9fccd957c, type: 2}
+  m_Material: {fileID: 6200000, guid: 78edac2424aba9b4c8e676407776bc2b, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -138,23 +139,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   circleSize: 60
-  explodeVelocityNull: 0
+  explodeVelocityNull: 1
   explodeAfterImpact: 0
-  delay: 3
---- !u!114 &9158427472428630844
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4377669944707833705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a45c67009427e4a4b9090586f6a03246, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ChildBanane: {fileID: 4377669944707833705, guid: 882d0583400869e4c81f38c889395b0b, type: 3}
---- !u!114 &773126345182772853
+  delay: 0
+--- !u!114 &-4938372259254476987
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -173,13 +161,11 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: -2347525112904985843}
-  - {fileID: -1729864423549968139}
-  - {fileID: 0}
+  - {fileID: -7846205067512470416}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-1729864423549968139
+--- !u!114 &-7846205067512470416
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -195,3 +181,36 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &-1049810831640061960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4377669944707833705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac37a23ea060284cafc9d72df1f4126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  itemsList: 2
+  ammo: 15
+  selected: 0
+--- !u!114 &-2563028502764311707
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4377669944707833705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973a7923e1236324b8669a07a38b4337, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shooter: {fileID: 0}
+  startPos: {x: 0, y: 0, z: 0}
+  targetPos: {x: 0, y: 0, z: 0}
+  speed: 0.7
+  charge: 1

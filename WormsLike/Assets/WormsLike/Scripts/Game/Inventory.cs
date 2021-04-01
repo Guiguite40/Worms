@@ -6,30 +6,32 @@ using Photon.Pun;
 
 public class Inventory : MonoBehaviourPunCallbacks
 {
-    //public List<Item_Weapon> weapons;
-    //public List<Item_Defense> defenses;
-    //public List<Item_Movement> movements;
+    [SerializeField] public List<GameObject> itemPrefabs = null;
 
-    [SerializeField] GameObject ui_Inventory = null;
-    [SerializeField] List<Button> items = null;
+    public Dictionary<Enums.ItemsList, Item> items = new Dictionary<Enums.ItemsList, Item>();
 
-    [SerializeField] public GameObject RocketPrefab = null;
-
+    private void Start()
+    {
+        foreach (GameObject item in itemPrefabs)
+        {
+            items.Add(item.GetComponent<Item>().itemsList, Instantiate(item.GetComponent<Item>()));
+        }                
+    }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            if (ui_Inventory.activeInHierarchy)
-                ui_Inventory.SetActive(true);
-        }
+        //if (Input.GetKeyDown(KeyCode.I))
+        //{
+        //    if (ui_Inventory.activeInHierarchy)
+        //        ui_Inventory.SetActive(true);
+        //}
 
-        if (/*Input.GetMouseButtonDown(1) ||*/Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (ui_Inventory.activeInHierarchy)
-                ui_Inventory.SetActive(false);
-        }
+        //if (/*Input.GetMouseButtonDown(1) ||*/Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    if (ui_Inventory.activeInHierarchy)
+        //        ui_Inventory.SetActive(false);
+        //}
 
         //if (Input.GetMouseButtonDown(0))
         //{
