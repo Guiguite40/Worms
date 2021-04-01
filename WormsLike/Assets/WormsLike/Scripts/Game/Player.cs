@@ -27,6 +27,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] float speed = 0;
 
     float timeToRelease = 0;
+    private int myteam;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +38,11 @@ public class Player : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+        if (PhotonNetwork.IsMasterClient)
+            myteam = 1;
+        else
+            myteam = 2;
+
         Debuging();
 
         foreach (var item in slimes)
@@ -55,7 +61,10 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            PlaceCharacter();
+            if (photonView.IsMine == true)
+            {
+                PlaceCharacter();
+            }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -106,18 +115,10 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (slimes.Count < slimeLimit)
         {
-            if (photonView.IsMine == true)
-            {
-                slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
-                slimes[slimes.Count - 1].transform.parent = transform;
-                slimes[slimes.Count - 1].SetPos(MousePos());
-
-                // Debug
-                if (PhotonNetwork.IsMasterClient)
-                    slimes[slimes.Count - 1].team = 1;
-                else
-                    slimes[slimes.Count - 1].team = 2;
-            }
+            slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
+            slimes[slimes.Count - 1].transform.parent = transform;
+            slimes[slimes.Count - 1].SetPos(MousePos());
+            slimes[slimes.Count - 1].team = myteam;
         }
     }
 
