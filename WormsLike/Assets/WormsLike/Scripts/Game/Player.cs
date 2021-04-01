@@ -249,7 +249,6 @@ public class Player : MonoBehaviourPunCallbacks
             timeToRelease = 0;
             charge = 0;
         }
-
         yield return null;
     }
 

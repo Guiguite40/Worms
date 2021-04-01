@@ -50,7 +50,7 @@ MonoBehaviour:
   slimes: []
   inv: {fileID: -6890893481750907789}
   slimeLimit: 3
-  team: 1
+  team: 2
   phase_placement: 0
   phase_game: 1
   isTurn: 1

@@ -21,7 +21,6 @@ public class Explosive : MonoBehaviourPunCallbacks
     {
         rb = GetComponentInChildren<Rigidbody2D>();
         transform.position = startPos;
-        Debug.Log(targetPos + "    " + transform.position);
         direction = targetPos - transform.position;
         angle = Vector3.SignedAngle(Vector3.right, targetPos - transform.position, Vector3.forward);
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
