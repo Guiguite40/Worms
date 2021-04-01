@@ -15,7 +15,6 @@ public class Player : MonoBehaviourPunCallbacks
     public bool phase_placement = false;
     public bool phase_game = false;
     public bool isTurn = false;
-
     Enums.ItemsList itemSelected = 0;
 
     /***** DEBUG *****/
@@ -264,7 +263,11 @@ public class Player : MonoBehaviourPunCallbacks
             {
                 Vector3 targetPos = MousePos();
                 targetPos.z = 0;
-                Vector3 startPos = new Vector3(currentCharacter.transform.position.x + 1.5f, currentCharacter.transform.position.y, 0);
+                Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
+                if (MousePos().x < currentCharacter.transform.position.x)
+                    startPos.x -= 1.5f;
+                else
+                    startPos.x += 1.5f;
 
                 Explosive explosive;
                 explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_attack].name, startPos, Quaternion.identity).GetComponent<Explosive>();
@@ -285,8 +288,20 @@ public class Player : MonoBehaviourPunCallbacks
         yield return null;
     }
 
-    IEnumerator UsingUtilitary(Enums.ItemsList itemsList)
-    { 
+    IEnumerator UsingUtilitary(Enums.ItemsList _utilitary)
+    {
+        if (currentCharacter != null)
+        {
+             if (_utilitary == Enums.ItemsList.AirStrike)
+            {
+                Vector3 startPos = MousePos();
+                startPos.y = 25;
+                startPos.z = 0;
+
+                Explosive utilitary = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_utilitary].name, startPos, Quaternion.identity).GetComponent<Explosive>();
+                utilitary.startPos = startPos;                
+            }
+        }
         yield return null;
     }
 }
