@@ -29,6 +29,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject panelServers;
     [SerializeField] private Text textErrorMdpToEnter;
 
+    [SerializeField] private Text textPseudo;
+
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     bool isGamePrivate = false;
     List<ServerInfo> listServer = new List<ServerInfo>();
@@ -58,6 +60,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
         canvasEnterPassword.SetActive(false);
 
+        textPseudo.text = PhotonNetwork.LocalPlayer.NickName;
+        textErrorMdpToEnter.text = "";
         SetupPlayerCustomProperties();
     }
 
@@ -369,9 +373,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
 	public override void OnJoinRoomFailed(short returnCode, string message)
 	{
-        SendText("join", "<color=#00ff00> join room failed, error code : " + returnCode + "</color>");
+        SendText("join", "<color=#ff0000> join room failed, error code : " + returnCode + "</color>");
         if(canvasCreateGame.activeSelf)
-            SendText("create", "<color=#00ff00> join room failed, error code : " + returnCode + "</color>");
+            SendText("create", "<color=#ff0000> join room failed, error code : " + returnCode + "</color>");
     }
 
 	public void LaunchLobby()

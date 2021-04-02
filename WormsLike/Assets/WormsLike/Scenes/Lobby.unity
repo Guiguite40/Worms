@@ -3436,6 +3436,7 @@ MonoBehaviour:
   chatMessageParent: {fileID: 405502443}
   chatMessage: {fileID: 7149967967249137942, guid: fe52d1f6c3a2bf447bdf33648b7b8858, type: 3}
   inputFieldChatMessage: {fileID: 1821286633}
+  buttonStart: {fileID: 1637781747}
 --- !u!4 &1673142669
 Transform:
   m_ObjectHideFlags: 0
@@ -4307,7 +4308,7 @@ MonoBehaviour:
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
   m_Text: 
   m_CaretBlinkRate: 0.85
-  m_CaretWidth: 1
+  m_CaretWidth: 3
   m_ReadOnly: 0
   m_ShouldActivateOnSelect: 1
 --- !u!114 &1821286634

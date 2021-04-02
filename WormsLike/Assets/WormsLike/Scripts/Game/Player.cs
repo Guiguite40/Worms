@@ -12,6 +12,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     [HideInInspector] public int slimeLimit = 3;
     public int team = 0;
+    private string strTeam = "none";
 
     public bool phase_placement = false;
     public bool phase_game = false;
@@ -29,6 +30,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] float speed = 0;
 
     float timeToRelease = 0;
+    bool isAllSlimePlaced = false;
 
     // Start is called before the first frame update
     void Start()
@@ -65,7 +67,12 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            PlaceCharacter();
+            if (PhotonNetwork.IsMasterClient)
+                strTeam = "blue";
+            else
+                strTeam = "red";
+
+            PlaceSlime();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -126,6 +133,22 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
+    public void SetupPlayerState(string _currentTeam, int _nbCharacterLimit)
+    {
+        strTeam = _currentTeam;
+        slimeLimit = _nbCharacterLimit;
+    }
+
+    public bool GetIsTurn()
+	{
+        return isTurn;
+	}
+
+    public void SetIsTurn(bool _turnState)
+    {
+        isTurn = _turnState;
+    }
+
     private void SetCharacterControlled(int _index)
     {
         currentCharacter = null;
@@ -158,50 +181,73 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    private void PlaceCharacter()
-    {
+    public void PlaceSlime()
+	{
         if (slimes.Count < slimeLimit)
         {
-            //Debug.Log(slimes.Count);
-            slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
-            slimes[slimes.Count - 1].transform.parent = transform;
-            slimes[slimes.Count - 1].SetPos(MousePos());
-            slimes[slimes.Count - 1].team = team;
+            if (photonView.IsMine == true)
+            {
+                GameObject newGoSlime = PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity);
+                int id = newGoSlime.GetPhotonView().ViewID;
+                int parentId = gameObject.GetPhotonView().ViewID;
+
+                int myTeam = 0;
+                if (strTeam == "blue")
+                    myTeam = 1;
+                else if (strTeam == "red")
+                    myTeam = 2;
+
+                photonView.RPC("SpawnSlime", RpcTarget.AllBuffered, id, parentId, MousePos().x, MousePos().y, myTeam);
+            }
         }
+        else
+            isAllSlimePlaced = true;
     }
 
-    private void ControlCharacter()
+    public bool GetAllSlimePlaced()
     {
-        float move = 0;
-        foreach (var item in slimes)
+        return isAllSlimePlaced;
+    }
+
+    public void SetAllSlimePlaced(bool _state)
+    {
+        isAllSlimePlaced = _state;
+    }
+
+    public void ControlCharacter()
+    {
+        if (photonView.IsMine == true)
         {
-            if (!item.isDead)
+            float move = 0;
+            foreach (var item in slimes)
             {
-                if (item.isControlled)
+                if (!item.isDead)
                 {
-                    move = Input.GetAxisRaw("Horizontal");
-                    if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
-                        item.rb.velocity = new Vector2(0, item.jumpForce);
+                    if (item.isControlled)
+                    {
+                        move = Input.GetAxisRaw("Horizontal");
+                        if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
+                            item.rb.velocity = new Vector2(0, item.jumpForce);
+                    }
+                    else
+                        if (move != 0)
+                        move = 0;
                 }
                 else
                     if (move != 0)
                     move = 0;
-            }
-            else
-                if (move != 0)
-                move = 0;
 
-            item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
-            item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
-        }
+                item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
+                item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
+            }
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (currentCharacter != null)
-            {
-                timeToRelease = 0;
-                UseItem(itemSelected);
-            }
+                if (currentCharacter != null)
+                {
+                    timeToRelease = 0;
+                    UseItem(itemSelected);
+                }
         }
     }
 
@@ -323,4 +369,21 @@ public class Player : MonoBehaviourPunCallbacks
         }
         yield return null;
     }
+
+    [PunRPC]
+    public void SpawnSlime(int id, int parentId, float posX, float posY, int team)
+    {
+        GameObject newGoSlime = PhotonView.Find(id).gameObject;
+
+        Slime newSlime = newGoSlime.GetComponent<Slime>();
+        newSlime.transform.parent = PhotonView.Find(parentId).gameObject.transform;
+        newSlime.SetPos(new Vector3(posX, posY, 0f));
+        newSlime.team = team;
+        slimes.Add(newSlime);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+    }
+
 }

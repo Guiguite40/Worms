@@ -20,6 +20,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     [Space(10)]
     [SerializeField] private Text textLoginPseudo;
     [SerializeField] private Text textLoginMdp;
+    [SerializeField] private Text textLoginMdpCache;
     [Space(4)]
     [SerializeField] private Text textLoginPseudoError;
     [SerializeField] private Text textLoginMdpError;
@@ -27,6 +28,8 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text textSignUpPseudo;
     [SerializeField] private Text textSignUpMdp;
     [SerializeField] private Text textSignUpMdpConfirm;
+    [SerializeField] private Text textSignUpMdpCache;
+    [SerializeField] private Text textSignUpMdpConfirmCache;
     [Space(4)]
     [SerializeField] private Text textSignUpPseudoError;
     [SerializeField] private Text textSignUpMdpConfirmError;
@@ -84,6 +87,24 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 
         if (Input.GetKeyDown(KeyCode.Tab))
             NextInputFieldActivate();
+
+        textLoginMdpCache.text = "";
+        for (int i = 0; i < textLoginMdp.text.Length; i++)
+		{
+            textLoginMdpCache.text += "*";
+		}
+
+        textSignUpMdpCache.text = "";
+        for (int i = 0; i < textSignUpMdp.text.Length; i++)
+        {
+            textSignUpMdpCache.text += "*";
+        }
+
+        textSignUpMdpConfirmCache.text = "";
+        for (int i = 0; i < textSignUpMdpConfirm.text.Length; i++)
+        {
+            textSignUpMdpConfirmCache.text += "*";
+        }
     }
 
     public void OpenCanvas(string _keyName)

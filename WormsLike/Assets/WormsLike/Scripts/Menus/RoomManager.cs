@@ -30,6 +30,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] private GameObject chatMessageParent;
     [SerializeField] private GameObject chatMessage;
     [SerializeField] private InputField inputFieldChatMessage;
+    [SerializeField] private Button buttonStart;
 
     int indexGamemode;
     int mapIndex = 0;
@@ -79,8 +80,24 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
         //print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
         if(inputFieldChatMessage.IsActive())
 		{
-            if (Input.GetKeyDown(KeyCode.Return))
-                OnClickSendMessage();
+            if (Input.GetKeyUp(KeyCode.Return))
+            {
+                if (inputFieldChatMessage.text == "" || inputFieldChatMessage.text == "\n")
+				{
+                    inputFieldChatMessage.text = "";
+                    return;
+                }
+                else
+                    OnClickSendMessage();
+
+                /*if (inputFieldChatMessage.text.Length < 1)
+                {
+                    inputFieldChatMessage.text = "";
+                    return;
+                }
+                else
+                    OnClickSendMessage();*/
+            }
         }
     }
 
@@ -91,7 +108,10 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
             textRoomPassword.text = MenuManager.instance.GetRoomPassword();
         else
+        {
             textRoomPassword.text = (string)PhotonNetwork.CurrentRoom.CustomProperties["pw"];
+            buttonStart.interactable = false;
+        }
 
         if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 0)
             indexGamemode = 0;
