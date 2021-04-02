@@ -239,7 +239,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     Vector3 MousePos()
     {
-        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 tmp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        tmp.z = 0;
+        return tmp;
     }
 
     IEnumerator ChargeCalculation(Enums.ItemsList _attack)
@@ -312,6 +314,11 @@ public class Player : MonoBehaviourPunCallbacks
 
                 Explosive utilitary = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_utilitary].name, startPos, Quaternion.identity).GetComponent<Explosive>();
                 utilitary.startPos = startPos;
+            }
+
+            else if (_utilitary == Enums.ItemsList.Teleportation)
+            {
+                currentCharacter.SetPos(MousePos());
             }
         }
         yield return null;
