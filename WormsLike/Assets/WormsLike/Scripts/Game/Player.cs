@@ -140,9 +140,9 @@ public class Player : MonoBehaviourPunCallbacks
     }
 
     public bool GetIsTurn()
-	{
+    {
         return isTurn;
-	}
+    }
 
     public void SetIsTurn(bool _turnState)
     {
@@ -182,7 +182,7 @@ public class Player : MonoBehaviourPunCallbacks
     }
 
     public void PlaceSlime()
-	{
+    {
         if (slimes.Count < slimeLimit)
         {
             if (photonView.IsMine == true)
@@ -241,13 +241,14 @@ public class Player : MonoBehaviourPunCallbacks
                 item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
             }
 
-        if (Input.GetMouseButtonDown(0))
-        {
+            if (Input.GetMouseButtonDown(0))
+            {
                 if (currentCharacter != null)
                 {
                     timeToRelease = 0;
                     UseItem(itemSelected);
                 }
+            }
         }
     }
 
@@ -385,5 +386,4 @@ public class Player : MonoBehaviourPunCallbacks
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
     }
-
 }
