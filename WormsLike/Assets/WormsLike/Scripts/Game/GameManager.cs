@@ -37,12 +37,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         START_PHASE,
         ACTION,
         MOVEMENTS_LEFT,
-        DAMAGE
+        DAMAGE,
+        MAP
     } PlayerPhaseState playerPhaseState = PlayerPhaseState.START_PHASE;
 
     [SerializeField] Text currentGameStateText;
     [SerializeField] Text currentTurnStateText;
     [SerializeField] Text dataPos;
+    [SerializeField] Text itsHisTurnText;
+    [SerializeField] GameObject healthBoxPrefab;
+    [SerializeField] GameObject damageBoxPrefab;
 
     int currentBluePlayerIndex = 0;
     int currentRedPlayerIndex = 0;
@@ -60,6 +64,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     bool bluePointPlaced = false;
     bool redPointPlaced = false;
 
+    ///////////////
     float timerStart = 5f;
     List<Photon.Realtime.Player> listPlayerBlue = new List<Photon.Realtime.Player>();
     SortedList<int, Photon.Realtime.Player> sortedlistPlayerBlue = new SortedList<int, Photon.Realtime.Player>();
@@ -68,6 +73,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     List<Player> listPlayers = new List<Player>();
     List<Player> listPlayersBlue = new List<Player>();
     List<Player> listPlayersRed = new List<Player>();
+
+    Dictionary<string, bool> allSlimesPlaced = new Dictionary<string, bool>();
+    //////////////
+
+    float timerPlayerStart = 3f;
+    float timerMovementsLeft = 3f;
+
     private void Awake()
     {
         if (instance == null)
@@ -109,9 +121,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         {
             if ((string)players[i].CustomProperties["t"] == "blue")
             {
+                allSlimesPlaced.Add(players[i].NickName, false);
                 listPlayerBlue.Add(players[i]);
                 //sortedlistPlayerBlue.Add(i, players[i]);
-
                 GameObject newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
                 Player player = newPlayer.GetComponent<Player>();
                 player.SetupPlayerState("blue", nbSlimePerPlayer);
@@ -122,6 +134,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
             if ((string)players[i].CustomProperties["t"] == "red")
             {
+                allSlimesPlaced.Add(players[i].NickName, false);
                 listPlayerRed.Add(players[i]);
 
                 GameObject newPlayer = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity);
@@ -246,9 +259,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 			case GamePhaseState.SLIME_PLACEMENT:
                 currentGameStateText.text = "slime placement";
 
+                for (int i = 0; i < allSlimesPlaced.Count; i++)
+                {
+                    Debug.LogError("all slime placed of " + PhotonNetwork.PlayerList[i].NickName + ", state : " + allSlimesPlaced[PhotonNetwork.PlayerList[i].NickName]);
+                }
+
                 if (IsLocalPlayerTurn())
                 {
-                    Debug.LogError("is the turn of this player");
+                    //Debug.LogError("is the turn of this player");
                     SetCurrentPlayerPlayingName();
                     if (Input.GetMouseButtonUp(0))
                     {
@@ -259,31 +277,121 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                         SendValueToMaster("currentPlayer");
                         SendValueToMaster("currentPlayTeam");
                     }
+
+                    if (GetCurrentPlayer().GetAllSlimePlaced())
+                    {
+                        allSlimesPlaced[PhotonNetwork.LocalPlayer.NickName] = true;
+                        Debug.LogError("current player has all slime placed");
+                        SendValueToMaster("allSlimePlaced", PhotonNetwork.LocalPlayer.NickName);
+                    }
                 }
+
+                if (IsLocalPlayerMaster())
+				{
+                    for (int i = 0; i < PhotonNetwork.PlayerList.Length; i++)
+                    {
+                        if (allSlimesPlaced[PhotonNetwork.PlayerList[i].NickName] == false)
+                            return;
+                    }
+                    SetGamePhaseState(GamePhaseState.GAME, true);
+				}
                 break;
 
 			case GamePhaseState.GAME:
                 currentGameStateText.text = "game";
 
                 switch (turnState)
-				{
-					case TurnState.TEAM:
+                {
+                    case TurnState.TEAM:
 
-						switch (playerPhaseState)
-						{
-							case PlayerPhaseState.START_PHASE:
+                        switch (playerPhaseState)
+                        {
+                            
+                            case PlayerPhaseState.START_PHASE:
+
+                                if (IsLocalPlayerTurn())
+                                {
+                                    itsHisTurnText.text = "true";
+                                    SetCurrentPlayerPlayingName();
+                                }
+                                else
+                                    itsHisTurnText.text = "false";
+
                                 currentTurnStateText.text = "start";
+                                if(timerPlayerStart <= 0)
+								{
+                                    SendValueToMaster("timerPlayerStart");
+                                    timerPlayerStart = 3f;
+                                    dataPos.text = timerPlayerStart.ToString();
+                                    //if (IsLocalPlayerMaster())
+                                        SetPlayerPhaseState(PlayerPhaseState.ACTION, true);
+								}
+                                else
+								{
+                                    if (IsLocalPlayerTurn())
+                                    {
+                                        timerPlayerStart -= Time.deltaTime;
+                                        dataPos.text = timerPlayerStart.ToString();
+                                        //SendValueToMaster("timerPlayerStart");
+                                    }
+								}
+
                                 break;
+
 							case PlayerPhaseState.ACTION:
                                 currentTurnStateText.text = "actions";
+
+                                /*if (IsLocalPlayerTurn())
+                                {
+                                    Debug.LogError("is the turn of this player");
+                                    GetCurrentPlayer().ControlCharacter();
+                                }*/
+                                if (IsLocalPlayerMaster())
+                                    SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, true);
                                 break;
+
 							case PlayerPhaseState.MOVEMENTS_LEFT:
                                 currentTurnStateText.text = "movements left";
+
+                                if (timerMovementsLeft <= 0)
+                                {
+                                    SendValueToMaster("timerMovementsLeft");
+                                    timerMovementsLeft = 3f;
+                                    dataPos.text = timerMovementsLeft.ToString();
+                                    //if (IsLocalPlayerMaster())
+                                        SetPlayerPhaseState(PlayerPhaseState.DAMAGE, true);
+                                }
+                                else
+                                {
+                                    if (IsLocalPlayerTurn())
+                                    {
+                                        timerMovementsLeft -= Time.deltaTime;
+                                        dataPos.text = timerMovementsLeft.ToString();
+                                        //SendValueToMaster("timerMovementsLeft");
+                                    }
+                                }
                                 break;
+
 							case PlayerPhaseState.DAMAGE:
                                 currentTurnStateText.text = "damage";
+
+                                if (IsLocalPlayerMaster())
+                                    SetPlayerPhaseState(PlayerPhaseState.MAP, true);
                                 break;
-							default:
+
+                            case PlayerPhaseState.MAP:
+                                currentTurnStateText.text = "map";
+                                ResetTimers();
+                                if (IsLocalPlayerTurn())
+                                {
+                                    SpawnCrate();
+                                    SetNextPlayerNTeamTurn();
+                                    SetPlayerPhaseState(PlayerPhaseState.START_PHASE, true);
+                                }
+                                break;
+
+
+                            default:
 								break;
 						}
 
@@ -291,6 +399,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 					case TurnState.MAP:
                         currentTurnStateText.text = "map";
                         break;
+
 					default:
 						break;
 				}
@@ -305,6 +414,27 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 				break;
 		}
 	}
+
+    void ResetTimers()
+	{
+        timerPlayerStart = 3f;
+        timerMovementsLeft = 3f;
+        dataPos.text = "all timers reset";
+    }
+
+    void SpawnCrate()
+	{
+        int randCrate = Random.Range(0, 2);
+        float posX = Random.Range(5, 61);
+        if (randCrate == 0)
+        {
+            GameObject healthBox = PhotonNetwork.Instantiate(healthBoxPrefab.name, new Vector3(posX, 25f, 0), Quaternion.identity);
+        }
+        else if (randCrate == 1)
+        {
+            GameObject damageBox = PhotonNetwork.Instantiate(damageBoxPrefab.name, new Vector3(posX, 25f, 0), Quaternion.identity);
+        }
+    }
 
     IEnumerator InstantiatePlayer()
     { 
@@ -353,6 +483,20 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             photonView.RPC("UpdateBluePlayerIndex", RpcTarget.MasterClient, currentBluePlayerIndex);
         if (_valueToSend == "redPlayerIndex")
             photonView.RPC("UpdateRedPlayerIndex", RpcTarget.MasterClient, currentRedPlayerIndex);
+
+        if (_valueToSend == "allSlimePlaced")
+            photonView.RPC("UpdateAllSlimePlaced", RpcTarget.MasterClient, GetCurrentPlayer().GetAllSlimePlaced(), PhotonNetwork.LocalPlayer.NickName);
+
+        if (_valueToSend == "timerPlayerStart")
+            photonView.RPC("UpdateTimerPlayerStart", RpcTarget.MasterClient, timerPlayerStart);
+        if (_valueToSend == "timerMovementsLeft")
+            photonView.RPC("UpdateTimerMovementsLeft", RpcTarget.MasterClient, timerMovementsLeft);
+    }
+
+    void SendValueToMaster(string _valueToSend, string _sender)
+    {
+        if (_valueToSend == "allSlimePlaced")
+            photonView.RPC("UpdateAllSlimePlaced", RpcTarget.MasterClient, true, _sender);
     }
 
     void SendValue(string _valueToSend, RpcTarget _target)
@@ -364,6 +508,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (_valueToSend == "gameState")
             photonView.RPC("UpdateCurrentGameState", _target, gamePhaseState);
+        if (_valueToSend == "playerState")
+            photonView.RPC("UpdateCurrentPlayerState", _target, playerPhaseState);
 
         if (_valueToSend == "bluePointPlaced")
             photonView.RPC("UpdateBluePointPlaced", _target, bluePointPlaced);
@@ -385,6 +531,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (_valueToSend == "gameState")
             SendValue("gameState", RpcTarget.OthersBuffered);
+        if (_valueToSend == "playerState")
+            SendValue("playerState", RpcTarget.OthersBuffered);
 
         if (_valueToSend == "bluePointPlaced")
             SendValue("bluePointPlaced", RpcTarget.OthersBuffered);
@@ -416,6 +564,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
+    void UpdateCurrentPlayerState(PlayerPhaseState _playerState)
+    {
+        playerPhaseState = _playerState;
+    }
+
+    [PunRPC]
     void UpdateBluePointPlaced(bool _isPlaced)
     {
         bluePointPlaced = _isPlaced;
@@ -439,6 +593,24 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         currentRedPlayerIndex = _index;
     }
 
+    [PunRPC]
+    void UpdateAllSlimePlaced(bool _state, string _nickname)
+    {
+        allSlimesPlaced[_nickname] = _state;
+    }
+
+    [PunRPC]
+    void UpdateTimerPlayerStart(float _value)
+    {
+        timerPlayerStart = _value;
+    }
+
+    [PunRPC]
+    void UpdateTimerMovementsLeft(float _value)
+    {
+        timerMovementsLeft = _value;
+    }
+
     public float GetTimer()
     {
         return timer;
@@ -455,12 +627,22 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 stream.SendNext(gamePhaseState);
                 stream.SendNext(currentBluePlayerIndex);
                 stream.SendNext(currentRedPlayerIndex);
+                stream.SendNext(allSlimesPlaced);
 
                 if (gamePhaseState == GamePhaseState.START)
                 {
                     stream.SendNext(timerStart);
                     stream.SendNext(startTeamIndex);
                     stream.SendNext(strStartTeam);
+                }
+
+                if(playerPhaseState == PlayerPhaseState.START_PHASE)
+				{
+                    stream.SendNext(timerPlayerStart);
+				}
+                if (playerPhaseState == PlayerPhaseState.MOVEMENTS_LEFT)
+                {
+                    stream.SendNext(timerMovementsLeft);
                 }
             }
         }
@@ -473,6 +655,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 gamePhaseState = (GamePhaseState)stream.ReceiveNext();
                 currentBluePlayerIndex = (int)stream.ReceiveNext();
                 currentRedPlayerIndex = (int)stream.ReceiveNext();
+                allSlimesPlaced = (Dictionary<string, bool>)stream.ReceiveNext();
 
                 if (gamePhaseState == GamePhaseState.START)
                 {
@@ -481,6 +664,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                     strStartTeam = (string)stream.ReceiveNext();
 
                     dataPos.text = timerStart.ToString();
+                }
+                if (playerPhaseState == PlayerPhaseState.START_PHASE)
+                {
+                    timerPlayerStart = (float)stream.ReceiveNext();
+                }
+                if (playerPhaseState == PlayerPhaseState.MOVEMENTS_LEFT)
+                {
+                    timerMovementsLeft = (float)stream.ReceiveNext();
                 }
             }
         }
@@ -588,6 +779,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         gamePhaseState = _state;
         if (_sendToOther)
             MasterSendToOthers("gameState");
+    }
+
+    void SetPlayerPhaseState(PlayerPhaseState _state, bool _sendToOther)
+    {
+        playerPhaseState = _state;
+        if (_sendToOther)
+            MasterSendToOthers("playerState");
     }
 
     static int SortByNickname(Photon.Realtime.Player p1, Photon.Realtime.Player p2)

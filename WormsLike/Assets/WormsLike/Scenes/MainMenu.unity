@@ -5561,6 +5561,7 @@ MonoBehaviour:
   serverPrefab: {fileID: 4140240784153625383, guid: 66e83db5ef81bcc4092c5eac8dffda96, type: 3}
   panelServers: {fileID: 844482948}
   textErrorMdpToEnter: {fileID: 1572355813}
+  textPseudo: {fileID: 1775460371}
 --- !u!4 &810353872
 Transform:
   m_ObjectHideFlags: 0

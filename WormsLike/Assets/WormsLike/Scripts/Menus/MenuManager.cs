@@ -29,6 +29,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject panelServers;
     [SerializeField] private Text textErrorMdpToEnter;
 
+    [SerializeField] private Text textPseudo;
+
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     bool isGamePrivate = false;
     List<ServerInfo> listServer = new List<ServerInfo>();
@@ -57,6 +59,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
         CloseCanvas("all");
 
         canvasEnterPassword.SetActive(false);
+
+        textPseudo.text = PhotonNetwork.LocalPlayer.NickName;
 
         SetupPlayerCustomProperties();
     }
