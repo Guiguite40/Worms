@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class Player : MonoBehaviourPunCallbacks
@@ -16,7 +17,6 @@ public class Player : MonoBehaviourPunCallbacks
     public bool phase_placement = false;
     public bool phase_game = false;
     public bool isTurn = false;
-
     Enums.ItemsList itemSelected = 0;
 
     /***** DEBUG *****/
@@ -26,6 +26,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] Slime currentCharacter = null;
 
     [SerializeField] float charge = 0;
+    [SerializeField] float chargeMax = 10;
     [SerializeField] float speed = 0;
 
     float timeToRelease = 0;
@@ -52,6 +53,14 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
         ControlCharacter();
+
+
+        if (currentCharacter != null)
+        {
+            currentCharacter.charge = charge;
+            if (currentCharacter.chargeMax != chargeMax)
+                currentCharacter.chargeMax = chargeMax;
+        }
     }
 
     void Debuging()
@@ -105,20 +114,20 @@ public class Player : MonoBehaviourPunCallbacks
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             SelectWeapon(Enums.ItemsList.Banana);
-        }    
-       else if (Input.GetKeyDown(KeyCode.Alpha5))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             SelectWeapon(Enums.ItemsList.AirStrike);
-        }       
-       else if (Input.GetKeyDown(KeyCode.Alpha6))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             SelectWeapon(Enums.ItemsList.Teleportation);
-        }       
-       else if (Input.GetKeyDown(KeyCode.Alpha7))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             SelectWeapon(Enums.ItemsList.JetPack);
-        }       
-       else if (Input.GetKeyDown(KeyCode.Alpha8))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             SelectWeapon(Enums.ItemsList.FlameThrower);
         }
@@ -131,9 +140,9 @@ public class Player : MonoBehaviourPunCallbacks
     }
 
     public bool GetIsTurn()
-	{
+    {
         return isTurn;
-	}
+    }
 
     public void SetIsTurn(bool _turnState)
     {
@@ -173,7 +182,7 @@ public class Player : MonoBehaviourPunCallbacks
     }
 
     public void PlaceSlime()
-	{
+    {
         if (slimes.Count < slimeLimit)
         {
             if (photonView.IsMine == true)
@@ -232,7 +241,6 @@ public class Player : MonoBehaviourPunCallbacks
                 item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
             }
 
-
             if (Input.GetMouseButtonDown(0))
             {
                 if (currentCharacter != null)
@@ -278,7 +286,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     Vector3 MousePos()
     {
-        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 tmp = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        tmp.z = 0;
+        return tmp;
     }
 
     IEnumerator ChargeCalculation(Enums.ItemsList _attack)
@@ -288,10 +298,13 @@ public class Player : MonoBehaviourPunCallbacks
             Debug.Log("ChargeCalculation");
             while (!Input.GetMouseButtonUp(0))
             {
-                timeToRelease += Time.deltaTime * 6f;
+                timeToRelease += Time.deltaTime * 5f;
+                charge = timeToRelease;
+                if (charge > chargeMax)
+                    break;
                 yield return null;
             }
-            charge = Mathf.Clamp(timeToRelease + 3, 3f, 20);
+            charge = Mathf.Clamp(timeToRelease + 3, 3f, chargeMax);
             StartCoroutine(LaunchExplosiveCharged(_attack, charge));
             timeToRelease = 0;
             charge = 0;
@@ -311,7 +324,11 @@ public class Player : MonoBehaviourPunCallbacks
             {
                 Vector3 targetPos = MousePos();
                 targetPos.z = 0;
-                Vector3 startPos = new Vector3(currentCharacter.transform.position.x + 1.5f, currentCharacter.transform.position.y, 0);
+                Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
+                if (MousePos().x < currentCharacter.transform.position.x)
+                    startPos.x -= 1.5f;
+                else
+                    startPos.x += 1.5f;
 
                 Explosive explosive;
                 explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_attack].name, startPos, Quaternion.identity).GetComponent<Explosive>();
@@ -332,8 +349,25 @@ public class Player : MonoBehaviourPunCallbacks
         yield return null;
     }
 
-    IEnumerator UsingUtilitary(Enums.ItemsList itemsList)
-    { 
+    IEnumerator UsingUtilitary(Enums.ItemsList _utilitary)
+    {
+        if (currentCharacter != null)
+        {
+            if (_utilitary == Enums.ItemsList.AirStrike)
+            {
+                Vector3 startPos = MousePos();
+                startPos.y = 25;
+                startPos.z = 0;
+
+                Explosive utilitary = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_utilitary].name, startPos, Quaternion.identity).GetComponent<Explosive>();
+                utilitary.startPos = startPos;
+            }
+
+            else if (_utilitary == Enums.ItemsList.Teleportation)
+            {
+                currentCharacter.SetPos(MousePos());
+            }
+        }
         yield return null;
     }
 
@@ -352,5 +386,4 @@ public class Player : MonoBehaviourPunCallbacks
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
     }
-
 }

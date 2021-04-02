@@ -17,17 +17,17 @@ namespace DTerrain
         // Update is called once per frame
         void Update()
         {
-            if (MyExplosiveObjects.myGo != null)
+            if (ExplosiveObjects.myGo != null)
             {
-                for (int i = 0; i < MyExplosiveObjects.myGo.Count; i++)
+                for (int i = 0; i < ExplosiveObjects.myGo.Count; i++)
                 {
-                    Vector3 screenPoint = mainCamera.WorldToViewportPoint(MyExplosiveObjects.myGo[i].transform.position);
+                    Vector3 screenPoint = mainCamera.WorldToViewportPoint(ExplosiveObjects.myGo[i].transform.position);
 
                     bool onScreen = screenPoint.z > 0 && screenPoint.x > 0 && screenPoint.x < 1 && screenPoint.y > 0;
                     if (onScreen == false)
                     {
-                        Destroy(MyExplosiveObjects.myGo[i]);
-                        MyExplosiveObjects.myGo.Remove(MyExplosiveObjects.myGo[i]);
+                        Destroy(ExplosiveObjects.myGo[i]);
+                        ExplosiveObjects.myGo.Remove(ExplosiveObjects.myGo[i]);
                     }
                 }
             }
