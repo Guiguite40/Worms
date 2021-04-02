@@ -5,6 +5,7 @@ public class Enums
     public enum Type
     {
         Weapon,
+        ChargableWeapon,
         Utility,
     }
 
@@ -16,9 +17,9 @@ public class Enums
         Banana,
         AirStrike,
         Teleportation,
-        IDK1,
+        Parachute,
         JetPack,
-        IDK2,
+        FlameThrower,
         Shield,
         IronBar,
         Touret,

@@ -11,11 +11,13 @@ public class Player : MonoBehaviourPunCallbacks
 
     [HideInInspector] public int slimeLimit = 3;
     public int team = 0;
+    private string strTeam = "none";
 
     public bool phase_placement = false;
     public bool phase_game = false;
-
     public bool isTurn = false;
+
+    Enums.ItemsList itemSelected = 0;
 
     /***** DEBUG *****/
     [SerializeField] GameObject healthBoxPrefab = null;
@@ -27,7 +29,6 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] float speed = 0;
 
     float timeToRelease = 0;
-    private int myteam;
 
     // Start is called before the first frame update
     void Start()
@@ -38,11 +39,6 @@ public class Player : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        if (PhotonNetwork.IsMasterClient)
-            myteam = 1;
-        else
-            myteam = 2;
-
         Debuging();
 
         foreach (var item in slimes)
@@ -61,10 +57,7 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            if (photonView.IsMine == true)
-            {
-                PlaceCharacter();
-            }
+            //PlaceCharacter();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -76,12 +69,69 @@ public class Player : MonoBehaviourPunCallbacks
             GameObject damageBox = Instantiate(damageBoxPrefab);
             damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
         }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+
+        if (Input.GetKeyDown(KeyCode.Keypad1))
+        {
             SetCharacterControlled(0);
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad2))
+        {
             SetCharacterControlled(1);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        }
+        else if (Input.GetKeyDown(KeyCode.Keypad3))
+        {
             SetCharacterControlled(2);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            SelectWeapon(Enums.ItemsList.RocketLauncher);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            SelectWeapon(Enums.ItemsList.Grenade);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            SelectWeapon(Enums.ItemsList.SaintGrenade);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            SelectWeapon(Enums.ItemsList.Banana);
+        }    
+       else if (Input.GetKeyDown(KeyCode.Alpha5))
+        {
+            SelectWeapon(Enums.ItemsList.AirStrike);
+        }       
+       else if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            SelectWeapon(Enums.ItemsList.Teleportation);
+        }       
+       else if (Input.GetKeyDown(KeyCode.Alpha7))
+        {
+            SelectWeapon(Enums.ItemsList.JetPack);
+        }       
+       else if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            SelectWeapon(Enums.ItemsList.FlameThrower);
+        }
+    }
+
+    public void SetupPlayerState(string _currentTeam, int _nbCharacterLimit)
+    {
+        strTeam = _currentTeam;
+        slimeLimit = _nbCharacterLimit;
+    }
+
+    public bool GetIsTurn()
+	{
+        return isTurn;
+	}
+
+    public void SetIsTurn(bool _turnState)
+    {
+        isTurn = _turnState;
     }
 
     private void SetCharacterControlled(int _index)
@@ -101,6 +151,11 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
+    public void SelectWeapon(Enums.ItemsList _item)
+    {
+        itemSelected = _item;
+    }
+
     private void UnSetCharacterControlled()
     {
         currentCharacter = null;
@@ -111,15 +166,39 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    private void PlaceCharacter()
+    /*private void PlaceCharacter()
     {
         if (slimes.Count < slimeLimit)
         {
+            //Debug.Log(slimes.Count);
             slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
             slimes[slimes.Count - 1].transform.parent = transform;
             slimes[slimes.Count - 1].SetPos(MousePos());
-            slimes[slimes.Count - 1].team = myteam;
+            slimes[slimes.Count - 1].team = team;
         }
+    }*/
+
+    public void PlaceSlime()
+	{
+        if (slimes.Count < slimeLimit)
+        {
+            if (photonView.IsMine == true)
+            {
+                GameObject newGoSlime = PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity);
+                Slime newSlime = newGoSlime.GetComponent<Slime>();
+                newSlime.transform.parent = transform;
+                newSlime.SetPos(MousePos());
+
+                if (strTeam == "blue")
+                    newSlime.team = 1;
+                else if (strTeam == "red")
+                    newSlime.team = 2;
+
+                slimes.Add(newSlime);
+            }
+        }
+        else
+            Debug.LogError("all slimes of a player is set");
     }
 
     private void ControlCharacter()
@@ -150,16 +229,43 @@ public class Player : MonoBehaviourPunCallbacks
 
         if (Input.GetMouseButtonDown(0))
         {
-            timeToRelease = 0;
-            UseItem(Enums.ItemsList.RocketLauncher);
+            if (currentCharacter != null)
+            {
+                timeToRelease = 0;
+                UseItem(itemSelected);
+            }
         }
     }
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
-        if (_itemSelected == Enums.ItemsList.RocketLauncher)
+        if (inv.items[_itemSelected].ammo > 0)
         {
-            StartCoroutine(ChargeCalculation(_itemSelected));
+            if (inv.items[_itemSelected].itemsList != Enums.ItemsList.RocketLauncher
+                && inv.items[_itemSelected].itemsList != Enums.ItemsList.Grenade)
+                inv.items[_itemSelected].ammo--;
+
+            switch (inv.items[_itemSelected].type)
+            {
+                case Enums.Type.Weapon:
+                    StartCoroutine(LaunchAttack(_itemSelected));
+                    break;
+
+                case Enums.Type.ChargableWeapon:
+                    StartCoroutine(ChargeCalculation(_itemSelected));
+                    break;
+
+                case Enums.Type.Utility:
+                    StartCoroutine(UsingUtilitary(_itemSelected));
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            Debug.Log("No ammo");
         }
     }
 
@@ -170,43 +276,57 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator ChargeCalculation(Enums.ItemsList _attack)
     {
-        while (!Input.GetMouseButtonUp(0))
+        if (currentCharacter != null)
         {
-            timeToRelease += Time.deltaTime * 6f;
-            yield return null;
+            Debug.Log("ChargeCalculation");
+            while (!Input.GetMouseButtonUp(0))
+            {
+                timeToRelease += Time.deltaTime * 6f;
+                yield return null;
+            }
+            charge = Mathf.Clamp(timeToRelease + 3, 3f, 20);
+            StartCoroutine(LaunchExplosiveCharged(_attack, charge));
+            timeToRelease = 0;
+            charge = 0;
         }
-        charge = Mathf.Clamp(timeToRelease + 3, 3f, 20);
-        StartCoroutine(LaunchAttackCharged(_attack, charge));
-        timeToRelease = 0;
-        charge = 0;
-
         yield return null;
     }
 
-    IEnumerator LaunchAttackCharged(Enums.ItemsList _attack, float _charge)
+    IEnumerator LaunchExplosiveCharged(Enums.ItemsList _attack, float _charge)
     {
         if (currentCharacter != null)
         {
-            if (_attack == Enums.ItemsList.RocketLauncher)
+            Debug.Log("LaunchAttackCharged");
+            if (_attack == Enums.ItemsList.RocketLauncher
+                || _attack == Enums.ItemsList.Grenade
+                || _attack == Enums.ItemsList.SaintGrenade
+                || _attack == Enums.ItemsList.Banana)
             {
                 Vector3 targetPos = MousePos();
                 targetPos.z = 0;
+                Vector3 startPos = new Vector3(currentCharacter.transform.position.x + 1.5f, currentCharacter.transform.position.y, 0);
 
-                Rocket rocket = PhotonNetwork.Instantiate(inv.RocketPrefab.name, currentCharacter.transform.position, Quaternion.identity).GetComponent<Rocket>();
-                rocket.shooter = currentCharacter.gameObject;
-                rocket.startPos = currentCharacter.transform.position;
-                rocket.targetPos = targetPos;
-                rocket.charge = _charge;
+                Explosive explosive;
+                explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_attack].name, startPos, Quaternion.identity).GetComponent<Explosive>();
+                explosive.shooter = currentCharacter.gameObject;
+                explosive.startPos = startPos;
+                explosive.targetPos = targetPos;
+                explosive.charge = _charge;
             }
         }
         yield return null;
     }
     IEnumerator LaunchAttack(Enums.ItemsList _attack)
     {
-        Debug.Log("LaunchAttack");
         if (currentCharacter != null)
         {
+            Debug.Log("LaunchAttack");
         }
+        yield return null;
+    }
+
+    IEnumerator UsingUtilitary(Enums.ItemsList itemsList)
+    { 
         yield return null;
     }
 }

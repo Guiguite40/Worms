@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: -2347525112904985843}
   - component: {fileID: -6348670088572722203}
   - component: {fileID: -7740811149794752224}
+  - component: {fileID: -162358379185623458}
+  - component: {fileID: 7493461735471018137}
   m_Layer: 0
   m_Name: Grenade
   m_TagString: Bullet
@@ -31,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 4377669944707833705}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -139,7 +141,7 @@ MonoBehaviour:
   circleSize: 30
   explodeVelocityNull: 0
   explodeAfterImpact: 0
-  delay: 3
+  delay: 6
 --- !u!114 &-6348670088572722203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,7 +160,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: -7740811149794752224}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -178,3 +181,36 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &-162358379185623458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4377669944707833705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac37a23ea060284cafc9d72df1f4126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  itemsList: 1
+  ammo: 1
+  selected: 0
+--- !u!114 &7493461735471018137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4377669944707833705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 973a7923e1236324b8669a07a38b4337, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shooter: {fileID: 0}
+  startPos: {x: 0, y: 0, z: 0}
+  targetPos: {x: 0, y: 0, z: 0}
+  speed: 1
+  charge: 1

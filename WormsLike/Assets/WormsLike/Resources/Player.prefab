@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7873787539829125246}
   - component: {fileID: 7873787539829125233}
+  - component: {fileID: -6890893481750907789}
   - component: {fileID: 5807082896305680187}
   - component: {fileID: 279911152031525321}
-  - component: {fileID: -6890893481750907789}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -59,6 +59,23 @@ MonoBehaviour:
   currentCharacter: {fileID: 0}
   charge: 0
   speed: 5
+--- !u!114 &-6890893481750907789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7873787539829125232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1bd904ef1111484bae51e5cb6406659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemPrefabs:
+  - {fileID: 2630013520201876711, guid: 184bb5867a503a443bad3cc771f8c4fd, type: 3}
+  - {fileID: 4377669944707833705, guid: 62a0c0b39dcaec94ab203f50d7542b2b, type: 3}
+  - {fileID: 4377669944707833705, guid: 69d94c92139039244b2a73ba66f1451e, type: 3}
+  - {fileID: 4377669944707833705, guid: edbeffd66d8b59b48b94e1a677e35b18, type: 3}
 --- !u!114 &5807082896305680187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,33 +115,3 @@ MonoBehaviour:
   sceneViewId: 2
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &-6890893481750907789
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7873787539829125232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1bd904ef1111484bae51e5cb6406659, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ui_Inventory: {fileID: 0}
-  items:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  RocketPrefab: {fileID: 2630013520201876711, guid: 184bb5867a503a443bad3cc771f8c4fd, type: 3}
