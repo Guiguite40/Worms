@@ -58,7 +58,12 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            //PlaceCharacter();
+            if (PhotonNetwork.IsMasterClient)
+                strTeam = "blue";
+            else
+                strTeam = "red";
+
+            PlaceSlime();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
@@ -167,18 +172,6 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
-    /*private void PlaceCharacter()
-    {
-        if (slimes.Count < slimeLimit)
-        {
-            //Debug.Log(slimes.Count);
-            slimes.Add(PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity).GetComponent<Slime>());
-            slimes[slimes.Count - 1].transform.parent = transform;
-            slimes[slimes.Count - 1].SetPos(MousePos());
-            slimes[slimes.Count - 1].team = team;
-        }
-    }*/
-
     public void PlaceSlime()
 	{
         if (slimes.Count < slimeLimit)
@@ -186,16 +179,16 @@ public class Player : MonoBehaviourPunCallbacks
             if (photonView.IsMine == true)
             {
                 GameObject newGoSlime = PhotonNetwork.Instantiate(slimePrefab.name, MousePos(), Quaternion.identity);
-                Slime newSlime = newGoSlime.GetComponent<Slime>();
-                newSlime.transform.parent = transform;
-                newSlime.SetPos(MousePos());
+                int id = newGoSlime.GetPhotonView().ViewID;
+                int parentId = gameObject.GetPhotonView().ViewID;
 
+                int myTeam = 0;
                 if (strTeam == "blue")
-                    newSlime.team = 1;
+                    myTeam = 1;
                 else if (strTeam == "red")
-                    newSlime.team = 2;
+                    myTeam = 2;
 
-                slimes.Add(newSlime);
+                photonView.RPC("SpawnSlime", RpcTarget.AllBuffered, id, parentId, MousePos().x, MousePos().y, myTeam);
             }
         }
         else
@@ -340,4 +333,21 @@ public class Player : MonoBehaviourPunCallbacks
     { 
         yield return null;
     }
+
+    [PunRPC]
+    public void SpawnSlime(int id, int parentId, float posX, float posY, int team)
+    {
+        GameObject newGoSlime = PhotonView.Find(id).gameObject;
+
+        Slime newSlime = newGoSlime.GetComponent<Slime>();
+        newSlime.transform.parent = PhotonView.Find(parentId).gameObject.transform;
+        newSlime.SetPos(new Vector3(posX, posY, 0f));
+        newSlime.team = team;
+        slimes.Add(newSlime);
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+    }
+
 }
