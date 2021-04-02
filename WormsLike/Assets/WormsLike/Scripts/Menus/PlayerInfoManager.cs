@@ -140,6 +140,11 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
         listTeamName.Add(teamName2);
         listTeamName.Add(teamName3);
         listTeamName.Add(teamName4);
+
+        for(int i = 0; i < 4; i++)
+		{
+            listTeamName[i].text = accountInfo.account[accountIndex].team[i].teamName;
+        }
     }
 
     void Update()
@@ -254,6 +259,8 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
         canvasModifyTeam.SetActive(false);
         canvasTeamManager.SetActive(false);
         canvasEnterTeamName.SetActive(false);
+
+        SavePlayerInfo();
     }
 
     public void OnApplicationQuit()
