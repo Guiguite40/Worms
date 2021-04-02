@@ -80,6 +80,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     float timerPlayerStart = 3f;
     float timerMovementsLeft = 3f;
     float timerSendInfo = 0.1f;
+    float timerPlayerTurn = 15f;
+    bool isPlayerTurnSetup = false;
+    int slimeIndex;
+    int slimeIndexMax;
 
     private void Awake()
     {
@@ -106,6 +110,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         gamemode = (int)PhotonNetwork.CurrentRoom.CustomProperties["gm"];
         nbPlayer = PhotonNetwork.CurrentRoom.PlayerCount;
         nbSlimePerPlayer = 12 / nbPlayer;
+        slimeIndexMax = nbSlimePerPlayer - 1;
 
         Debug.LogError("gamemode : " + gamemode);
         Debug.LogError("nb player : " + nbPlayer);
@@ -356,13 +361,40 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 							case PlayerPhaseState.ACTION:
                                 currentTurnStateText.text = "actions";
 
-                                /*if (IsLocalPlayerTurn())
+                                if(!isPlayerTurnSetup)
+								{
+                                    if (slimeIndex == slimeIndexMax)
+                                        slimeIndex = 0;
+
+                                    //GetCurrentPlayer().SetCharacterControlled(slimeIndex);
+                                    slimeIndex++;
+                                    isPlayerTurnSetup = true;
+								}
+                                else
+								{
+                                    /////DEBUG/////
+                                    if (IsLocalPlayerMaster())
+                                        SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, true);
+                                    break;
+                                }
+
+                                if (timerPlayerTurn <= 0)
                                 {
-                                    Debug.LogError("is the turn of this player");
-                                    GetCurrentPlayer().ControlCharacter();
-                                }*/
-                                if (IsLocalPlayerMaster())
-                                    SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, true);
+                                    timerPlayerTurn = 15f;
+                                    SendValueToMaster("timerPlayerTurn");
+                                    dataPos.text = timerPlayerTurn.ToString();
+                                    SetPlayerPhaseState(PlayerPhaseState.DAMAGE, true);
+                                }
+                                else
+                                {
+                                    if (IsLocalPlayerTurn())
+                                    {
+                                        timerPlayerTurn -= Time.deltaTime;
+                                        dataPos.text = timerPlayerTurn.ToString();
+                                        GetCurrentPlayer().ControlCharacter();
+                                    }
+                                }
+
                                 break;
 
 							case PlayerPhaseState.MOVEMENTS_LEFT:
@@ -435,6 +467,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     void ResetTimers()
 	{
         timerPlayerStart = 3f;
+        timerPlayerTurn = 15f;
+        isPlayerTurnSetup = false;
         timerMovementsLeft = 3f;
         dataPos.text = "all timers reset";
     }
@@ -508,6 +542,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             photonView.RPC("UpdateTimerPlayerStart", RpcTarget.MasterClient, timerPlayerStart);
         if (_valueToSend == "timerMovementsLeft")
             photonView.RPC("UpdateTimerMovementsLeft", RpcTarget.MasterClient, timerMovementsLeft);
+        if (_valueToSend == "timerPlayerTurn")
+            photonView.RPC("UpdateTimerPlayerTurn", RpcTarget.MasterClient, timerPlayerTurn);
     }
 
     void SendValueToMaster(string _valueToSend, string _sender)
@@ -628,6 +664,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         timerMovementsLeft = _value;
     }
 
+    [PunRPC]
+    void UpdateTimerPlayerTurn(float _value)
+    {
+        timerPlayerTurn = _value;
+    }
+
     public float GetTimer()
     {
         return timer;
@@ -658,6 +700,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 				{
                     stream.SendNext(timerPlayerStart);
 				}
+                if (playerPhaseState == PlayerPhaseState.ACTION)
+                {
+                    stream.SendNext(timerPlayerTurn);
+                }
                 if (playerPhaseState == PlayerPhaseState.MOVEMENTS_LEFT)
                 {
                     stream.SendNext(timerMovementsLeft);
@@ -687,6 +733,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 if (playerPhaseState == PlayerPhaseState.START_PHASE)
                 {
                     timerPlayerStart = (float)stream.ReceiveNext();
+                }
+                if (playerPhaseState == PlayerPhaseState.ACTION)
+                {
+                    timerPlayerTurn = (float)stream.ReceiveNext();
                 }
                 if (playerPhaseState == PlayerPhaseState.MOVEMENTS_LEFT)
                 {
