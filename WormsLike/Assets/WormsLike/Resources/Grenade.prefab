@@ -143,6 +143,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 0
   delay: 6
+  explosionPrefab: {fileID: 188940160595757274, guid: 73cab8d81c14ab34fbb06a15dc35195f, type: 3}
 --- !u!114 &-6348670088572722203
 MonoBehaviour:
   m_ObjectHideFlags: 0

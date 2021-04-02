@@ -35,8 +35,9 @@ namespace DTerrain
                 }
 
                 firstExplode = false;
+                StartCoroutine(gameObject.GetComponent<ExplosiveObjects>().Explosion());
                 Destroy(gameObject);
-                MyExplosiveObjects.myGo.Remove(gameObject);
+                ExplosiveObjects.myGo.Remove(gameObject);
             }
         }
     }

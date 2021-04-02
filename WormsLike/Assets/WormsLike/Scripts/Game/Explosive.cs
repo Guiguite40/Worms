@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class Explosive : MonoBehaviourPunCallbacks
+public class Explosive : MonoBehaviour
 {
     Rigidbody2D rb = null;
     [HideInInspector] public GameObject shooter = null;

@@ -105,7 +105,6 @@ MonoBehaviour:
   type: 1
   itemsList: 0
   ammo: 1
-  selected: 0
 --- !u!114 &-7206566954252768907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,6 +188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb0910f61045a04a95ef6dd605a6295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 188940160595757274, guid: 73cab8d81c14ab34fbb06a15dc35195f, type: 3}
   circleSize: 30
   explodeVelocityNull: 0
   explodeAfterImpact: 1

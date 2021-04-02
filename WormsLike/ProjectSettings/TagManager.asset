@@ -11,6 +11,7 @@ TagManager:
   - Jumpable
   - UI_Inventory
   - Rocket
+  - Explosion
   layers:
   - Default
   - TransparentFX
