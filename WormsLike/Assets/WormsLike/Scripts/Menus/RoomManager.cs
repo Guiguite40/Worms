@@ -80,8 +80,24 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
         //print("room gm index : " + PhotonNetwork.CurrentRoom.CustomProperties["gm"].ToString());
         if(inputFieldChatMessage.IsActive())
 		{
-            if (Input.GetKeyDown(KeyCode.Return))
-                OnClickSendMessage();
+            if (Input.GetKeyUp(KeyCode.Return))
+            {
+                if (inputFieldChatMessage.text == "" || inputFieldChatMessage.text == "\n")
+				{
+                    inputFieldChatMessage.text = "";
+                    return;
+                }
+                else
+                    OnClickSendMessage();
+
+                /*if (inputFieldChatMessage.text.Length < 1)
+                {
+                    inputFieldChatMessage.text = "";
+                    return;
+                }
+                else
+                    OnClickSendMessage();*/
+            }
         }
     }
 
