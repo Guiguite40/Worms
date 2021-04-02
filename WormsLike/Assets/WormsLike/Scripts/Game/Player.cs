@@ -207,36 +207,39 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void ControlCharacter()
     {
-        float move = 0;
-        foreach (var item in slimes)
+        if (photonView.IsMine == true)
         {
-            if (!item.isDead)
+            float move = 0;
+            foreach (var item in slimes)
             {
-                if (item.isControlled)
+                if (!item.isDead)
                 {
-                    move = Input.GetAxisRaw("Horizontal");
-                    if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
-                        item.rb.velocity = new Vector2(0, item.jumpForce);
+                    if (item.isControlled)
+                    {
+                        move = Input.GetAxisRaw("Horizontal");
+                        if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
+                            item.rb.velocity = new Vector2(0, item.jumpForce);
+                    }
+                    else
+                        if (move != 0)
+                        move = 0;
                 }
                 else
                     if (move != 0)
                     move = 0;
+
+                item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
+                item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
             }
-            else
-                if (move != 0)
-                move = 0;
-
-            item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
-            item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
-        }
 
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (currentCharacter != null)
+            if (Input.GetMouseButtonDown(0))
             {
-                timeToRelease = 0;
-                UseItem(itemSelected);
+                if (currentCharacter != null)
+                {
+                    timeToRelease = 0;
+                    UseItem(itemSelected);
+                }
             }
         }
     }
