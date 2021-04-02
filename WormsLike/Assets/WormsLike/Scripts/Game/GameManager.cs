@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     bool bluePointPlaced = false;
     bool redPointPlaced = false;
 
+    ///////////////
     float timerStart = 5f;
     List<Photon.Realtime.Player> listPlayerBlue = new List<Photon.Realtime.Player>();
     SortedList<int, Photon.Realtime.Player> sortedlistPlayerBlue = new SortedList<int, Photon.Realtime.Player>();
@@ -70,6 +71,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     List<Player> listPlayersRed = new List<Player>();
 
     Dictionary<string, bool> allSlimesPlaced = new Dictionary<string, bool>();
+    //////////////
+
+    float timerPlayerStart = 3f;
+    float timerMovementsLeft = 3f;
+
     private void Awake()
     {
         if (instance == null)
@@ -266,13 +272,6 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
                         SendValueToMaster("currentPlayer");
                         SendValueToMaster("currentPlayTeam");
-
-                        /*if (GetCurrentPlayer().GetAllSlimePlaced())
-                        {
-                            allSlimesPlaced[PhotonNetwork.LocalPlayer.NickName] = true;
-                            Debug.LogError("current player has all slime placed");
-                            SendValueToMaster("allSlimePlaced");
-                        }*/
                     }
 
                     if (GetCurrentPlayer().GetAllSlimePlaced())
@@ -292,33 +291,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                     }
                     SetGamePhaseState(GamePhaseState.GAME, true);
 				}
-
-                    /*if(IsLocalPlayerMaster())
-                    {
-                        bool allSlimeBluePlaced = false;
-                        for(int i = 0; i < listPlayersBlue.Count; i++)
-                        {
-                            if (!listPlayersBlue[i].GetAllSlimePlaced())
-                                return;
-                        }
-                        allSlimeBluePlaced = true;
-                        Debug.LogError("all slimes blue placed");
-                        bool allSlimeRedPlaced = false;
-                        for (int i = 0; i < listPlayersRed.Count; i++)
-                        {
-                            if (!listPlayersRed[i].GetAllSlimePlaced())
-                                return;
-                        }
-                        allSlimeRedPlaced = true;
-                        Debug.LogError("all slimes Red placed");
-                        if (allSlimeBluePlaced && allSlimeRedPlaced)
-                        {
-                            Debug.LogError("all slimes placed");
-                            SetGamePhaseState(GamePhaseState.GAME, true);
-                        }
-                    }*/
-
-                    break;
+                break;
 
 			case GamePhaseState.GAME:
                 currentGameStateText.text = "game";
@@ -331,16 +304,49 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 						{
 							case PlayerPhaseState.START_PHASE:
                                 currentTurnStateText.text = "start";
+                                if(timerPlayerStart <= 0)
+								{
+                                    timerPlayerStart = 3f;
+                                    dataPos.text = timerPlayerStart.ToString();
+                                    SetPlayerPhaseState(PlayerPhaseState.ACTION, true);
+								}
+                                else
+								{
+                                    timerPlayerStart -= Time.deltaTime;
+                                    dataPos.text = timerPlayerStart.ToString();
+                                    SendValueToMaster("timerPlayerStart");
+								}
+
                                 break;
+
 							case PlayerPhaseState.ACTION:
                                 currentTurnStateText.text = "actions";
+
+                                SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, true);
                                 break;
+
 							case PlayerPhaseState.MOVEMENTS_LEFT:
                                 currentTurnStateText.text = "movements left";
+
+                                if (timerMovementsLeft <= 0)
+                                {
+                                    timerMovementsLeft = 3f;
+                                    dataPos.text = timerMovementsLeft.ToString();
+                                    SetPlayerPhaseState(PlayerPhaseState.DAMAGE, true);
+                                }
+                                else
+                                {
+                                    timerMovementsLeft -= Time.deltaTime;
+                                    dataPos.text = timerMovementsLeft.ToString();
+                                    SendValueToMaster("timerMovementsLeft");
+                                }
                                 break;
+
 							case PlayerPhaseState.DAMAGE:
                                 currentTurnStateText.text = "damage";
+
                                 break;
+
 							default:
 								break;
 						}
@@ -348,7 +354,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 						break;
 					case TurnState.MAP:
                         currentTurnStateText.text = "map";
+
+
                         break;
+
 					default:
 						break;
 				}
@@ -414,6 +423,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (_valueToSend == "allSlimePlaced")
             photonView.RPC("UpdateAllSlimePlaced", RpcTarget.MasterClient, GetCurrentPlayer().GetAllSlimePlaced(), PhotonNetwork.LocalPlayer.NickName);
+
+        if (_valueToSend == "timerPlayerStart")
+            photonView.RPC("UpdateTimerPlayerStart", RpcTarget.MasterClient, timerPlayerStart);
+        if (_valueToSend == "timerMovementsLeft")
+            photonView.RPC("UpdateTimerMovementsLeft", RpcTarget.MasterClient, timerMovementsLeft);
     }
 
     void SendValueToMaster(string _valueToSend, string _sender)
@@ -431,6 +445,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (_valueToSend == "gameState")
             photonView.RPC("UpdateCurrentGameState", _target, gamePhaseState);
+        if (_valueToSend == "playerState")
+            photonView.RPC("UpdateCurrentPlayerState", _target, playerPhaseState);
 
         if (_valueToSend == "bluePointPlaced")
             photonView.RPC("UpdateBluePointPlaced", _target, bluePointPlaced);
@@ -452,6 +468,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (_valueToSend == "gameState")
             SendValue("gameState", RpcTarget.OthersBuffered);
+        if (_valueToSend == "playerState")
+            SendValue("playerState", RpcTarget.OthersBuffered);
 
         if (_valueToSend == "bluePointPlaced")
             SendValue("bluePointPlaced", RpcTarget.OthersBuffered);
@@ -480,6 +498,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     void UpdateCurrentGameState(GamePhaseState _gameState)
     {
         gamePhaseState = _gameState;
+    }
+
+    [PunRPC]
+    void UpdateCurrentPlayerState(PlayerPhaseState _playerState)
+    {
+        playerPhaseState = _playerState;
     }
 
     [PunRPC]
@@ -512,6 +536,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         allSlimesPlaced[_nickname] = _state;
     }
 
+    [PunRPC]
+    void UpdateTimerPlayerStart(float _value)
+    {
+        timerPlayerStart = _value;
+    }
+
+    [PunRPC]
+    void UpdateTimerMovementsLeft(float _value)
+    {
+        timerMovementsLeft = _value;
+    }
+
     public float GetTimer()
     {
         return timer;
@@ -536,6 +572,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                     stream.SendNext(startTeamIndex);
                     stream.SendNext(strStartTeam);
                 }
+
+                if(playerPhaseState == PlayerPhaseState.START_PHASE)
+				{
+                    stream.SendNext(timerPlayerStart);
+				}
             }
         }
         else
@@ -556,6 +597,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                     strStartTeam = (string)stream.ReceiveNext();
 
                     dataPos.text = timerStart.ToString();
+                }
+                if (playerPhaseState == PlayerPhaseState.START_PHASE)
+                {
+                    timerPlayerStart = (float)stream.ReceiveNext();
                 }
             }
         }
@@ -663,6 +708,13 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         gamePhaseState = _state;
         if (_sendToOther)
             MasterSendToOthers("gameState");
+    }
+
+    void SetPlayerPhaseState(PlayerPhaseState _state, bool _sendToOther)
+    {
+        playerPhaseState = _state;
+        if (_sendToOther)
+            MasterSendToOthers("playerState");
     }
 
     static int SortByNickname(Photon.Realtime.Player p1, Photon.Realtime.Player p2)
