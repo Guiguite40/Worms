@@ -29,6 +29,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] float speed = 0;
 
     float timeToRelease = 0;
+    bool isAllSlimePlaced = false;
 
     // Start is called before the first frame update
     void Start()
@@ -191,10 +192,20 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
         else
-            Debug.LogError("all slimes of a player is set");
+            isAllSlimePlaced = true;
     }
 
-    private void ControlCharacter()
+    public bool GetAllSlimePlaced()
+    {
+        return isAllSlimePlaced;
+    }
+
+    public void SetAllSlimePlaced(bool _state)
+    {
+        isAllSlimePlaced = _state;
+    }
+
+    public void ControlCharacter()
     {
         float move = 0;
         foreach (var item in slimes)
