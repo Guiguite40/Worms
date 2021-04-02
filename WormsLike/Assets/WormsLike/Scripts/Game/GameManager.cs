@@ -235,6 +235,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
                 if (IsLocalPlayerTurn())
                 {
+                    itsHisTurnText.text = "true";
                     SetCurrentPlayerPlayingName();
                     if (Input.GetKeyUp(KeyCode.P))
                     {
@@ -254,6 +255,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                         SendValueToMaster("currentPlayTeam");
                     }
                 }
+                else
+                    itsHisTurnText.text = "false";
                 break;
 
 			case GamePhaseState.SLIME_PLACEMENT:
@@ -266,6 +269,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
                 if (IsLocalPlayerTurn())
                 {
+                    itsHisTurnText.text = "true";
                     //Debug.LogError("is the turn of this player");
                     SetCurrentPlayerPlayingName();
                     if (Input.GetMouseButtonUp(0))
@@ -285,6 +289,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                         SendValueToMaster("allSlimePlaced", PhotonNetwork.LocalPlayer.NickName);
                     }
                 }
+                else
+                    itsHisTurnText.text = "false";
 
                 if (IsLocalPlayerMaster())
 				{
@@ -320,8 +326,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                 currentTurnStateText.text = "start";
                                 if(timerPlayerStart <= 0)
 								{
-                                    SendValueToMaster("timerPlayerStart");
                                     timerPlayerStart = 3f;
+                                    SendValueToMaster("timerPlayerStart");
                                     dataPos.text = timerPlayerStart.ToString();
                                     //if (IsLocalPlayerMaster())
                                         SetPlayerPhaseState(PlayerPhaseState.ACTION, true);
@@ -355,8 +361,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
                                 if (timerMovementsLeft <= 0)
                                 {
-                                    SendValueToMaster("timerMovementsLeft");
                                     timerMovementsLeft = 3f;
+                                    SendValueToMaster("timerMovementsLeft");
                                     dataPos.text = timerMovementsLeft.ToString();
                                     //if (IsLocalPlayerMaster())
                                         SetPlayerPhaseState(PlayerPhaseState.DAMAGE, true);
@@ -386,6 +392,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                 {
                                     SpawnCrate();
                                     SetNextPlayerNTeamTurn();
+                                    SendValueToMaster("currentPlayer");
+                                    SendValueToMaster("currentPlayTeam");
                                     SetPlayerPhaseState(PlayerPhaseState.START_PHASE, true);
                                 }
                                 break;
