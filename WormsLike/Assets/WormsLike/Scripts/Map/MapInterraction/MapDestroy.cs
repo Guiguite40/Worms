@@ -70,6 +70,8 @@ namespace DTerrain
                 {
                     if (PhotonNetwork.IsMasterClient)
                         photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
+                    else
+                        photonView.RPC("MapSyncClient", RpcTarget.MasterClient, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
 
                     ExplosiveObjectsPosition.RemoveAt(i);
                     ExplosiveObjectsSize.RemoveAt(i);
@@ -181,6 +183,12 @@ namespace DTerrain
         public void MapSync(Vector3 pos, int size)
         {
             DestroyMapCircle(pos, size);
+        }
+        
+        [PunRPC]
+        public void MapSyncClient(Vector3 pos, int size)
+        {
+            photonView.RPC("MapSync", RpcTarget.AllBuffered, pos, size);
         }
 
         [PunRPC]
