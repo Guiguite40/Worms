@@ -397,7 +397,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                             case PlayerPhaseState.MAP:
                                 currentTurnStateText.text = "map";
                                 ResetTimers();
-                                if (IsLocalPlayerTurn())
+                                if (/*IsLocalPlayerTurn()*/ IsLocalPlayerMaster())
                                 {
                                     SpawnCrate();
                                     SetNextPlayerNTeamTurn();
