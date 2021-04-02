@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class Player : MonoBehaviourPunCallbacks
@@ -24,6 +25,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] Slime currentCharacter = null;
 
     [SerializeField] float charge = 0;
+    [SerializeField] float chargeMax = 10;
     [SerializeField] float speed = 0;
 
     float timeToRelease = 0;
@@ -49,6 +51,14 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
         ControlCharacter();
+
+
+        if (currentCharacter != null)
+        {
+            currentCharacter.charge = charge;
+            if (currentCharacter.chargeMax != chargeMax)
+                currentCharacter.chargeMax = chargeMax;
+        }
     }
 
     void Debuging()
@@ -97,20 +107,20 @@ public class Player : MonoBehaviourPunCallbacks
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             SelectWeapon(Enums.ItemsList.Banana);
-        }    
-       else if (Input.GetKeyDown(KeyCode.Alpha5))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha5))
         {
             SelectWeapon(Enums.ItemsList.AirStrike);
-        }       
-       else if (Input.GetKeyDown(KeyCode.Alpha6))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha6))
         {
             SelectWeapon(Enums.ItemsList.Teleportation);
-        }       
-       else if (Input.GetKeyDown(KeyCode.Alpha7))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             SelectWeapon(Enums.ItemsList.JetPack);
-        }       
-       else if (Input.GetKeyDown(KeyCode.Alpha8))
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             SelectWeapon(Enums.ItemsList.FlameThrower);
         }
@@ -185,7 +195,6 @@ public class Player : MonoBehaviourPunCallbacks
             item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
         }
 
-
         if (Input.GetMouseButtonDown(0))
         {
             if (currentCharacter != null)
@@ -240,10 +249,13 @@ public class Player : MonoBehaviourPunCallbacks
             Debug.Log("ChargeCalculation");
             while (!Input.GetMouseButtonUp(0))
             {
-                timeToRelease += Time.deltaTime * 6f;
+                timeToRelease += Time.deltaTime * 5f;
+                charge = timeToRelease;
+                if (charge > chargeMax)
+                    break;
                 yield return null;
             }
-            charge = Mathf.Clamp(timeToRelease + 3, 3f, 20);
+            charge = Mathf.Clamp(timeToRelease + 3, 3f, chargeMax);
             StartCoroutine(LaunchExplosiveCharged(_attack, charge));
             timeToRelease = 0;
             charge = 0;
@@ -292,14 +304,14 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (currentCharacter != null)
         {
-             if (_utilitary == Enums.ItemsList.AirStrike)
+            if (_utilitary == Enums.ItemsList.AirStrike)
             {
                 Vector3 startPos = MousePos();
                 startPos.y = 25;
                 startPos.z = 0;
 
                 Explosive utilitary = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_utilitary].name, startPos, Quaternion.identity).GetComponent<Explosive>();
-                utilitary.startPos = startPos;                
+                utilitary.startPos = startPos;
             }
         }
         yield return null;

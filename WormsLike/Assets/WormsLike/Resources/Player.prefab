@@ -58,6 +58,7 @@ MonoBehaviour:
   damageBoxPrefab: {fileID: 1363721780923859905, guid: a9ff06611642eff4b9fa622152286a24, type: 3}
   currentCharacter: {fileID: 0}
   charge: 0
+  chargeMax: 10
   speed: 5
 --- !u!114 &-6890893481750907789
 MonoBehaviour:
