@@ -79,6 +79,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     float timerPlayerStart = 3f;
     float timerMovementsLeft = 3f;
+    float timerSendInfo = 0.1f;
 
     private void Awake()
     {
@@ -181,17 +182,25 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (IsLocalPlayerMaster())
         {
-            MasterSendToOthers("currentPlayer");
-            MasterSendToOthers("currentPlayTeam");
-            MasterSendToOthers("gameState");
+            if (timerSendInfo <= 0)
+            {
+                MasterSendToOthers("currentPlayer");
+                MasterSendToOthers("currentPlayTeam");
+                //MasterSendToOthers("gameState");
 
-            MasterSendToOthers("bluePointPlaced");
-            MasterSendToOthers("redPointPlaced");
+                if (gamePhaseState == GamePhaseState.POINT_PLACEMENT)
+                {
+                    MasterSendToOthers("bluePointPlaced");
+                    MasterSendToOthers("redPointPlaced");
+                }
 
-            MasterSendToOthers("bluePlayerIndex");
-            MasterSendToOthers("redPlayerIndex");
+                MasterSendToOthers("bluePlayerIndex");
+                MasterSendToOthers("redPlayerIndex");
+                timerSendInfo = 0.1f;
+            }
+            else
+                timerSendInfo -= Time.deltaTime;
         }
-        //Debug.LogError("current player : " + currentlocalPlayerPlayingName);
 
         /*Debug.LogError("blue list 0 : " + listPlayerBlue[0].NickName);
         Debug.LogError("blue list 1 : " + listPlayerBlue[1].NickName);
@@ -633,6 +642,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 stream.SendNext(currentlocalPlayerPlayingName);
                 stream.SendNext(currentPlayTeam);
                 stream.SendNext(gamePhaseState);
+                stream.SendNext(playerPhaseState);
                 stream.SendNext(currentBluePlayerIndex);
                 stream.SendNext(currentRedPlayerIndex);
                 stream.SendNext(allSlimesPlaced);
@@ -661,6 +671,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 currentlocalPlayerPlayingName = (string)stream.ReceiveNext();
                 currentPlayTeam = (string)stream.ReceiveNext();
                 gamePhaseState = (GamePhaseState)stream.ReceiveNext();
+                playerPhaseState = (PlayerPhaseState)stream.ReceiveNext();
                 currentBluePlayerIndex = (int)stream.ReceiveNext();
                 currentRedPlayerIndex = (int)stream.ReceiveNext();
                 allSlimesPlaced = (Dictionary<string, bool>)stream.ReceiveNext();
