@@ -212,7 +212,7 @@ public class Player : MonoBehaviourPunCallbacks
         isAllSlimePlaced = _state;
     }
 
-    private void ControlCharacter()
+    public void ControlCharacter()
     {
         float move = 0;
         foreach (var item in slimes)
