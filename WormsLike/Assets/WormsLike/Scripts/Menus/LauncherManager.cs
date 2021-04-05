@@ -39,6 +39,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     string nickname = "";
     int accountColorIndex = -1;
     bool fileEmpty = false;
+    bool hasNoLine = false;
     bool[] accountCreationStep;
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     List<InputField> listInputFieldsLogin = new List<InputField>();
@@ -164,7 +165,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     public void OnClickLogin()
 	{
         if (LoginAccountIsExist())
-            Connect();
+            Connect(false);
         else
             return;
 	}
@@ -172,7 +173,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     public void OnClickSignUp()
 	{
         if (AccountCreation())
-            Connect();
+            Connect(true);
         else
         {
             Debug.LogError("account creation failed");
@@ -180,9 +181,9 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         }
     }
 
-    void Connect()
-	{
-        if(!fileEmpty)
+    void Connect(bool _isSignUp)
+    {
+        if (!_isSignUp)
             PhotonNetwork.LocalPlayer.NickName = nickname;
         else
             PhotonNetwork.LocalPlayer.NickName = textSignUpPseudo.text;
@@ -214,6 +215,11 @@ public class LauncherManager : MonoBehaviourPunCallbacks
                         accountCreationStep[0] = true;
                     }
                 }
+            }
+            else
+            {
+                accountCreationStep[0] = true;
+                hasNoLine = true;
             }
         }
         else
@@ -266,7 +272,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     void WriteFileNewAccount()
 	{
         string strToWrite = textSignUpPseudo.text + ":" + textSignUpMdp.text + "/" + accountColorIndex;
-        if(!fileEmpty)
+        if (!fileEmpty && !hasNoLine)
             File.AppendAllText(accountsFilePath, "\n" + strToWrite);
         else
             File.AppendAllText(accountsFilePath, strToWrite);
