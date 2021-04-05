@@ -341,6 +341,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                 if(timerPlayerStart <= 0)
 								{
                                     timerPlayerStart = 3f;
+                                    ResetTimers();
                                     SendValueToMaster("timerPlayerStart");
                                     dataPos.text = timerPlayerStart.ToString();
                                     //if (IsLocalPlayerMaster())
@@ -374,8 +375,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                 if (timerPlayerTurn <= 0)
                                 {
                                     timerPlayerTurn = 20f;
+                                    ResetTimers();
                                     SendValueToMaster("timerPlayerTurn");
                                     dataPos.text = timerPlayerTurn.ToString();
+                                    Debug.LogError("timer player turn 0, switched to map");
                                     SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //DAMAGE //true
                                 }
                                 else
@@ -416,10 +419,12 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                     GetCurrentPlayer().UnSetCharacterControlled();
                                     GetCurrentPlayer().SetHasAttacked(false);
                                     timerMovementsLeft = 3f;
+                                    ResetTimers();
                                     SendValueToMaster("timerMovementsLeft");
                                     dataPos.text = timerMovementsLeft.ToString();
                                     //if (IsLocalPlayerMaster())
-                                        SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); // DAMAGE //true
+                                    Debug.LogError("timer movements left = 0, switched to map");
+                                    SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); // DAMAGE //true
                                 }
                                 else
                                 {
