@@ -272,6 +272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   textPlayerName: {fileID: 6812128029853489183}
   textMessage: {fileID: 5383294256661299832}
+  img: {fileID: 3772877862817571609}
   sizeY: 100
   rectTransform: {fileID: 8178558854652999435}
   rectTransformText: {fileID: 5064406406444858110}
@@ -486,15 +487,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9716981, g: 0.88177055, b: 0.3254272, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

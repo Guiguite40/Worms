@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 {
 	[SerializeField] private Text textName;
+	[SerializeField] private Image img;
 
 	int oldTeam;
 	int currentTeam;
@@ -32,6 +33,7 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
     {
 		currentTeam = (int)RoomManager.TeamState.SPECTATE;
 		oldTeam = currentTeam;
+		img.sprite = ProfilePictureManager.instance.GetPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
 		UpdateTeam();
 	}
 

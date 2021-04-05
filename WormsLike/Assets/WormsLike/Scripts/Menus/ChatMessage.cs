@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
-public class ChatMessage : MonoBehaviour
+public class ChatMessage : MonoBehaviourPunCallbacks
 {
     [SerializeField] private Text textPlayerName;
     [SerializeField] private Text textMessage;
+    [SerializeField] private Image img;
     [SerializeField] private float sizeY = 100;
     [SerializeField] private RectTransform rectTransform;
     [SerializeField] private RectTransform rectTransformText;
@@ -15,6 +17,7 @@ public class ChatMessage : MonoBehaviour
     void Start()
     {
         UpdateSize();
+        img.sprite = ProfilePictureManager.instance.GetPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
     }
 
     void Update()
