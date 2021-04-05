@@ -886,6 +886,21 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             SendValueToMaster("playerState");
     }
 
+    public void OnClickReturnToMenu()
+	{
+        PhotonNetwork.LoadLevel("Lobby");
+
+        /*if(IsLocalPlayerMaster())
+		{
+            PhotonNetwork.LoadLevel("Lobby");
+        }
+        else
+		{
+            PhotonNetwork.Disconnect();
+            PhotonNetwork.LoadLevel("MainMenu");
+        }*/
+    }
+
     static int SortByNickname(Photon.Realtime.Player p1, Photon.Realtime.Player p2)
     {
         return p1.NickName.CompareTo(p2.NickName);
