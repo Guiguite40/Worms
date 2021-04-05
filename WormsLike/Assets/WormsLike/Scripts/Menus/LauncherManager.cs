@@ -189,6 +189,11 @@ public class LauncherManager : MonoBehaviourPunCallbacks
             PhotonNetwork.LocalPlayer.NickName = textSignUpPseudo.text;
 
         PhotonNetwork.ConnectUsingSettings();
+
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        hash.Add("pp", accountColorIndex);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
         PhotonNetwork.LoadLevel("MainMenu");
     }
 

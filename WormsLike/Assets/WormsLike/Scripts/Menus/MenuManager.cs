@@ -30,6 +30,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text textErrorMdpToEnter;
 
     [SerializeField] private Text textPseudo;
+    [SerializeField] private Image spriteImg;
 
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     bool isGamePrivate = false;
@@ -61,6 +62,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         canvasEnterPassword.SetActive(false);
 
         textPseudo.text = PhotonNetwork.LocalPlayer.NickName;
+        SetProfilPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
         textErrorMdpToEnter.text = "";
         SetupPlayerCustomProperties();
     }
@@ -71,6 +73,11 @@ public class MenuManager : MonoBehaviourPunCallbacks
         if(canvasCreateGame.activeSelf)
             UpdateButtonNbPlayer();
     }
+
+    void SetProfilPicture(int _index)
+	{
+        spriteImg.sprite = ProfilePictureManager.instance.GetPicture(_index);
+	}
 
     void SetupCustomProperty()
     {

@@ -532,6 +532,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 48272259}
   m_CullTransparentMesh: 1
+--- !u!1 &60208575
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 60208577}
+  - component: {fileID: 60208576}
+  m_Layer: 0
+  m_Name: SpriteManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &60208576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60208575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5beb4f1a8c5e4245a8bcf162f5f3003, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spSlime1: {fileID: -4319994875215175222, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
+  spSlime2: {fileID: -8275196888917352216, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
+  spSlime3: {fileID: -5944981847795454106, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
+  spSlime4: {fileID: -6039128370661825274, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
+  spSlime5: {fileID: -430504365516349845, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
+  spSlime6: {fileID: -3654646329434164883, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
+--- !u!4 &60208577
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60208575}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &69412059
 GameObject:
   m_ObjectHideFlags: 0
@@ -2234,16 +2283,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.36320752, g: 0.9568576, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -2323,7 +2372,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &338792368
 GameObject:
@@ -5562,6 +5611,7 @@ MonoBehaviour:
   panelServers: {fileID: 844482948}
   textErrorMdpToEnter: {fileID: 1572355813}
   textPseudo: {fileID: 1775460371}
+  spriteImg: {fileID: 290113467}
 --- !u!4 &810353872
 Transform:
   m_ObjectHideFlags: 0
