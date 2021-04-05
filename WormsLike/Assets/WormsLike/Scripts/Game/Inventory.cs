@@ -15,7 +15,7 @@ public class Inventory : MonoBehaviourPunCallbacks
         foreach (GameObject item in itemPrefabs)
         {
             items.Add(item.GetComponent<Item>().itemsList, Instantiate(item.GetComponent<Item>()));
-        }                
+        }
     }
 
     // Update is called once per frame

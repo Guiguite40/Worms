@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 namespace DTerrain
 {
-    public class MyExplosiveObjects : MonoBehaviour
+    public class ExplosiveObjects : MonoBehaviour
     {
+        [Header("Explosion prefab")]
+        [SerializeField] GameObject explosionPrefab = null;
         [Header("Paramétres")]
         [SerializeField]
         protected int circleSize = 0;
@@ -14,7 +17,7 @@ namespace DTerrain
         [SerializeField]
         protected bool explodeAfterImpact = false;
         [SerializeField]
-        protected float delay = 0f;       
+        protected float delay = 0f;
         private float timer = 0f;
 
         private Rigidbody2D rb = null;
@@ -25,7 +28,7 @@ namespace DTerrain
         {
             rb = gameObject.GetComponent<Rigidbody2D>();
 
-            timer = 0f;          
+            timer = 0f;
             myGo.Add(gameObject);
         }
 
@@ -47,6 +50,8 @@ namespace DTerrain
                     }
                     else
                     {
+                        Debug.Log("Explosion : after impact");
+                        StartCoroutine(Explosion());
                         Destroy(gameObject);
                         myGo.Remove(gameObject);
                     }
@@ -55,10 +60,14 @@ namespace DTerrain
 
             if (explodeVelocityNull == true)
             {
-                if (rb.velocity == new Vector2(0f,0f))
+                if (rb.velocity == new Vector2(0f, 0f))
                 {
+                    Debug.Log("Explosion : on velocity null");
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
+                    StartCoroutine(Explosion());
+                    Debug.Log(gameObject.name);
+
                     Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }
@@ -71,12 +80,21 @@ namespace DTerrain
             {
                 if (explodeAfterImpact == true && explodeVelocityNull == false)
                 {
+                    Debug.Log("Explosion : on trigger");
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
+                    StartCoroutine(Explosion());
                     Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }
             }
+        }
+
+        public IEnumerator Explosion()
+        {
+            Debug.Log("Explosion");
+            GameObject explosion = PhotonNetwork.Instantiate(explosionPrefab.name, gameObject.transform.position, Quaternion.identity);
+            yield return null;
         }
     }
 }

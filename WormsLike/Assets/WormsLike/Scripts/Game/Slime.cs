@@ -23,11 +23,15 @@ public class Slime : MonoBehaviourPunCallbacks
     private Vector2 dir = Vector2.right;
     public float move = 0;
 
+    /******** CHARGE ********/
+    [SerializeField] public Image charge_ImgBG = null;
+    [SerializeField] public Image chargeImg = null;
+    public float charge = 0;
+    public float chargeMax = 0;
+
     /******** HEALTH ********/
     [Header("Health")]
     [SerializeField] private Text healthText = null;
-    [SerializeField] private Image healthBar = null;
-    [SerializeField] private Image healthBarDiff = null;
     public int maxHealth = 0;
     [SerializeField] private float curHealth = 0;
     float healthDisplayed = 0;
@@ -63,6 +67,7 @@ public class Slime : MonoBehaviourPunCallbacks
     {
         Flip();
         Health_Management();
+        Charge_Management();
 
         /* DEBUG */
         if (isControlled)
@@ -79,10 +84,10 @@ public class Slime : MonoBehaviourPunCallbacks
     public void SetMove(float _move)
     {
         if (!isDead)
-        if (isControlled && !isDead)
-        {
-            move = _move;
-        }
+            if (isControlled && !isDead)
+            {
+                move = _move;
+            }
     }
 
     public void Jump(bool _value)
@@ -141,23 +146,23 @@ public class Slime : MonoBehaviourPunCallbacks
         healthDisplayed = Mathf.Lerp(healthDisplayed, curHealth, healthCd);
         if (healthCd >= 1f)
             healthCd = 0f;
-        healthBar.fillAmount = curHealth / maxHealth;
-        healthBarDiff.fillAmount = healthDisplayed / maxHealth;
+        //healthBar.fillAmount = curHealth / maxHealth;
+        //healthBarDiff.fillAmount = healthDisplayed / maxHealth;
 
         /* COLORS */
-        if (healthDisplayed >= 35 && healthBar.color != greenColor)
-        {
-            healthBar.color = greenColor;
-        }
-        else if (healthDisplayed < 35 && healthBar.color != redColor)
-        {
-            healthBar.color = redColor;
-        }
-        // Health diff color
-        if (healthBarDiff.color != orangeColor)
-        {
-            healthBarDiff.color = orangeColor;
-        }
+        //if (healthDisplayed >= 35 && healthBar.color != greenColor)
+        //{
+        //    healthBar.color = greenColor;
+        //}
+        //else if (healthDisplayed < 35 && healthBar.color != redColor)
+        //{
+        //    healthBar.color = redColor;
+        //}
+        //// Health diff color
+        //if (healthBarDiff.color != orangeColor)
+        //{
+        //    healthBarDiff.color = orangeColor;
+        //}
 
         if (curHealth <= 0)
         {
@@ -171,6 +176,20 @@ public class Slime : MonoBehaviourPunCallbacks
             if (curHealth > maxHealth)
                 curHealth = maxHealth;
         }
+    }
+
+    private void Charge_Management()
+    {
+        if (charge > 0)
+        {
+            charge_ImgBG.gameObject.SetActive(true);
+        }
+        else if (charge <= 0)
+        {
+            charge_ImgBG.gameObject.SetActive(false);
+        }
+
+        chargeImg.fillAmount = charge / chargeMax;
     }
 
     private void FallDamage()
