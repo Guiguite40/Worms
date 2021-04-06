@@ -7,5 +7,6 @@ public class Item : MonoBehaviour
 {
     public Enums.Type type = 0;
     public Enums.ItemsList itemsList = 0;
+    public bool infiniteAmmo = false;
     public int ammo = 0;
 }

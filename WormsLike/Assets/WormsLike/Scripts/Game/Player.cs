@@ -86,20 +86,6 @@ public class Player : MonoBehaviourPunCallbacks
             damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
         }
 
-        if (Input.GetKeyDown(KeyCode.Keypad1))
-        {
-            SetCharacterControlled(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            SetCharacterControlled(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Keypad3))
-        {
-            SetCharacterControlled(2);
-        }
-
-
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             SelectWeapon(Enums.ItemsList.RocketLauncher);
@@ -126,11 +112,19 @@ public class Player : MonoBehaviourPunCallbacks
         }
         else if (Input.GetKeyDown(KeyCode.Alpha7))
         {
-            SelectWeapon(Enums.ItemsList.JetPack);
+            SelectWeapon(Enums.ItemsList.Parachute);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha8))
         {
-            SelectWeapon(Enums.ItemsList.FlameThrower);
+            SelectWeapon(Enums.ItemsList.JetPack);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            SelectWeapon(Enums.ItemsList.Shield);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            SelectWeapon(Enums.ItemsList.SkipTurn);
         }
     }
 
@@ -268,11 +262,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
-        if (inv.items[_itemSelected].ammo > 0)
+        if (inv.IsItemUseable(_itemSelected))
         {
-            if (inv.items[_itemSelected].itemsList != Enums.ItemsList.RocketLauncher
-                && inv.items[_itemSelected].itemsList != Enums.ItemsList.Grenade)
-                inv.items[_itemSelected].ammo--;
+            inv.UseItem(_itemSelected);
 
             switch (inv.items[_itemSelected].type)
             {

@@ -7,7 +7,6 @@ using Photon.Pun;
 public class Inventory : MonoBehaviourPunCallbacks
 {
     [SerializeField] public List<GameObject> itemPrefabs = null;
-
     public Dictionary<Enums.ItemsList, Item> items = new Dictionary<Enums.ItemsList, Item>();
 
     private void Start()
@@ -16,6 +15,26 @@ public class Inventory : MonoBehaviourPunCallbacks
         {
             items.Add(item.GetComponent<Item>().itemsList, Instantiate(item.GetComponent<Item>()));
         }
+    }
+
+    public void AddItem(Enums.ItemsList _item, int nb)
+    {
+        items[_item].ammo += nb;
+    }
+
+    public void UseItem(Enums.ItemsList _item)
+    {
+        if (!items[_item].infiniteAmmo)
+            if (items[_item].ammo > 0)
+                items[_item].ammo -= 1;
+    }
+
+    public bool IsItemUseable(Enums.ItemsList _item)
+    {
+        if (items[_item].infiniteAmmo || items[_item].ammo > 0)
+            return true;
+        else
+            return false;
     }
 
     // Update is called once per frame

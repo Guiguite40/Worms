@@ -19,12 +19,7 @@ public class Enums
         Teleportation,
         Parachute,
         JetPack,
-        FlameThrower,
         Shield,
-        IronBar,
-        Touret,
-        NotAvailable1,
-        NotAvailable2,
         SkipTurn
     }
 }
