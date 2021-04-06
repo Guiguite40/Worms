@@ -55,13 +55,13 @@ namespace DTerrain
                 RightPosX = RightMapKiller.transform.position.x;
 
                 PosY = LeftMapKiller.transform.position.y;
-                
+
                 photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
             }
 
             if (mapTurn == true)
             {
-                MapMortSubite();               
+                MapMortSubite();
             }
 
             if (ExplosiveObjectsPosition.Count() != 0)
@@ -183,8 +183,19 @@ namespace DTerrain
         public void MapSync(Vector3 pos, int size)
         {
             DestroyMapCircle(pos, size);
+
+            Vector2 myPos = pos;
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(myPos, size);
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.gameObject.tag == "Player")
+                {
+                    hitCollider.gameObject.GetComponent<Rigidbody2D>().AddExplosionForce(300f, pos, size);
+                    Debug.LogError("Damage");
+                }
+            }
         }
-        
+
         [PunRPC]
         public void MapSyncClient(Vector3 pos, int size)
         {

@@ -76,7 +76,7 @@ namespace DTerrain
 
         public void OnTriggerEnter2D(Collider2D collision)
         {
-            if (!collision.gameObject.CompareTag("Bullet") && !collision.gameObject.CompareTag("Player"))
+            if (!collision.gameObject.CompareTag("Bullet"))
             {
                 if (explodeAfterImpact == true && explodeVelocityNull == false)
                 {
