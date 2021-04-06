@@ -18,6 +18,8 @@ namespace DTerrain
         protected bool explodeAfterImpact = false;
         [SerializeField]
         protected float delay = 0f;
+        [SerializeField]
+        protected float damage = 0f;
         private float timer = 0f;
 
         private Rigidbody2D rb = null;
@@ -43,6 +45,7 @@ namespace DTerrain
                 {
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
+                    MapDestroy.ExplosiveObjectsDamage.Add(damage);
 
                     if (gameObject.name.Contains("FirstBanana"))
                     {
@@ -65,6 +68,7 @@ namespace DTerrain
                     Debug.Log("Explosion : on velocity null");
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
+                    MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
                     Debug.Log(gameObject.name);
 
@@ -83,6 +87,7 @@ namespace DTerrain
                     Debug.Log("Explosion : on trigger");
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
+                    MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
                     Destroy(gameObject);
                     myGo.Remove(gameObject);

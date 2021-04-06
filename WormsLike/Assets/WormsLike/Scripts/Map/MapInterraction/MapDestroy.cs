@@ -24,6 +24,7 @@ namespace DTerrain
 
         public static List<Vector3> ExplosiveObjectsPosition = new List<Vector3>();
         public static List<int> ExplosiveObjectsSize = new List<int>();
+        public static List<float> ExplosiveObjectsDamage = new List<float>();
 
         [Header("MapDeathMove")]
         [SerializeField]
@@ -69,9 +70,9 @@ namespace DTerrain
                 for (int i = 0; i < ExplosiveObjectsPosition.Count(); i++)
                 {
                     if (PhotonNetwork.IsMasterClient)
-                        photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
+                        photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
                     else
-                        photonView.RPC("MapSyncClient", RpcTarget.MasterClient, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i]);
+                        photonView.RPC("MapSyncClient", RpcTarget.MasterClient, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
 
                     ExplosiveObjectsPosition.RemoveAt(i);
                     ExplosiveObjectsSize.RemoveAt(i);
@@ -180,26 +181,37 @@ namespace DTerrain
         }
 
         [PunRPC]
-        public void MapSync(Vector3 pos, int size)
+        public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
         {
             DestroyMapCircle(pos, size);
 
             Vector2 myPos = pos;
             Collider2D[] hitColliders = Physics2D.OverlapCircleAll(myPos, size);
-            foreach (var hitCollider in hitColliders)
+            foreach (Collider2D hitCollider in hitColliders)
             {
                 if (hitCollider.gameObject.tag == "Player")
                 {
                     hitCollider.gameObject.GetComponent<Rigidbody2D>().AddExplosionForce(300f, pos, size);
-                    Debug.LogError("Damage");
+
+                    Collider2D[] fullSize = Physics2D.OverlapCircleAll(myPos, size);
+                    Collider2D[] midSize = Physics2D.OverlapCircleAll(myPos, size / 2);
+                    Collider2D[] smallSize = Physics2D.OverlapCircleAll(myPos, size / 4);
+
+                    if (smallSize.Contains(hitCollider))
+                        hitCollider.gameObject.GetComponent<Slime>().Hit(dmg);
+                    else if(midSize.Contains(hitCollider))
+                        hitCollider.gameObject.GetComponent<Slime>().Hit(dmg / 2);
+                    else if (fullSize.Contains(hitCollider))
+                        hitCollider.gameObject.GetComponent<Slime>().Hit(dmg / 4);
+
                 }
             }
         }
 
         [PunRPC]
-        public void MapSyncClient(Vector3 pos, int size)
+        public void MapSyncClient(Vector3 pos, int size, float dmg = 0.0F)
         {
-            photonView.RPC("MapSync", RpcTarget.AllBuffered, pos, size);
+            photonView.RPC("MapSync", RpcTarget.AllBuffered, pos, size, dmg);
         }
 
         [PunRPC]
