@@ -2155,7 +2155,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1845204667}
   m_HandleRect: {fileID: 1845204666}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3649,6 +3649,7 @@ MonoBehaviour:
   chatMessage: {fileID: 7149967967249137942, guid: fe52d1f6c3a2bf447bdf33648b7b8858, type: 3}
   inputFieldChatMessage: {fileID: 1821286633}
   buttonStart: {fileID: 1637781747}
+  grid: {fileID: 209196795}
 --- !u!4 &1673142669
 Transform:
   m_ObjectHideFlags: 0
