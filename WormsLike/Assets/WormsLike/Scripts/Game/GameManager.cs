@@ -83,6 +83,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     float timerPlayerTurn = 20f;
     float timerMap = 3f;
     bool isPlayerTurnSetup = false;
+    bool crateSpawned = false;
     int slimeIndex;
     int slimeIndexMax;
 
@@ -466,7 +467,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
                                 if (timerMap <= 0)
                                 {
-                                    SpawnCrate();
+                                    //SpawnCrate();
                                     SetNextPlayerNTeamTurn();
                                     SendValueToMaster("currentPlayer");
                                     SendValueToMaster("currentPlayTeam");
@@ -479,6 +480,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                 {
                                     if (IsLocalPlayerTurn())
                                     {
+                                        if(!crateSpawned)
+										{
+                                            SpawnCrate();
+                                            crateSpawned = true;
+										}
                                         timerMap -= Time.deltaTime;
                                         dataPos.text = timerMap.ToString();
                                     }
@@ -537,7 +543,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         isPlayerTurnSetup = false;
         timerMovementsLeft = 3f;
         if (_resetTimerMap)
+        {
             timerMap = 3f;
+            crateSpawned = false;
+        }
+
         dataPos.text = "all timers reset";
     }
 
