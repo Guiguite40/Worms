@@ -83,6 +83,12 @@ public class UI : MonoBehaviour
         }
     }
 
+    public void OpenInventory()
+    {
+        if (!inventoryOpened)
+            inventoryOpened = true;
+    }
+
     public void CloseInventory()
     {
         if (inventoryOpened)
