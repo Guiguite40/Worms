@@ -38,6 +38,8 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     string accountsFilePath = "";
     string nickname = "";
     int accountColorIndex = -1;
+    bool fileEmpty = false;
+    bool hasNoLine = false;
     bool[] accountCreationStep;
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     List<InputField> listInputFieldsLogin = new List<InputField>();
@@ -70,6 +72,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 		{
             print("accounts file not exist, create one...");
             File.Create(accountsFilePath);
+            fileEmpty = true;
         }
 
         OpenCanvas("choose");
@@ -162,7 +165,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     public void OnClickLogin()
 	{
         if (LoginAccountIsExist())
-            Connect();
+            Connect(false);
         else
             return;
 	}
@@ -170,37 +173,62 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     public void OnClickSignUp()
 	{
         if (AccountCreation())
-            Connect();
+            Connect(true);
         else
+        {
+            Debug.LogError("account creation failed");
             return;
+        }
     }
 
-    void Connect()
-	{
-        PhotonNetwork.LocalPlayer.NickName = nickname;
+    void Connect(bool _isSignUp)
+    {
+        if (!_isSignUp)
+            PhotonNetwork.LocalPlayer.NickName = nickname;
+        else
+            PhotonNetwork.LocalPlayer.NickName = textSignUpPseudo.text;
+
         PhotonNetwork.ConnectUsingSettings();
+
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        hash.Add("pp", accountColorIndex);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+
         PhotonNetwork.LoadLevel("MainMenu");
     }
 
     bool AccountCreation()
 	{
-        string[] line = File.ReadAllLines(accountsFilePath);
-
-        for (int i = 0; i < line.Length; i++)
+        if (!fileEmpty)
         {
-            string pseudo = line[i].Substring(0, line[i].IndexOf(':'));
-            if (textSignUpPseudo.text == pseudo)
+            string[] line = File.ReadAllLines(accountsFilePath);
+
+            if (line.Length > 0)
             {
-                textSignUpPseudoError.gameObject.SetActive(true);
-                accountCreationStep[0] = false;
-                break;
+                for (int i = 0; i < line.Length; i++)
+                {
+                    string pseudo = line[i].Substring(0, line[i].IndexOf(':'));
+                    if (textSignUpPseudo.text == pseudo)
+                    {
+                        textSignUpPseudoError.gameObject.SetActive(true);
+                        accountCreationStep[0] = false;
+                        break;
+                    }
+                    else
+                    {
+                        textSignUpPseudoError.gameObject.SetActive(false);
+                        accountCreationStep[0] = true;
+                    }
+                }
             }
             else
             {
-                textSignUpPseudoError.gameObject.SetActive(false);
                 accountCreationStep[0] = true;
-            }    
+                hasNoLine = true;
+            }
         }
+        else
+            accountCreationStep[0] = true;
 
         if (textSignUpMdp.text != textSignUpMdpConfirm.text)
         {
@@ -226,6 +254,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 
         if (accountCreationStep[0] && accountCreationStep[1] && accountCreationStep[2])
         {
+            //PhotonNetwork.LocalPlayer.NickName = textSignUpPseudo.text;
             WriteFileNewAccount();
             return true;
         }
@@ -248,7 +277,10 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     void WriteFileNewAccount()
 	{
         string strToWrite = textSignUpPseudo.text + ":" + textSignUpMdp.text + "/" + accountColorIndex;
-        File.AppendAllText(accountsFilePath, "\n" + strToWrite);
+        if (!fileEmpty && !hasNoLine)
+            File.AppendAllText(accountsFilePath, "\n" + strToWrite);
+        else
+            File.AppendAllText(accountsFilePath, strToWrite);
     }
 
 	bool LoginAccountIsExist()

@@ -31,6 +31,7 @@ public class Player : MonoBehaviourPunCallbacks
 
     float timeToRelease = 0;
     bool isAllSlimePlaced = false;
+    bool hasAttacked = false;
 
     // Start is called before the first frame update
     void Start()
@@ -149,7 +150,7 @@ public class Player : MonoBehaviourPunCallbacks
         isTurn = _turnState;
     }
 
-    private void SetCharacterControlled(int _index)
+    public void SetCharacterControlled(int _index)
     {
         currentCharacter = null;
         if (slimes.Count - 1 >= _index)
@@ -171,7 +172,7 @@ public class Player : MonoBehaviourPunCallbacks
         itemSelected = _item;
     }
 
-    private void UnSetCharacterControlled()
+    public void UnSetCharacterControlled()
     {
         currentCharacter = null;
         foreach (var item in slimes)
@@ -241,16 +242,29 @@ public class Player : MonoBehaviourPunCallbacks
                 item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
             }
 
-            if (Input.GetMouseButtonDown(0))
+            if (!hasAttacked)
             {
-                if (currentCharacter != null)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    timeToRelease = 0;
-                    UseItem(itemSelected);
+                    if (currentCharacter != null)
+                    {
+                        timeToRelease = 0;
+                        UseItem(itemSelected);
+                    }
                 }
             }
         }
     }
+
+    public bool GetHasAttacked()
+	{
+        return hasAttacked;
+	}
+
+    public void SetHasAttacked(bool _state)
+	{
+        hasAttacked = _state;
+	}
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
@@ -277,6 +291,8 @@ public class Player : MonoBehaviourPunCallbacks
                 default:
                     break;
             }
+
+            hasAttacked = true;
         }
         else
         {

@@ -205,7 +205,11 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
         if (!canvasPlayerInfo.activeSelf)
             canvasPlayerInfo.SetActive(true);
         else
+        {
             canvasPlayerInfo.SetActive(false);
+            canvasModifyTeam.SetActive(false);
+            canvasTeamManager.SetActive(false);
+        }
     }
 
     public void OnClickTeamCharacter()
@@ -223,6 +227,7 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
     {
         print("current team selected : " + currentTeamSelected);
         canvasTeamManager.SetActive(true);
+        canvasModifyTeam.SetActive(false);
 
         for (int i = 0; i < 6; i++)
         {
@@ -261,6 +266,11 @@ public class PlayerInfoManager : MonoBehaviourPunCallbacks
         canvasEnterTeamName.SetActive(false);
 
         SavePlayerInfo();
+    }
+
+    public void OnClickCloseTeamManager()
+	{
+        canvasTeamManager.SetActive(false);
     }
 
     public void OnApplicationQuit()

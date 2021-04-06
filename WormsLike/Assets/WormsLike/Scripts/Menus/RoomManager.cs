@@ -122,7 +122,10 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     void UpdateParameters()
 	{
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
             UpdateButtons();
+            buttonStart.interactable = true;
+        }
         else
         {
             if (!isClientButtonSetup)
@@ -344,5 +347,11 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
     public void LaunchGame()
     {
         PhotonNetwork.LoadLevel("TurnSystemTest");
+    }
+
+    public void OnClickReturnToMenu()
+	{
+        PhotonNetwork.Disconnect();
+        PhotonNetwork.LoadLevel("MainMenu");
     }
 }
