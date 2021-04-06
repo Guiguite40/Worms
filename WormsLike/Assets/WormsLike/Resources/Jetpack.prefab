@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
-  itemsList: 6
+  itemsList: 7
   invImage: {fileID: 4681246902660288667, guid: 7007e9303b4df3447ba9475067d22a15, type: 3}
   infiniteAmmo: 0
   ammo: 5

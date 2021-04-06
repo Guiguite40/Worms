@@ -55,7 +55,6 @@ public class Player : MonoBehaviourPunCallbacks
         }
         ControlCharacter();
 
-
         if (currentCharacter != null)
         {
             currentCharacter.charge = charge;
