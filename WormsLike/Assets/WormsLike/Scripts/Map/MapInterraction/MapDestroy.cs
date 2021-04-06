@@ -80,6 +80,25 @@ namespace DTerrain
             }
         }
 
+        private void ZoneDamage(Vector3 pos, int size)
+        {
+            Vector2 myPos = new Vector2(pos.x, pos.y);
+            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(myPos, size);
+            foreach (Collider2D hitCollider in hitColliders)
+            {
+                if (hitCollider.gameObject.tag == "Player")
+                {
+                    //hitCollider.gameObject.GetComponent<Rigidbody2D>().AddExplosionForce(300f, pos, size);
+
+                    Vector3 dist = pos - hitCollider.gameObject.transform.position;
+
+                    Debug.LogError(dist);
+
+                    //hitCollider.gameObject.GetComponent<Slime>().Hit(dmg);
+                }
+            }
+        }
+
         private void DestroyMapCircle(Vector3 position, int size)
         {
             destroyCircle = Shape.GenerateShapeCircle(size);
@@ -184,28 +203,7 @@ namespace DTerrain
         public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
         {
             DestroyMapCircle(pos, size);
-
-            Vector2 myPos = pos;
-            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(myPos, size);
-            foreach (Collider2D hitCollider in hitColliders)
-            {
-                if (hitCollider.gameObject.tag == "Player")
-                {
-                    hitCollider.gameObject.GetComponent<Rigidbody2D>().AddExplosionForce(300f, pos, size);
-
-                    Collider2D[] fullSize = Physics2D.OverlapCircleAll(myPos, size);
-                    Collider2D[] midSize = Physics2D.OverlapCircleAll(myPos, size / 2);
-                    Collider2D[] smallSize = Physics2D.OverlapCircleAll(myPos, size / 4);
-
-                    if (smallSize.Contains(hitCollider))
-                        hitCollider.gameObject.GetComponent<Slime>().Hit(dmg);
-                    else if(midSize.Contains(hitCollider))
-                        hitCollider.gameObject.GetComponent<Slime>().Hit(dmg / 2);
-                    else if (fullSize.Contains(hitCollider))
-                        hitCollider.gameObject.GetComponent<Slime>().Hit(dmg / 4);
-
-                }
-            }
+            ZoneDamage(pos, size);
         }
 
         [PunRPC]
