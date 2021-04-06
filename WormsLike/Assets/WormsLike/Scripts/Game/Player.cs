@@ -184,6 +184,11 @@ public class Player : MonoBehaviourPunCallbacks
         }
     }
 
+    public Slime GetCurrentCharacter()
+	{
+        return currentCharacter;
+	}
+
     public void PlaceSlime()
     {
         if (slimes.Count < slimeLimit)
