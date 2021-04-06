@@ -61,6 +61,15 @@ public class Player : MonoBehaviourPunCallbacks
             if (currentCharacter.chargeMax != chargeMax)
                 currentCharacter.chargeMax = chargeMax;
         }
+
+        if (UI.Instance.inventoryOpened)
+        {
+            UI.Instance.ActualizeAmmoCount(inv);
+        }
+
+
+        if (itemSelected != UI.Instance.GetItemSelected())
+            itemSelected = UI.Instance.GetItemSelected();
     }
 
     void Debuging()
@@ -85,46 +94,46 @@ public class Player : MonoBehaviourPunCallbacks
             damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SelectWeapon(Enums.ItemsList.RocketLauncher);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SelectWeapon(Enums.ItemsList.Grenade);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SelectWeapon(Enums.ItemsList.SaintGrenade);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SelectWeapon(Enums.ItemsList.Banana);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SelectWeapon(Enums.ItemsList.AirStrike);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            SelectWeapon(Enums.ItemsList.Teleportation);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            SelectWeapon(Enums.ItemsList.Parachute);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            SelectWeapon(Enums.ItemsList.JetPack);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            SelectWeapon(Enums.ItemsList.Shield);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            SelectWeapon(Enums.ItemsList.SkipTurn);
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha1))
+        //{
+        //    SelectWeapon(Enums.ItemsList.RocketLauncher);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha2))
+        //{
+        //    SelectWeapon(Enums.ItemsList.Grenade);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha3))
+        //{
+        //    SelectWeapon(Enums.ItemsList.SaintGrenade);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha4))
+        //{
+        //    SelectWeapon(Enums.ItemsList.Banana);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha5))
+        //{
+        //    SelectWeapon(Enums.ItemsList.AirStrike);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha6))
+        //{
+        //    SelectWeapon(Enums.ItemsList.Teleportation);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha7))
+        //{
+        //    SelectWeapon(Enums.ItemsList.Parachute);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha8))
+        //{
+        //    SelectWeapon(Enums.ItemsList.JetPack);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha9))
+        //{
+        //    SelectWeapon(Enums.ItemsList.Shield);
+        //}
+        //else if (Input.GetKeyDown(KeyCode.Alpha0))
+        //{
+        //    SelectWeapon(Enums.ItemsList.SkipTurn);
+        //}
     }
 
     public void SetupPlayerState(string _currentTeam, int _nbCharacterLimit)
