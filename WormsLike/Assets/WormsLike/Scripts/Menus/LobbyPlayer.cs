@@ -35,6 +35,7 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 	void Start()
     {
 		currentTeam = (int)RoomManager.TeamState.SPECTATE;
+		//currentTeam = (int)RoomManager.TeamState.BLUE;
 		oldTeam = currentTeam;
 		//img.sprite = ProfilePictureManager.instance.GetPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
 		UpdateTeam();
