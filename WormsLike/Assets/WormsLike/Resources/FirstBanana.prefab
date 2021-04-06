@@ -349,6 +349,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   itemsList: 3
+  invImage: {fileID: 1011397100307417246, guid: 7007e9303b4df3447ba9475067d22a15, type: 3}
+  infiniteAmmo: 0
   ammo: 100
   selected: 0
 --- !u!114 &-4774223281259950722
