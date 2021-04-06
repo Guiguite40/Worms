@@ -12,6 +12,7 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 	int oldTeam;
 	int currentTeam;
 	string name;
+	int ppIndex;
 
 	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 	{
@@ -20,11 +21,13 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 			int team = currentTeam;
 			stream.SendNext(team);
 			stream.SendNext(name);
+			stream.SendNext((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
 		}
 		else
 		{
 			currentTeam = (int)stream.ReceiveNext();
 			name = (string)stream.ReceiveNext();
+			ppIndex = (int)stream.ReceiveNext();
 			UpdateInfo();
 		}
 	}
@@ -33,7 +36,7 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
     {
 		currentTeam = (int)RoomManager.TeamState.SPECTATE;
 		oldTeam = currentTeam;
-		img.sprite = ProfilePictureManager.instance.GetPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
+		//img.sprite = ProfilePictureManager.instance.GetPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
 		UpdateTeam();
 	}
 
@@ -46,6 +49,7 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 	void UpdateInfo()
 	{
 		textName.text = name;
+		img.sprite = ProfilePictureManager.instance.GetPicture(ppIndex);
 		if (currentTeam != oldTeam)
 		{
 			UpdateTeam();
@@ -69,9 +73,10 @@ public class LobbyPlayer : MonoBehaviourPunCallbacks, IPunObservable
 		UpdateTeam();
 	}
 
-	public void SetupPlayerInfo(string _name)
+	public void SetupPlayerInfo(string _name, int _ppIndex)
 	{
 		name = _name;
 		textName.text = name;
+		img.sprite = ProfilePictureManager.instance.GetPicture(_ppIndex);
 	}
 }

@@ -60,11 +60,14 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
         PhotonNetwork.AutomaticallySyncScene = true;
         playerMax = PhotonNetwork.CurrentRoom.MaxPlayers;
 
+        //GameObject playerToCopy = RoomPlayer;
+        //playerToCopy.GetComponent<LobbyPlayer>().SetupPlayerInfo(PhotonNetwork.LocalPlayer.NickName);
+
         currentPlayer = PhotonNetwork.Instantiate("RoomPlayer", Vector3.zero, Quaternion.identity);
         currentPlayer.transform.parent = GameObject.Find("BgSpectate").transform;
         currentPlayer.transform.localScale = new Vector3(1, 1, 1);
 
-        currentPlayer.GetComponent<LobbyPlayer>().SetupPlayerInfo(PhotonNetwork.LocalPlayer.NickName);
+        currentPlayer.GetComponent<LobbyPlayer>().SetupPlayerInfo(PhotonNetwork.LocalPlayer.NickName, (int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
 
         ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
         hash.Add("t", playerTeam);
@@ -324,16 +327,16 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnClickSendMessage()
 	{
-        photonView.RPC("CreateChatMessage", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName, inputFieldChatMessage.text);
+        photonView.RPC("CreateChatMessage", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName, inputFieldChatMessage.text, (int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
         inputFieldChatMessage.text = "";
         inputFieldChatMessage.ActivateInputField();
     }
 
     [PunRPC]
-    void CreateChatMessage(string _senderName, string _message)
+    void CreateChatMessage(string _senderName, string _message, int _ppIndex)
 	{
         GameObject newMessage = Instantiate(chatMessage);
-        newMessage.GetComponent<ChatMessage>().SetupMessage(_senderName, _message);
+        newMessage.GetComponent<ChatMessage>().SetupMessage(_senderName, _message, _ppIndex);
         newMessage.transform.parent = chatMessageParent.transform;
         newMessage.transform.localScale = new Vector3(1, 1, 1);
         listChatMessage.Add(newMessage);
