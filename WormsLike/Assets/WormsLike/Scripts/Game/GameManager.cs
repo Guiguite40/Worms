@@ -369,8 +369,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                             dataPos.text = timerPlayerStart.ToString();
 
                                             //Set cam zoom on slime
-                                            //CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
-                                            //SendValueToMaster("camera");
+                                            GetCurrentPlayer().SetCharacterControlled(slimeIndex);
+                                            CameraManager.instance.MoveCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
+                                            SendValueToMaster("camera");
 
                                             //SendValueToMaster("timerPlayerStart");
                                         }

@@ -79,4 +79,22 @@ public class CameraManager : MonoBehaviour
         Camera.main.transform.position = basePos;
         Camera.main.orthographicSize = baseSize;
     }
+
+    public void MoveCamOnTarget(Vector3 _pos)
+	{
+        Vector3 targetPos = new Vector3(_pos.x, _pos.y, Camera.main.transform.position.z);
+        if ((targetPos - Camera.main.transform.position).magnitude > 0.5f)
+        {
+            Camera.main.transform.position += (targetPos - Camera.main.transform.position) * targetCamSpeed * Time.deltaTime;
+        }
+        else
+            Camera.main.transform.position = targetPos;
+
+        if (Camera.main.orthographicSize > 6)
+        {
+            Camera.main.orthographicSize -= 4 * Time.deltaTime;
+        }
+        else
+            Camera.main.orthographicSize = 6f;
+    }
 }
