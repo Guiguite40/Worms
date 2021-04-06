@@ -302,6 +302,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
                 print("account find : pseudo : " + pseudo + ", mdp : " + mdp + ", img index : " + imgIndex.ToString());
                 DesactiveErrorLogin();
                 nickname = pseudo;
+                accountColorIndex = imgIndex;
                 return true;
             }
         }

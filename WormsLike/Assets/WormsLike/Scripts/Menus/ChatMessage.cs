@@ -17,7 +17,7 @@ public class ChatMessage : MonoBehaviourPunCallbacks
     void Start()
     {
         UpdateSize();
-        img.sprite = ProfilePictureManager.instance.GetPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
+        //img.sprite = ProfilePictureManager.instance.GetPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
     }
 
     void Update()
@@ -26,11 +26,12 @@ public class ChatMessage : MonoBehaviourPunCallbacks
         UpdateSize();
     }
 
-    public void SetupMessage(string _playerName, string _message)
+    public void SetupMessage(string _playerName, string _message, int _ppIndex)
 	{
         textPlayerName.text = _playerName;
         textMessage.text = _message;
-	}
+        img.sprite = ProfilePictureManager.instance.GetPicture(_ppIndex);
+    }
 
     void UpdateSize()
 	{
