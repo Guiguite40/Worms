@@ -93,47 +93,6 @@ public class Player : MonoBehaviourPunCallbacks
             GameObject damageBox = Instantiate(damageBoxPrefab);
             damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
         }
-
-        //if (Input.GetKeyDown(KeyCode.Alpha1))
-        //{
-        //    SelectWeapon(Enums.ItemsList.RocketLauncher);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha2))
-        //{
-        //    SelectWeapon(Enums.ItemsList.Grenade);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha3))
-        //{
-        //    SelectWeapon(Enums.ItemsList.SaintGrenade);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha4))
-        //{
-        //    SelectWeapon(Enums.ItemsList.Banana);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha5))
-        //{
-        //    SelectWeapon(Enums.ItemsList.AirStrike);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha6))
-        //{
-        //    SelectWeapon(Enums.ItemsList.Teleportation);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha7))
-        //{
-        //    SelectWeapon(Enums.ItemsList.Parachute);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha8))
-        //{
-        //    SelectWeapon(Enums.ItemsList.JetPack);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha9))
-        //{
-        //    SelectWeapon(Enums.ItemsList.Shield);
-        //}
-        //else if (Input.GetKeyDown(KeyCode.Alpha0))
-        //{
-        //    SelectWeapon(Enums.ItemsList.SkipTurn);
-        //}
     }
 
     public void SetupPlayerState(string _currentTeam, int _nbCharacterLimit)
@@ -251,12 +210,16 @@ public class Player : MonoBehaviourPunCallbacks
 
             if (!hasAttacked)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (UI.Instance.inventoryOpened == false)
                 {
-                    if (currentCharacter != null)
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        timeToRelease = 0;
-                        UseItem(itemSelected);
+                        Debug.Log("Coucou");
+                        if (currentCharacter != null)
+                        {
+                            timeToRelease = 0;
+                            UseItem(itemSelected);
+                        }
                     }
                 }
             }
@@ -338,11 +301,6 @@ public class Player : MonoBehaviourPunCallbacks
         if (currentCharacter != null)
         {
             Debug.Log("LaunchAttackCharged");
-            //if (_item == Enums.ItemsList.RocketLauncher
-            //    || _item == Enums.ItemsList.Grenade
-            //    || _item == Enums.ItemsList.SaintGrenade
-            //    || _item == Enums.ItemsList.Banana)
-            //{
             Vector3 targetPos = MousePos();
             targetPos.z = 0;
             Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
@@ -357,7 +315,6 @@ public class Player : MonoBehaviourPunCallbacks
             explosive.startPos = startPos;
             explosive.targetPos = targetPos;
             explosive.charge = _charge;
-            //}
         }
         yield return null;
     }

@@ -6,7 +6,7 @@ using Photon.Pun;
 
 public class UI : MonoBehaviour
 {
-    [SerializeField] GameObject inv = null;
+    [SerializeField] public GameObject inv = null;
     [SerializeField] public List<Button> itemButtons = new List<Button>();
 
     private static UI instance = null;
