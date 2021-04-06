@@ -81,7 +81,9 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     float timerMovementsLeft = 3f;
     float timerSendInfo = 0.1f;
     float timerPlayerTurn = 20f;
+    float timerMap = 3f;
     bool isPlayerTurnSetup = false;
+    bool crateSpawned = false;
     int slimeIndex;
     int slimeIndexMax;
 
@@ -338,44 +340,53 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                     itsHisTurnText.text = "false";
 
                                 currentTurnStateText.text = "start";
-                                if(timerPlayerStart <= 0)
-								{
-                                    timerPlayerStart = 3f;
-                                    ResetTimers();
-                                    SendValueToMaster("timerPlayerStart");
-                                    dataPos.text = timerPlayerStart.ToString();
-                                    //if (IsLocalPlayerMaster())
-                                        SetPlayerPhaseState(PlayerPhaseState.ACTION, false, true); //true
-								}
+
+                                if (!isPlayerTurnSetup)
+                                {
+                                    if (slimeIndex == slimeIndexMax)
+                                        slimeIndex = 0;
+
+                                    //GetCurrentPlayer().SetCharacterControlled(slimeIndex);
+                                    //slimeIndex++;
+                                    isPlayerTurnSetup = true;
+                                }
                                 else
-								{
-                                    if (IsLocalPlayerTurn())
+                                {
+                                    if (timerPlayerStart <= 0)
                                     {
-                                        timerPlayerStart -= Time.deltaTime;
+                                        timerPlayerStart = 3f;
+                                        ResetTimers(true);
+                                        SendValueToMaster("timerPlayerStart");
                                         dataPos.text = timerPlayerStart.ToString();
-                                        //SendValueToMaster("timerPlayerStart");
+                                        //if (IsLocalPlayerMaster())
+                                        SetPlayerPhaseState(PlayerPhaseState.ACTION, false, true); //true
                                     }
-								}
+                                    else
+                                    {
+                                        if (IsLocalPlayerTurn())
+                                        {
+                                            timerPlayerStart -= Time.deltaTime;
+                                            dataPos.text = timerPlayerStart.ToString();
+
+                                            //Set cam zoom on slime
+                                            GetCurrentPlayer().SetCharacterControlled(slimeIndex);
+                                            CameraManager.instance.MoveCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
+                                            SendValueToMaster("camera");
+
+                                            //SendValueToMaster("timerPlayerStart");
+                                        }
+                                    }
+                                }
 
                                 break;
 
 							case PlayerPhaseState.ACTION:
                                 currentTurnStateText.text = "actions";
-
-                                /*if(!isPlayerTurnSetup)
-								{
-                                    if (slimeIndex == slimeIndexMax)
-                                        slimeIndex = 0;
-
-                                    GetCurrentPlayer().SetCharacterControlled(slimeIndex);
-                                    slimeIndex++;
-                                    isPlayerTurnSetup = true;
-								}*/
                                 
                                 if (timerPlayerTurn <= 0)
                                 {
                                     timerPlayerTurn = 20f;
-                                    ResetTimers();
+                                    ResetTimers(true);
                                     SendValueToMaster("timerPlayerTurn");
                                     dataPos.text = timerPlayerTurn.ToString();
                                     Debug.LogError("timer player turn 0, switched to map");
@@ -387,24 +398,23 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                     {
                                         if (!isPlayerTurnSetup)
                                         {
-                                            if (slimeIndex == slimeIndexMax)
-                                                slimeIndex = 0;
-
                                             GetCurrentPlayer().SetCharacterControlled(slimeIndex);
                                             slimeIndex++;
                                             isPlayerTurnSetup = true;
                                         }
+
+                                        timerPlayerTurn -= Time.deltaTime;
+                                        dataPos.text = timerPlayerTurn.ToString();
+                                        if (!GetCurrentPlayer().GetHasAttacked())
+                                        {
+                                            GetCurrentPlayer().ControlCharacter();
+                                            CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
+                                            SendValueToMaster("camera");
+                                        }
                                         else
                                         {
-                                            timerPlayerTurn -= Time.deltaTime;
-                                            dataPos.text = timerPlayerTurn.ToString();
-                                            if (!GetCurrentPlayer().GetHasAttacked())
-                                                GetCurrentPlayer().ControlCharacter();
-                                            else
-                                            {
-                                                //GetCurrentPlayer().SetHasAttacked(true);
-                                                SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, false, true); //true
-                                            }
+                                            //GetCurrentPlayer().SetHasAttacked(true);
+                                            SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, false, true); //true
                                         }
                                     }
                                 }
@@ -419,12 +429,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                     GetCurrentPlayer().UnSetCharacterControlled();
                                     GetCurrentPlayer().SetHasAttacked(false);
                                     timerMovementsLeft = 3f;
-                                    ResetTimers();
+                                    ResetTimers(true);
                                     SendValueToMaster("timerMovementsLeft");
                                     dataPos.text = timerMovementsLeft.ToString();
                                     //if (IsLocalPlayerMaster())
                                     Debug.LogError("timer movements left = 0, switched to map");
-                                    SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); // DAMAGE //true
+                                    //SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); // DAMAGE //true
+                                    if (IsLocalPlayerMaster())
+                                    {
+                                        SetPlayerPhaseState(PlayerPhaseState.MAP, true, false);
+                                    }
+                                    else
+                                        SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true
                                 }
                                 else
                                 {
@@ -433,6 +449,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                         timerMovementsLeft -= Time.deltaTime;
                                         dataPos.text = timerMovementsLeft.ToString();
                                         GetCurrentPlayer().ControlCharacter();
+                                        CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
+                                        SendValueToMaster("camera");
                                         //SendValueToMaster("timerMovementsLeft");
                                     }
                                 }
@@ -447,8 +465,39 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
                             case PlayerPhaseState.MAP:
                                 currentTurnStateText.text = "map";
-                                ResetTimers();
-                                if (IsLocalPlayerTurn() /*IsLocalPlayerMaster()*/)
+
+                                if (timerMap <= 0)
+                                {
+                                    //SpawnCrate();
+                                    SetNextPlayerNTeamTurn();
+                                    SendValueToMaster("currentPlayer");
+                                    SendValueToMaster("currentPlayTeam");
+                                    timerMap = 3f;
+                                    ResetTimers(true);
+                                    dataPos.text = timerMap.ToString();
+                                    SetPlayerPhaseState(PlayerPhaseState.START_PHASE, false, true);
+                                }
+                                else
+                                {
+                                    if (IsLocalPlayerTurn())
+                                    {
+                                        if(!crateSpawned)
+										{
+                                            SpawnCrate();
+                                            crateSpawned = true;
+										}
+                                        timerMap -= Time.deltaTime;
+                                        dataPos.text = timerMap.ToString();
+                                    }
+                                    ResetTimers(false);
+                                    CameraManager.instance.ResetCam();
+                                    GetCurrentPlayer().UnSetCharacterControlled();
+                                }
+
+                                /*ResetTimers();
+                                CameraManager.instance.ResetCam();
+                                GetCurrentPlayer().UnSetCharacterControlled();
+                                if (IsLocalPlayerTurn())
                                 {
                                     SpawnCrate();
                                     SetNextPlayerNTeamTurn();
@@ -460,10 +509,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                     }
                                     else
                                         SetPlayerPhaseState(PlayerPhaseState.START_PHASE, false, true); //true
-                                }
-
-                                //if(IsLocalPlayerMaster())
-                                    //SpawnCrate();
+                                }*/
                                 break;
 
 
@@ -491,12 +537,18 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 		}
 	}
 
-    void ResetTimers()
+    void ResetTimers(bool _resetTimerMap)
 	{
         timerPlayerStart = 3f;
         timerPlayerTurn = 20f;
         isPlayerTurnSetup = false;
         timerMovementsLeft = 3f;
+        if (_resetTimerMap)
+        {
+            timerMap = 3f;
+            crateSpawned = false;
+        }
+
         dataPos.text = "all timers reset";
     }
 
@@ -571,6 +623,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
             photonView.RPC("UpdateTimerMovementsLeft", RpcTarget.MasterClient, timerMovementsLeft);
         if (_valueToSend == "timerPlayerTurn")
             photonView.RPC("UpdateTimerPlayerTurn", RpcTarget.MasterClient, timerPlayerTurn);
+        if (_valueToSend == "timerMap")
+            photonView.RPC("UpdateTimerMap", RpcTarget.MasterClient, timerMap);
+
+        if (_valueToSend == "camera")
+            photonView.RPC("UpdateCamera", RpcTarget.MasterClient, Camera.main.transform.position, Camera.main.orthographicSize);
     }
 
     void SendValueToMaster(string _valueToSend, string _sender)
@@ -697,6 +754,19 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         timerPlayerTurn = _value;
     }
 
+    [PunRPC]
+    void UpdateTimerMap(float _value)
+    {
+        timerMap = _value;
+    }
+
+    [PunRPC]
+    void UpdateCamera(Vector3 _pos, float _size)
+    {
+        Camera.main.transform.position = _pos;
+        Camera.main.orthographicSize = _size;
+    }
+
     public float GetTimer()
     {
         return timer;
@@ -735,6 +805,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     stream.SendNext(timerMovementsLeft);
                 }
+                if (playerPhaseState == PlayerPhaseState.MAP)
+                {
+                    stream.SendNext(timerMap);
+                }
+
+                if (playerPhaseState == PlayerPhaseState.ACTION || playerPhaseState == PlayerPhaseState.MOVEMENTS_LEFT)
+                {
+                    stream.SendNext(Camera.main.transform.position);
+                    stream.SendNext(Camera.main.orthographicSize);
+                }
             }
         }
         else
@@ -768,6 +848,16 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                 if (playerPhaseState == PlayerPhaseState.MOVEMENTS_LEFT)
                 {
                     timerMovementsLeft = (float)stream.ReceiveNext();
+                }
+                if (playerPhaseState == PlayerPhaseState.MAP)
+                {
+                    timerMap = (float)stream.ReceiveNext();
+                }
+
+                if (playerPhaseState == PlayerPhaseState.ACTION || playerPhaseState == PlayerPhaseState.MOVEMENTS_LEFT)
+				{
+                    Camera.main.transform.position = (Vector3)stream.ReceiveNext();
+                    Camera.main.orthographicSize = (float)stream.ReceiveNext();
                 }
             }
         }
