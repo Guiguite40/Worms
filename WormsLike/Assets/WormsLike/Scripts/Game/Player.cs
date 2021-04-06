@@ -251,14 +251,14 @@ public class Player : MonoBehaviourPunCallbacks
     }
 
     public bool GetHasAttacked()
-	{
+    {
         return hasAttacked;
-	}
+    }
 
     public void SetHasAttacked(bool _state)
-	{
+    {
         hasAttacked = _state;
-	}
+    }
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
@@ -320,31 +320,31 @@ public class Player : MonoBehaviourPunCallbacks
         yield return null;
     }
 
-    IEnumerator LaunchExplosiveCharged(Enums.ItemsList _attack, float _charge)
+    IEnumerator LaunchExplosiveCharged(Enums.ItemsList _item, float _charge)
     {
         if (currentCharacter != null)
         {
             Debug.Log("LaunchAttackCharged");
-            if (_attack == Enums.ItemsList.RocketLauncher
-                || _attack == Enums.ItemsList.Grenade
-                || _attack == Enums.ItemsList.SaintGrenade
-                || _attack == Enums.ItemsList.Banana)
-            {
-                Vector3 targetPos = MousePos();
-                targetPos.z = 0;
-                Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
-                if (MousePos().x < currentCharacter.transform.position.x)
-                    startPos.x -= 1.5f;
-                else
-                    startPos.x += 1.5f;
+            //if (_item == Enums.ItemsList.RocketLauncher
+            //    || _item == Enums.ItemsList.Grenade
+            //    || _item == Enums.ItemsList.SaintGrenade
+            //    || _item == Enums.ItemsList.Banana)
+            //{
+            Vector3 targetPos = MousePos();
+            targetPos.z = 0;
+            Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
+            if (MousePos().x < currentCharacter.transform.position.x)
+                startPos.x -= 1.5f;
+            else
+                startPos.x += 1.5f;
 
-                Explosive explosive;
-                explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_attack].name, startPos, Quaternion.identity).GetComponent<Explosive>();
-                explosive.shooter = currentCharacter.gameObject;
-                explosive.startPos = startPos;
-                explosive.targetPos = targetPos;
-                explosive.charge = _charge;
-            }
+            Explosive explosive;
+            explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_item].name, startPos, Quaternion.identity).GetComponent<Explosive>();
+            explosive.shooter = currentCharacter.gameObject;
+            explosive.startPos = startPos;
+            explosive.targetPos = targetPos;
+            explosive.charge = _charge;
+            //}
         }
         yield return null;
     }
