@@ -55,13 +55,21 @@ public class Player : MonoBehaviourPunCallbacks
         }
         ControlCharacter();
 
-
         if (currentCharacter != null)
         {
             currentCharacter.charge = charge;
             if (currentCharacter.chargeMax != chargeMax)
                 currentCharacter.chargeMax = chargeMax;
         }
+
+        if (UI.Instance.inventoryOpened)
+        {
+            UI.Instance.ActualizeAmmoCount(inv);
+        }
+
+
+        if (itemSelected != UI.Instance.GetItemSelected())
+            itemSelected = UI.Instance.GetItemSelected();
     }
 
     void Debuging()
@@ -84,53 +92,6 @@ public class Player : MonoBehaviourPunCallbacks
         {
             GameObject damageBox = Instantiate(damageBoxPrefab);
             damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Keypad1))
-        {
-            SetCharacterControlled(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Keypad2))
-        {
-            SetCharacterControlled(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Keypad3))
-        {
-            SetCharacterControlled(2);
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            SelectWeapon(Enums.ItemsList.RocketLauncher);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            SelectWeapon(Enums.ItemsList.Grenade);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            SelectWeapon(Enums.ItemsList.SaintGrenade);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            SelectWeapon(Enums.ItemsList.Banana);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha5))
-        {
-            SelectWeapon(Enums.ItemsList.AirStrike);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha6))
-        {
-            SelectWeapon(Enums.ItemsList.Teleportation);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha7))
-        {
-            SelectWeapon(Enums.ItemsList.JetPack);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha8))
-        {
-            SelectWeapon(Enums.ItemsList.FlameThrower);
         }
     }
 
@@ -181,6 +142,11 @@ public class Player : MonoBehaviourPunCallbacks
                 item.isControlled = false;
         }
     }
+
+    public Slime GetCurrentCharacter()
+	{
+        return currentCharacter;
+	}
 
     public void PlaceSlime()
     {
@@ -244,12 +210,16 @@ public class Player : MonoBehaviourPunCallbacks
 
             if (!hasAttacked)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (UI.Instance.inventoryOpened == false)
                 {
-                    if (currentCharacter != null)
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        timeToRelease = 0;
-                        UseItem(itemSelected);
+                        Debug.Log("Coucou");
+                        if (currentCharacter != null)
+                        {
+                            timeToRelease = 0;
+                            UseItem(itemSelected);
+                        }
                     }
                 }
             }
@@ -257,22 +227,20 @@ public class Player : MonoBehaviourPunCallbacks
     }
 
     public bool GetHasAttacked()
-	{
+    {
         return hasAttacked;
-	}
+    }
 
     public void SetHasAttacked(bool _state)
-	{
+    {
         hasAttacked = _state;
-	}
+    }
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
-        if (inv.items[_itemSelected].ammo > 0)
+        if (inv.IsItemUseable(_itemSelected))
         {
-            if (inv.items[_itemSelected].itemsList != Enums.ItemsList.RocketLauncher
-                && inv.items[_itemSelected].itemsList != Enums.ItemsList.Grenade)
-                inv.items[_itemSelected].ammo--;
+            inv.UseItem(_itemSelected);
 
             switch (inv.items[_itemSelected].type)
             {
@@ -328,31 +296,25 @@ public class Player : MonoBehaviourPunCallbacks
         yield return null;
     }
 
-    IEnumerator LaunchExplosiveCharged(Enums.ItemsList _attack, float _charge)
+    IEnumerator LaunchExplosiveCharged(Enums.ItemsList _item, float _charge)
     {
         if (currentCharacter != null)
         {
             Debug.Log("LaunchAttackCharged");
-            if (_attack == Enums.ItemsList.RocketLauncher
-                || _attack == Enums.ItemsList.Grenade
-                || _attack == Enums.ItemsList.SaintGrenade
-                || _attack == Enums.ItemsList.Banana)
-            {
-                Vector3 targetPos = MousePos();
-                targetPos.z = 0;
-                Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
-                if (MousePos().x < currentCharacter.transform.position.x)
-                    startPos.x -= 0.5f;
-                else
-                    startPos.x += 0.5f;
+            Vector3 targetPos = MousePos();
+            targetPos.z = 0;
+            Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
+            if (MousePos().x < currentCharacter.transform.position.x)
+                startPos.x -= 1.5f;
+            else
+                startPos.x += 1.5f;
 
-                Explosive explosive;
-                explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_attack].name, startPos, Quaternion.identity).GetComponent<Explosive>();
-                explosive.shooter = currentCharacter.gameObject;
-                explosive.startPos = startPos;
-                explosive.targetPos = targetPos;
-                explosive.charge = _charge;
-            }
+            Explosive explosive;
+            explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_item].name, startPos, Quaternion.identity).GetComponent<Explosive>();
+            explosive.shooter = currentCharacter.gameObject;
+            explosive.startPos = startPos;
+            explosive.targetPos = targetPos;
+            explosive.charge = _charge;
         }
         yield return null;
     }

@@ -335,6 +335,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   itemsList: 2
+  invImage: {fileID: 7468386418667082883, guid: 7007e9303b4df3447ba9475067d22a15, type: 3}
+  infiniteAmmo: 0
   ammo: 15
   selected: 0
 --- !u!114 &-2563028502764311707
