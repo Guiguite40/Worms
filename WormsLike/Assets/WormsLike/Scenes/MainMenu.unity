@@ -562,12 +562,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5beb4f1a8c5e4245a8bcf162f5f3003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spSlime1: {fileID: -4319994875215175222, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
-  spSlime2: {fileID: -8275196888917352216, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
-  spSlime3: {fileID: -5944981847795454106, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
-  spSlime4: {fileID: -6039128370661825274, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
-  spSlime5: {fileID: -430504365516349845, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
-  spSlime6: {fileID: -3654646329434164883, guid: d0bc73a98159f254a8990d8369490db3, type: 3}
+  spSlime1: {fileID: 21300000, guid: 20725752872f6744696b2b3a70b552c0, type: 3}
+  spSlime2: {fileID: 21300000, guid: fd91400e6adb56b4f92972f6ffcb12bc, type: 3}
+  spSlime3: {fileID: 21300000, guid: bc131132dbedd784c9b0ff3b9f3a4681, type: 3}
+  spSlime4: {fileID: 21300000, guid: 2e76c262249627d4f8d790cd8ce7d3ed, type: 3}
+  spSlime5: {fileID: 21300000, guid: 2bec587b5fd9f8144a7c7d974770a7ec, type: 3}
+  spSlime6: {fileID: 21300000, guid: 79712a8bd87452f4cbc42cd1bb767cf3, type: 3}
 --- !u!4 &60208577
 Transform:
   m_ObjectHideFlags: 0
