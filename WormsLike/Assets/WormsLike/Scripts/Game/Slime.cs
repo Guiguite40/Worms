@@ -8,7 +8,6 @@ public class Slime : MonoBehaviourPunCallbacks
 {
     [Header("Colliders")]
     [SerializeField] private GameObject head = null;
-    [SerializeField] private GameObject feet = null;
     [SerializeField] private SpriteRenderer SpRenderer = null;
     [SerializeField] private ContactFilter2D filter; // ramps
     [SerializeField] public Rigidbody2D rb = null;
