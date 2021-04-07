@@ -91,7 +91,7 @@ namespace DTerrain
         float timerMap = 3f;
         bool isPlayerTurnSetup = false;
         bool crateSpawned = false;
-        int slimeIndex;
+        int slimeIndex = 0;
         int slimeIndexMax;
 
         private void Awake()
@@ -99,7 +99,7 @@ namespace DTerrain
             if (instance == null)
                 instance = this;
 
-            BasicPaintableLayer.id = 0;
+            //BasicPaintableLayer.id = 0;
         }
 
         void SetupStartValue()
@@ -119,7 +119,8 @@ namespace DTerrain
 
             gamemode = (int)PhotonNetwork.CurrentRoom.CustomProperties["gm"];
             nbPlayer = PhotonNetwork.CurrentRoom.PlayerCount;
-            nbSlimePerPlayer = 6 / nbPlayer;
+            //nbSlimePerPlayer = 6 / nbPlayer;
+            nbSlimePerPlayer = (int)PhotonNetwork.CurrentRoom.CustomProperties["nbs"];
             slimeIndexMax = nbSlimePerPlayer - 1;
         }
 

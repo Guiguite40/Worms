@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.42344362, g: 0.47082424, b: 0.51312023, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -232,7 +232,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2419729321271084904, guid: 97c816279aa0afc47af6108d7c5e9832, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SwitchGamemode
+      value: DecrementNbSlimes
       objectReference: {fileID: 0}
     - target: {fileID: 2419729321271084904, guid: 97c816279aa0afc47af6108d7c5e9832, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -260,7 +260,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3027938829947054323, guid: 97c816279aa0afc47af6108d7c5e9832, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SwitchGamemode
+      value: IncrementNbSlimes
       objectReference: {fileID: 0}
     - target: {fileID: 3027938829947054323, guid: 97c816279aa0afc47af6108d7c5e9832, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
@@ -503,7 +503,7 @@ GameObject:
   - component: {fileID: 148402574}
   - component: {fileID: 148402573}
   m_Layer: 5
-  m_Name: TextRoomGamemode
+  m_Name: TextRoomNbSlimes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -561,7 +561,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Team deathmatch
+  m_Text: 2
 --- !u!222 &148402574
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2006,7 +2006,7 @@ GameObject:
   - component: {fileID: 983854255}
   - component: {fileID: 983854254}
   m_Layer: 5
-  m_Name: 'TextRoomGamemode:'
+  m_Name: 'TextRoomNbSlimes:'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2064,7 +2064,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Gamemode :'
+  m_Text: 'Slimes number :'
 --- !u!222 &983854255
 CanvasRenderer:
   m_ObjectHideFlags: 0
