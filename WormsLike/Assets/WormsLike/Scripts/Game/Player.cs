@@ -306,9 +306,9 @@ public class Player : MonoBehaviourPunCallbacks
             targetPos.z = 0;
             Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
             if (MousePos().x < currentCharacter.transform.position.x)
-                startPos.x -= 1.5f;
+                startPos.x -= 0.5f;
             else
-                startPos.x += 1.5f;
+                startPos.x += 0.5f;
 
             Explosive explosive;
             explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_item].name, startPos, Quaternion.identity).GetComponent<Explosive>();

@@ -192,9 +192,9 @@ public class Slime : MonoBehaviourPunCallbacks
         chargeImg.fillAmount = charge / chargeMax;
     }
 
-    private void FallDamage()
+    public void Hit(float damage)
     {
-        //if (velocity.y >)
+        curHealth -= damage;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -235,16 +235,6 @@ public class Slime : MonoBehaviourPunCallbacks
                 curHealth += 20;
                 Destroy(collision.gameObject);
             }
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Bullet" && collision.gameObject.GetComponent<Explosive>().shooter != this.gameObject)
-        {
-            Debug.Log("Player hited");
-            curHealth -= 20;
-            //Destroy(collision.gameObject);
         }
     }
 }
