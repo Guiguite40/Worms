@@ -99,7 +99,7 @@ namespace DTerrain
             if (instance == null)
                 instance = this;
 
-            BasicPaintableLayer.id = Random.Range(0, 3);
+            BasicPaintableLayer.id = 0;
         }
 
         void SetupStartValue()
@@ -116,16 +116,10 @@ namespace DTerrain
                 SendValue("currentPlayTeam", RpcTarget.OthersBuffered);
             }
 
-            Debug.LogError("current play team start : " + currentPlayTeam);
-
             gamemode = (int)PhotonNetwork.CurrentRoom.CustomProperties["gm"];
             nbPlayer = PhotonNetwork.CurrentRoom.PlayerCount;
-            nbSlimePerPlayer = 12 / nbPlayer;
+            nbSlimePerPlayer = 6 / nbPlayer;
             slimeIndexMax = nbSlimePerPlayer - 1;
-
-            Debug.LogError("gamemode : " + gamemode);
-            Debug.LogError("nb player : " + nbPlayer);
-            Debug.LogError("nb slimes per player : " + nbSlimePerPlayer);
         }
 
         void Start()
@@ -145,8 +139,6 @@ namespace DTerrain
                     Player player = newPlayer.GetComponent<Player>();
                     player.SetupPlayerState("blue", nbSlimePerPlayer);
                     listPlayersBlue.Add(player);
-
-                    print("player no : " + i + ", added to list player blue");
                 }
 
                 if ((string)players[i].CustomProperties["t"] == "red")
@@ -158,8 +150,6 @@ namespace DTerrain
                     Player player = newPlayer.GetComponent<Player>();
                     player.SetupPlayerState("red", nbSlimePerPlayer);
                     listPlayersRed.Add(player);
-
-                    print("player no : " + i + ", added to list player red");
                 }
             }
 
@@ -251,8 +241,6 @@ namespace DTerrain
                 case GamePhaseState.POINT_PLACEMENT:
 
                     currentGameStateText.text = "point placement";
-                    Debug.LogError("blue point placed : " + bluePointPlaced);
-                    Debug.LogError("red point placed : " + redPointPlaced);
 
                     if (IsLocalPlayerMaster())
                         if (bluePointPlaced && redPointPlaced)
@@ -299,7 +287,6 @@ namespace DTerrain
                         SetCurrentPlayerPlayingName();
                         if (Input.GetMouseButtonUp(0))
                         {
-                            Debug.LogError("click place slime");
                             GetCurrentPlayer().PlaceSlime();
                             SetNextPlayerNTeamTurn();
 
@@ -310,7 +297,6 @@ namespace DTerrain
                         if (GetCurrentPlayer().GetAllSlimePlaced())
                         {
                             allSlimesPlaced[PhotonNetwork.LocalPlayer.NickName] = true;
-                            Debug.LogError("current player has all slime placed");
                             SendValueToMaster("allSlimePlaced", PhotonNetwork.LocalPlayer.NickName);
                         }
                     }
@@ -403,7 +389,6 @@ namespace DTerrain
                                         SendValueToMaster("timerPlayerTurn");
                                         uiTimer.text = timerPlayerTurn.ToString();
                                         dataPos.text = timerPlayerTurn.ToString();
-                                        Debug.LogError("timer player turn 0, switched to map");
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //DAMAGE //true
                                     }
                                     else
@@ -449,7 +434,6 @@ namespace DTerrain
                                         //uiTimer.text = timerMovementsLeft.ToString();
                                         dataPos.text = timerMovementsLeft.ToString();
                                         //if (IsLocalPlayerMaster())
-                                        Debug.LogError("timer movements left = 0, switched to map");
                                         //SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); // DAMAGE //true
                                         if (IsLocalPlayerMaster())
                                         {
@@ -586,10 +570,8 @@ namespace DTerrain
 
         IEnumerator InstantiatePlayer()
         {
-            Debug.Log("Player instantiation1");
             //Debug.Log("Waiting other players");
             yield return new WaitForSeconds(1);
-            Debug.Log("Player instantiation2");
 
             GameObject newPlayer = playerPrefab;
             PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
@@ -936,7 +918,6 @@ namespace DTerrain
                 return listPlayersBlue[currentBluePlayerIndex];
             else
             {
-                Debug.LogError("is the turn of none");
                 if (strStartTeam == "red")
                     return listPlayersRed[0];
                 else

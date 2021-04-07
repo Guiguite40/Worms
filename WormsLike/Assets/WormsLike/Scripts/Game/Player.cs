@@ -36,14 +36,12 @@ public class Player : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("player start");
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debuging();
-
         foreach (var item in slimes)
         {
             if (item.GetComponent<Slime>().isDead)
@@ -70,29 +68,6 @@ public class Player : MonoBehaviourPunCallbacks
 
         if (itemSelected != UI.Instance.GetItemSelected())
             itemSelected = UI.Instance.GetItemSelected();
-    }
-
-    void Debuging()
-    {
-        if (Input.GetKeyDown(KeyCode.KeypadPlus))
-        {
-            if (PhotonNetwork.IsMasterClient)
-                strTeam = "blue";
-            else
-                strTeam = "red";
-
-            PlaceSlime();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            GameObject healthBox = Instantiate(healthBoxPrefab);
-            healthBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            GameObject damageBox = Instantiate(damageBoxPrefab);
-            damageBox.transform.position = new Vector3(MousePos().x, MousePos().y, 0);
-        }
     }
 
     public void SetupPlayerState(string _currentTeam, int _nbCharacterLimit)
@@ -144,9 +119,9 @@ public class Player : MonoBehaviourPunCallbacks
     }
 
     public Slime GetCurrentCharacter()
-	{
+    {
         return currentCharacter;
-	}
+    }
 
     public void PlaceSlime()
     {
@@ -214,7 +189,6 @@ public class Player : MonoBehaviourPunCallbacks
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
-                        Debug.Log("Coucou");
                         if (currentCharacter != null)
                         {
                             timeToRelease = 0;
@@ -279,7 +253,6 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (currentCharacter != null)
         {
-            Debug.Log("ChargeCalculation");
             while (!Input.GetMouseButtonUp(0))
             {
                 timeToRelease += Time.deltaTime * 5f;
@@ -298,26 +271,27 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator LaunchExplosiveCharged(Enums.ItemsList _item, float _charge)
     {
-        if (currentCharacter != null)
+        if (photonView.IsMine)
         {
-            Debug.Log("LaunchAttackCharged");
-            Vector3 targetPos = MousePos();
-            targetPos.z = 0;
-            Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
-            if (MousePos().x < currentCharacter.transform.position.x)
-                startPos.x -= 0.5f;
-            else
-                startPos.x += 0.5f;
+            if (currentCharacter != null)
+            {
+                Vector3 targetPos = MousePos();
+                targetPos.z = 0;
+                Vector3 startPos = new Vector3(currentCharacter.transform.position.x, currentCharacter.transform.position.y, 0);
+                if (MousePos().x < currentCharacter.transform.position.x)
+                    startPos.x -= 0.5f;
+                else
+                    startPos.x += 0.5f;
 
-            Explosive explosive;
-            explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_item].name, startPos, Quaternion.identity).GetComponent<Explosive>();
-            explosive.shooter = currentCharacter.gameObject;
-            explosive.startPos = startPos;
-            explosive.targetPos = targetPos;
-            explosive.charge = _charge;
+                GameObject explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_item].name, startPos, Quaternion.identity);
+                int idweapon = explosive.GetPhotonView().ViewID;
+
+                photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
+            }
+            yield return null;
         }
-        yield return null;
     }
+
     IEnumerator LaunchAttack(Enums.ItemsList _attack)
     {
         if (currentCharacter != null)
@@ -329,21 +303,25 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator UsingUtilitary(Enums.ItemsList _utilitary)
     {
-        if (currentCharacter != null)
+        if (photonView.IsMine)
         {
-            if (_utilitary == Enums.ItemsList.AirStrike)
+            if (currentCharacter != null)
             {
-                Vector3 startPos = MousePos();
-                startPos.y = 25;
-                startPos.z = 0;
+                if (_utilitary == Enums.ItemsList.AirStrike)
+                {
+                    Vector3 startPos = MousePos();
+                    startPos.y = 25;
+                    startPos.z = 0;
 
-                Explosive utilitary = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_utilitary].name, startPos, Quaternion.identity).GetComponent<Explosive>();
-                utilitary.startPos = startPos;
-            }
+                    GameObject utilitary = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_utilitary].name, startPos, Quaternion.identity);
+                    int idutilitary = utilitary.GetPhotonView().ViewID;
 
-            else if (_utilitary == Enums.ItemsList.Teleportation)
-            {
-                currentCharacter.SetPos(MousePos());
+                    photonView.RPC("SpawnUtility", RpcTarget.AllBuffered, idutilitary, startPos.x, startPos.y);
+                }
+                else if (_utilitary == Enums.ItemsList.Teleportation)
+                {
+                    currentCharacter.SetPos(MousePos());
+                }
             }
         }
         yield return null;
@@ -359,6 +337,28 @@ public class Player : MonoBehaviourPunCallbacks
         newSlime.SetPos(new Vector3(posX, posY, 0f));
         newSlime.team = team;
         slimes.Add(newSlime);
+    }
+
+    [PunRPC]
+    public void SpawnWeapon(int idWeapon, float posX, float posY, float targetPosX, float targetPosY, float _charge)
+    {
+        GameObject newGoExplosive = PhotonView.Find(idWeapon).gameObject;
+
+        Explosive explosive = newGoExplosive.GetComponent<Explosive>();
+
+        explosive.startPos = new Vector3(posX, posY, 0f);
+        explosive.targetPos = new Vector3(targetPosX, targetPosY, 0f);
+        explosive.charge = _charge;
+    }
+
+    [PunRPC]
+    public void SpawnUtility(int idutilitary, float posX, float posY)
+    {
+        GameObject newGoUtilitary = PhotonView.Find(idutilitary).gameObject;
+
+        Explosive utilitary = newGoUtilitary.GetComponent<Explosive>();
+
+        utilitary.startPos = new Vector3(posX, posY, 0f);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
