@@ -22,8 +22,9 @@ namespace DTerrain
         [SerializeField]
         protected GameObject chunkTemplate;
 
-        [field:SerializeField]
-        public Texture2D OriginalTexture { get; set; }
+        public static Texture2D OriginalTexture { get; set; }
+
+        public static int id;
 
         [field:SerializeField]
         public int PPU { get; protected set; }
@@ -36,13 +37,14 @@ namespace DTerrain
 
         public List<T> Chunks { get; private set; }
 
-
+        [SerializeField] List<Texture2D> myMaps = new List<Texture2D>();
 
         /// <summary>
         /// Spawns all chunks that are required for full functionality and adds them to the list named 'Chunks'.
         /// </summary>
         public virtual void SpawnChunks()
         {
+            OriginalTexture = myMaps[id];
 
             Chunks = new List<T>();
             chunkSizeX = OriginalTexture.width / ChunkCountX;
