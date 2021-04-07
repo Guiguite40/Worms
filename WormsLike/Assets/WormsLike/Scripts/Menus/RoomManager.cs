@@ -130,6 +130,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 			indexGamemode = 1;
 
 		nbSlimes = (int)PhotonNetwork.CurrentRoom.CustomProperties["nbs"];
+		mapIndex = (int)PhotonNetwork.CurrentRoom.CustomProperties["m"];
 	}
 
 	void UpdateParameters()
@@ -164,6 +165,8 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 			textMap.text = "map 3";
 		if (mapIndex == lastMapIndex)
 			textMap.text = "map 4";
+
+		PhotonNetwork.CurrentRoom.CustomProperties["m"] = mapIndex;
 	}
 
 	void UpdateGamemode()

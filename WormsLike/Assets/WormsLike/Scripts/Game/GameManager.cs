@@ -99,12 +99,12 @@ namespace DTerrain
             if (instance == null)
                 instance = this;
 
-            //BasicPaintableLayer.id = 0;
+            BasicPaintableLayer.id = (int)PhotonNetwork.CurrentRoom.CustomProperties["m"];
         }
 
         void SetupStartValue()
         {
-            BasicPaintableLayer.id = 1;
+            //BasicPaintableLayer.id = 1;
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
                 startTeamIndex = Random.Range(0, 2);
