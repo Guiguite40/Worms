@@ -34,16 +34,27 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text textSignUpPseudoError;
     [SerializeField] private Text textSignUpMdpConfirmError;
     [SerializeField] private Text textColorError;
+    [Space(4)]
+    [SerializeField] private Image ppSelected;
+    [SerializeField] private Button pp0;
+    [SerializeField] private Button pp1;
+    [SerializeField] private Button pp2;
+    [SerializeField] private Button pp3;
+    [SerializeField] private Button pp4;
+    [SerializeField] private Button pp5;
 
     string accountsFilePath = "";
     string nickname = "";
     int accountColorIndex = -1;
+    int ifSignUpIndex = 0;
+    int ifLoginIndex = 0;
     bool fileEmpty = false;
     bool hasNoLine = false;
     bool[] accountCreationStep;
     Dictionary<string, GameObject> canvas = new Dictionary<string, GameObject>();
     List<InputField> listInputFieldsLogin = new List<InputField>();
     List<InputField> listInputFieldsSignUp = new List<InputField>();
+    List<Button> listPp = new List<Button>();
     void Start()
     {
 #if UNITY_EDITOR
@@ -76,6 +87,14 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         }
 
         OpenCanvas("choose");
+
+        ppSelected.gameObject.SetActive(false);
+        listPp.Add(pp0);
+        listPp.Add(pp1);
+        listPp.Add(pp2);
+        listPp.Add(pp3);
+        listPp.Add(pp4);
+        listPp.Add(pp5);
     }
 
     void Update()
@@ -135,19 +154,32 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     {
         if (canvas["login"].activeSelf)
         {
-            if(listInputFieldsLogin[0].IsActive())
-			{
-                listInputFieldsLogin[0].DeactivateInputField();
-                listInputFieldsLogin[1].ActivateInputField();
-                return;
-            }
-            
-            if(listInputFieldsLogin[1].IsActive())
-			{
-                listInputFieldsLogin[1].DeactivateInputField();
-                listInputFieldsLogin[0].ActivateInputField();
-                return;
-            }
+            if (listInputFieldsLogin[0].isFocused)
+                ifLoginIndex = 1;
+            if (listInputFieldsLogin[1].isFocused)
+                ifLoginIndex = 0;
+
+            listInputFieldsLogin[ifLoginIndex].Select();
+            ifLoginIndex++;
+            if (ifLoginIndex == 2)
+                ifLoginIndex = 0;
+            return;
+        }
+
+        if (canvas["signUp"].activeSelf)
+        {
+            if (listInputFieldsSignUp[0].isFocused)
+                ifSignUpIndex = 1;
+            if (listInputFieldsSignUp[1].isFocused)
+                ifSignUpIndex = 2;
+            if (listInputFieldsSignUp[2].isFocused)
+                ifSignUpIndex = 0;
+
+            listInputFieldsSignUp[ifSignUpIndex].Select();
+            ifSignUpIndex++;
+            if (ifSignUpIndex == 3)
+                ifSignUpIndex = 0;
+            return;
         }
     }
 
@@ -160,6 +192,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
             listInputFieldsSignUp[i].text = "";
 
         accountColorIndex = -1;
+        ppSelected.gameObject.SetActive(false);
     }
 
     public void OnClickLogin()
@@ -266,7 +299,10 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     public void SetImgColorIndex(int _index)
 	{
         accountColorIndex = _index;
-	}
+        ppSelected.gameObject.SetActive(true);
+
+        ppSelected.transform.position = listPp[accountColorIndex].transform.position;
+    }
 
     void ResetAccountCreationStep()
 	{
