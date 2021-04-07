@@ -80,6 +80,22 @@ namespace DTerrain
             }
         }
 
+        public void SetMortSubite()
+		{
+            if (mapTurn == false && PhotonNetwork.IsMasterClient)
+            {
+                mapTurn = true;
+                shipDescent = true;
+
+                leftPosX = LeftMapKiller.transform.position.x;
+                RightPosX = RightMapKiller.transform.position.x;
+
+                PosY = LeftMapKiller.transform.position.y;
+
+                photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
+            }
+        }
+
         private void ZoneDamage(Vector3 pos, int size)
         {
             Vector2 myPos = new Vector2(pos.x, pos.y);
