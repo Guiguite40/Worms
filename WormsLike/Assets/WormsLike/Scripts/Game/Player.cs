@@ -330,10 +330,10 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator Teleportation()
     {
-        GameObject ps = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, Quaternion.identity);
+        GameObject ps = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
         yield return new WaitForSeconds(0.5f);
         currentCharacter.SetPos(MousePos());
-        GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, Quaternion.identity);
+        GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
         yield return null;
     }
 
