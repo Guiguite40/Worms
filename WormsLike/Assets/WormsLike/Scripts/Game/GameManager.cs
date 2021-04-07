@@ -128,7 +128,7 @@ namespace DTerrain
             SetupStartValue();
             uiTurn.text = "";
             uiTimer.text = "";
-            dataPos.text = "master";
+            //dataPos.text = "master";
             Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
             for (int i = 0; i < players.Length; i++)
             {
@@ -219,7 +219,7 @@ namespace DTerrain
             {
                 case GamePhaseState.START:
 
-                    currentGameStateText.text = "start";
+                    //currentGameStateText.text = "start";
                     if (timerStart <= 0)
                     {
                         if (gamemode == 1)
@@ -228,21 +228,21 @@ namespace DTerrain
                             SetGamePhaseState(GamePhaseState.SLIME_PLACEMENT, false);
 
                         timerStart = 5f;
-                        dataPos.text = timerStart.ToString();
+                        //dataPos.text = timerStart.ToString();
                     }
                     else
                     {
                         if (IsLocalPlayerMaster())
                         {
                             timerStart -= Time.deltaTime;
-                            dataPos.text = timerStart.ToString();
+                            //dataPos.text = timerStart.ToString();
                         }
                     }
                     break;
 
                 case GamePhaseState.POINT_PLACEMENT:
 
-                    currentGameStateText.text = "point placement";
+                    //currentGameStateText.text = "point placement";
 
                     if (IsLocalPlayerMaster())
                         if (bluePointPlaced && redPointPlaced)
@@ -250,7 +250,7 @@ namespace DTerrain
 
                     if (IsLocalPlayerTurn())
                     {
-                        itsHisTurnText.text = "true";
+                        //itsHisTurnText.text = "true";
                         SetCurrentPlayerPlayingName();
                         if (Input.GetKeyUp(KeyCode.P))
                         {
@@ -270,12 +270,12 @@ namespace DTerrain
                             SendValueToMaster("currentPlayTeam");
                         }
                     }
-                    else
-                        itsHisTurnText.text = "false";
+                    //else
+                        //itsHisTurnText.text = "false";
                     break;
 
                 case GamePhaseState.SLIME_PLACEMENT:
-                    currentGameStateText.text = "slime placement";
+                    //currentGameStateText.text = "slime placement";
 
                     for (int i = 0; i < allSlimesPlaced.Count; i++)
                     {
@@ -284,7 +284,7 @@ namespace DTerrain
 
                     if (IsLocalPlayerTurn())
                     {
-                        itsHisTurnText.text = "true";
+                        //itsHisTurnText.text = "true";
                         SetCurrentPlayerPlayingName();
                         if (Input.GetMouseButtonUp(0))
                         {
@@ -301,8 +301,8 @@ namespace DTerrain
                             SendValueToMaster("allSlimePlaced", PhotonNetwork.LocalPlayer.NickName);
                         }
                     }
-                    else
-                        itsHisTurnText.text = "false";
+                    //else
+                        //itsHisTurnText.text = "false";
 
                     if (IsLocalPlayerMaster())
                     {
@@ -316,7 +316,7 @@ namespace DTerrain
                     break;
 
                 case GamePhaseState.GAME:
-                    currentGameStateText.text = "game";
+                    //currentGameStateText.text = "game";
 
                     switch (turnState)
                     {
@@ -329,17 +329,17 @@ namespace DTerrain
 
                                     if (IsLocalPlayerTurn())
                                     {
-                                        itsHisTurnText.text = "true";
+                                        //itsHisTurnText.text = "true";
                                         uiTurn.text = "It's your turn";
                                         SetCurrentPlayerPlayingName();
                                     }
                                     else
                                     {
-                                        itsHisTurnText.text = "false";
+                                        //itsHisTurnText.text = "false";
                                         uiTurn.text = "";
                                     }
 
-                                    currentTurnStateText.text = "start";
+                                    //currentTurnStateText.text = "start";
 
                                     if (!isPlayerTurnSetup)
                                     {
@@ -355,7 +355,7 @@ namespace DTerrain
                                             timerPlayerStart = 3f;
                                             ResetTimers(true);
                                             SendValueToMaster("timerPlayerStart");
-                                            dataPos.text = timerPlayerStart.ToString();
+                                            //dataPos.text = timerPlayerStart.ToString();
                                             SetPlayerPhaseState(PlayerPhaseState.ACTION, false, true); //true
                                         }
                                         else
@@ -363,7 +363,7 @@ namespace DTerrain
                                             if (IsLocalPlayerTurn())
                                             {
                                                 timerPlayerStart -= Time.deltaTime;
-                                                dataPos.text = timerPlayerStart.ToString();
+                                                //dataPos.text = timerPlayerStart.ToString();
 
                                                 GetCurrentPlayer().SetCharacterControlled(slimeIndex);
                                                 CameraManager.instance.MoveCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
@@ -382,7 +382,7 @@ namespace DTerrain
                                     break;
 
                                 case PlayerPhaseState.ACTION:
-                                    currentTurnStateText.text = "actions";
+                                    //currentTurnStateText.text = "actions";
 
                                     if (timerPlayerTurn <= 0 || isPassTurn())
                                     {
@@ -391,7 +391,7 @@ namespace DTerrain
                                         SendValueToMaster("timerPlayerTurn");
                                         uiTimer.text = timerPlayerTurn.ToString();
                                         SendValueToMaster("uiTimer");
-                                        dataPos.text = timerPlayerTurn.ToString();
+                                        //dataPos.text = timerPlayerTurn.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //DAMAGE //true
                                     }
                                     else
@@ -408,7 +408,7 @@ namespace DTerrain
                                             timerPlayerTurn -= Time.deltaTime;
                                             uiTimer.text = timerPlayerTurn.ToString();
                                             SendValueToMaster("uiTimer");
-                                            dataPos.text = timerPlayerTurn.ToString();
+                                            //dataPos.text = timerPlayerTurn.ToString();
                                             if (!GetCurrentPlayer().GetHasAttacked())
                                             {
                                                 GetCurrentPlayer().ControlCharacter();
@@ -425,7 +425,7 @@ namespace DTerrain
                                     break;
 
                                 case PlayerPhaseState.MOVEMENTS_LEFT:
-                                    currentTurnStateText.text = "movements left";
+                                    //currentTurnStateText.text = "movements left";
 
                                     if (timerMovementsLeft <= 0)
                                     {
@@ -436,7 +436,7 @@ namespace DTerrain
 
                                         SendValueToMaster("timerMovementsLeft");
 
-                                        dataPos.text = timerMovementsLeft.ToString();
+                                        //dataPos.text = timerMovementsLeft.ToString();
                                         if (IsLocalPlayerMaster())
                                         {
                                             SetPlayerPhaseState(PlayerPhaseState.MAP, true, false);
@@ -451,7 +451,7 @@ namespace DTerrain
                                             timerMovementsLeft -= Time.deltaTime;
                                             uiTimer.text = timerMovementsLeft.ToString();
                                             SendValueToMaster("uiTimer");
-                                            dataPos.text = timerMovementsLeft.ToString();
+                                            //dataPos.text = timerMovementsLeft.ToString();
                                             GetCurrentPlayer().ControlCharacter();
                                             CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             SendValueToMaster("camera");
@@ -460,14 +460,14 @@ namespace DTerrain
                                     break;
 
                                 case PlayerPhaseState.DAMAGE:
-                                    currentTurnStateText.text = "damage";
+                                    //currentTurnStateText.text = "damage";
 
                                     if (IsLocalPlayerMaster())
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, true, false); //only true
                                     break;
 
                                 case PlayerPhaseState.MAP:
-                                    currentTurnStateText.text = "map";
+                                    //currentTurnStateText.text = "map";
 
                                     if (timerMap <= 0)
                                     {
@@ -476,7 +476,7 @@ namespace DTerrain
                                         SendValueToMaster("currentPlayTeam");
                                         timerMap = 3f;
                                         ResetTimers(true);
-                                        dataPos.text = timerMap.ToString();
+                                        //dataPos.text = timerMap.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.START_PHASE, false, true);
                                     }
                                     else
@@ -489,7 +489,7 @@ namespace DTerrain
                                                 crateSpawned = true;
                                             }
                                             timerMap -= Time.deltaTime;
-                                            dataPos.text = timerMap.ToString();
+                                            //dataPos.text = timerMap.ToString();
                                         }
                                         ResetTimers(false);
                                         CameraManager.instance.ResetCam();
@@ -504,7 +504,7 @@ namespace DTerrain
 
                             break;
                         case TurnState.MAP:
-                            currentTurnStateText.text = "map";
+                            //currentTurnStateText.text = "map";
                             break;
 
                         default:
@@ -513,7 +513,7 @@ namespace DTerrain
                     break;
 
                 case GamePhaseState.END_GAME:
-                    currentGameStateText.text = "end game";
+                    //currentGameStateText.text = "end game";
 
                     break;
 
@@ -534,7 +534,7 @@ namespace DTerrain
                 crateSpawned = false;
             }
 
-            dataPos.text = "all timers reset";
+            //dataPos.text = "all timers reset";
             uiTimer.text = "";
             uiTurn.text = "";
             SendValueToMaster("uiTimer");
@@ -850,7 +850,7 @@ namespace DTerrain
                         startTeamIndex = (int)stream.ReceiveNext();
                         strStartTeam = (string)stream.ReceiveNext();
 
-                        dataPos.text = timerStart.ToString();
+                        //dataPos.text = timerStart.ToString();
                     }
                     if (playerPhaseState == PlayerPhaseState.START_PHASE)
                     {
