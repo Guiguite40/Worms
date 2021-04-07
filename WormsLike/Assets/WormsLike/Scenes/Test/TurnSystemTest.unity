@@ -1598,6 +1598,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1825895929}
     - target: {fileID: 5979688290120108674, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
+      propertyPath: timerText
+      value: 
+      objectReference: {fileID: 1643410021}
+    - target: {fileID: 5979688290120108674, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
       propertyPath: itsHisTurnText
       value: 
       objectReference: {fileID: 886257277}
@@ -2284,6 +2288,17 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Current Game State text
+--- !u!114 &1643410021 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4861946155590021484, guid: a850f49e895385e42a78a70a6f7dbb8e, type: 3}
+  m_PrefabInstance: {fileID: 802777075}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1673681691
 GameObject:
   m_ObjectHideFlags: 0
