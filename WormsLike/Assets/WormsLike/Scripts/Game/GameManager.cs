@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] Text itsHisTurnText;
     [SerializeField] GameObject healthBoxPrefab;
     [SerializeField] GameObject damageBoxPrefab;
+    [SerializeField] Text uiTimer;
+    [SerializeField] Text uiTurn;
 
     int currentBluePlayerIndex = 0;
     int currentRedPlayerIndex = 0;
@@ -80,7 +82,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     float timerPlayerStart = 3f;
     float timerMovementsLeft = 3f;
     float timerSendInfo = 0.1f;
-    float timerPlayerTurn = 20f;
+    float timerPlayerTurn = 60f;
     float timerMap = 3f;
     bool isPlayerTurnSetup = false;
     bool crateSpawned = false;
@@ -122,7 +124,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     void Start()
     {
         SetupStartValue();
-
+        uiTurn.text = "";
         dataPos.text = "master";
         Photon.Realtime.Player[] players = PhotonNetwork.PlayerList;
         for (int i = 0; i < players.Length; i++)
@@ -358,6 +360,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                         ResetTimers(true);
                                         SendValueToMaster("timerPlayerStart");
                                         dataPos.text = timerPlayerStart.ToString();
+                                        uiTurn.text = "";
                                         //if (IsLocalPlayerMaster())
                                         SetPlayerPhaseState(PlayerPhaseState.ACTION, false, true); //true
                                     }
@@ -367,14 +370,17 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                         {
                                             timerPlayerStart -= Time.deltaTime;
                                             dataPos.text = timerPlayerStart.ToString();
-
+                                            uiTurn.text = "It's your turn";
                                             //Set cam zoom on slime
                                             GetCurrentPlayer().SetCharacterControlled(slimeIndex);
                                             CameraManager.instance.MoveCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             SendValueToMaster("camera");
+                                            //send text
 
                                             //SendValueToMaster("timerPlayerStart");
                                         }
+                                        else
+                                            uiTurn.text = "It's the  turn of " + GetCurrentPlayerName();
                                     }
                                 }
 
@@ -385,9 +391,10 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                 
                                 if (timerPlayerTurn <= 0 || isPassTurn())
                                 {
-                                    timerPlayerTurn = 20f;
+                                    timerPlayerTurn = 60f;
                                     ResetTimers(true);
                                     SendValueToMaster("timerPlayerTurn");
+                                    uiTimer.text = timerPlayerTurn.ToString();
                                     dataPos.text = timerPlayerTurn.ToString();
                                     Debug.LogError("timer player turn 0, switched to map");
                                     SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //DAMAGE //true
@@ -404,6 +411,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                         }
 
                                         timerPlayerTurn -= Time.deltaTime;
+                                        uiTimer.text = timerPlayerTurn.ToString();
                                         dataPos.text = timerPlayerTurn.ToString();
                                         if (!GetCurrentPlayer().GetHasAttacked())
                                         {
@@ -431,6 +439,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                     timerMovementsLeft = 3f;
                                     ResetTimers(true);
                                     SendValueToMaster("timerMovementsLeft");
+                                    //uiTimer.text = timerMovementsLeft.ToString();
                                     dataPos.text = timerMovementsLeft.ToString();
                                     //if (IsLocalPlayerMaster())
                                     Debug.LogError("timer movements left = 0, switched to map");
@@ -447,6 +456,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
                                     if (IsLocalPlayerTurn())
                                     {
                                         timerMovementsLeft -= Time.deltaTime;
+                                        uiTimer.text = timerMovementsLeft.ToString();
                                         dataPos.text = timerMovementsLeft.ToString();
                                         GetCurrentPlayer().ControlCharacter();
                                         CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
@@ -540,7 +550,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     void ResetTimers(bool _resetTimerMap)
 	{
         timerPlayerStart = 3f;
-        timerPlayerTurn = 20f;
+        timerPlayerTurn = 60f;
         isPlayerTurnSetup = false;
         timerMovementsLeft = 3f;
         if (_resetTimerMap)
@@ -550,6 +560,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         dataPos.text = "all timers reset";
+        uiTimer.text = "60";
     }
 
     void SpawnCrate()
@@ -628,6 +639,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (_valueToSend == "camera")
             photonView.RPC("UpdateCamera", RpcTarget.MasterClient, Camera.main.transform.position, Camera.main.orthographicSize);
+
+        if (_valueToSend == "uiTimer")
+            photonView.RPC("UpdateUiTimer", RpcTarget.MasterClient, uiTimer);
+        if (_valueToSend == "uiText")
+            photonView.RPC("UpdateUiText", RpcTarget.MasterClient, uiTurn);
     }
 
     void SendValueToMaster(string _valueToSend, string _sender)
@@ -966,6 +982,11 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
     void SetCurrentPlayerPlayingName()
 	{
         currentlocalPlayerPlayingName = PhotonNetwork.LocalPlayer.NickName;
+    }
+
+    string GetCurrentPlayerName()
+	{
+        return currentlocalPlayerPlayingName;
     }
 
     void SetGamePhaseState(GamePhaseState _state, bool _sendToOther)
