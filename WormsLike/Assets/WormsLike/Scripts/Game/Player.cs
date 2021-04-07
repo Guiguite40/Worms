@@ -10,6 +10,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] List<Slime> slimes = new List<Slime>();
     [SerializeField] Inventory inv = null;
     [SerializeField] GameObject teleportationPS = null;
+    [SerializeField] GameObject parachute = null;
 
     [HideInInspector] public int slimeLimit = 3;
     public int team = 0;
@@ -322,6 +323,10 @@ public class Player : MonoBehaviourPunCallbacks
                 else if (_utilitary == Enums.ItemsList.Teleportation)
                 {
                     StartCoroutine(Teleportation());
+                }
+                else if (_utilitary == Enums.ItemsList.Parachute)
+                {
+                    Utility.OpenParachute(currentCharacter.rb, parachute);
                 }
             }
         }
