@@ -203,7 +203,7 @@ namespace DTerrain
         public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
         {
             DestroyMapCircle(pos, size);
-            ZoneDamage(pos, size);
+            //ZoneDamage(pos, size);
         }
 
         [PunRPC]

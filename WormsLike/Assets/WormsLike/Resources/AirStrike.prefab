@@ -685,9 +685,10 @@ GameObject:
   - component: {fileID: 4387105631937873597}
   - component: {fileID: -7463349860000713085}
   - component: {fileID: 4145380131838184885}
+  - component: {fileID: 6509133420821800567}
   m_Layer: 0
   m_Name: AirStrike
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -741,11 +742,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 973a7923e1236324b8669a07a38b4337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooter: {fileID: 0}
+  airStrike: 1
   startPos: {x: 0, y: 0, z: 0}
   targetPos: {x: 0, y: 0, z: 0}
   speed: 0
   charge: 0
+--- !u!114 &6509133420821800567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387105631937873596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &4718874448215317410
 GameObject:
   m_ObjectHideFlags: 0
