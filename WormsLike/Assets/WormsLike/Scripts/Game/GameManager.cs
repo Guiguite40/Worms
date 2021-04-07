@@ -383,7 +383,7 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
 							case PlayerPhaseState.ACTION:
                                 currentTurnStateText.text = "actions";
                                 
-                                if (timerPlayerTurn <= 0)
+                                if (timerPlayerTurn <= 0 || isPassTurn())
                                 {
                                     timerPlayerTurn = 20f;
                                     ResetTimers(true);
@@ -896,6 +896,14 @@ public class GameManager : MonoBehaviourPunCallbacks, IPunObservable
         else
             return false;
     }
+
+    bool isPassTurn()
+	{
+        if (Input.GetKeyUp(KeyCode.N))
+            return true;
+
+        return false;
+	}
 
     Player GetCurrentPlayer()
 	{
