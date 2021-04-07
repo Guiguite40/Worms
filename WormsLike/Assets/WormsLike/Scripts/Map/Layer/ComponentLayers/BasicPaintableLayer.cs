@@ -13,8 +13,7 @@ namespace DTerrain
         public virtual void Start()
         {
             SpawnChunks();
-            InitChunks();
-            
+            InitChunks();            
         }
 
         public virtual void Update()
