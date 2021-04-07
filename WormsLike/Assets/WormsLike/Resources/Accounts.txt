@@ -7,3 +7,5 @@ coucou:test/3
 a:a/1
 b:b/2
 c:c/3
+
+f:f/3
