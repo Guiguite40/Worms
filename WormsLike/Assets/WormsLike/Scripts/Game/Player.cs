@@ -9,6 +9,7 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] GameObject slimePrefab = null;
     [SerializeField] List<Slime> slimes = new List<Slime>();
     [SerializeField] Inventory inv = null;
+    [SerializeField] GameObject teleportationPS = null;
 
     [HideInInspector] public int slimeLimit = 3;
     public int team = 0;
@@ -320,10 +321,19 @@ public class Player : MonoBehaviourPunCallbacks
                 }
                 else if (_utilitary == Enums.ItemsList.Teleportation)
                 {
-                    currentCharacter.SetPos(MousePos());
+                    StartCoroutine(Teleportation());
                 }
             }
         }
+        yield return null;
+    }
+
+    IEnumerator Teleportation()
+    {
+        GameObject ps = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
+        yield return new WaitForSeconds(0.5f);
+        currentCharacter.SetPos(MousePos());
+        GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
         yield return null;
     }
 
