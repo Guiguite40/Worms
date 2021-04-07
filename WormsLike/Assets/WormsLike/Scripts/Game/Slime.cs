@@ -8,7 +8,6 @@ public class Slime : MonoBehaviourPunCallbacks
 {
     [Header("Colliders")]
     [SerializeField] private GameObject head = null;
-    [SerializeField] private GameObject feet = null;
     [SerializeField] private SpriteRenderer SpRenderer = null;
     [SerializeField] private ContactFilter2D filter; // ramps
     [SerializeField] public Rigidbody2D rb = null;
@@ -20,6 +19,8 @@ public class Slime : MonoBehaviourPunCallbacks
     [SerializeField] public float maxSpeed = 0;
     [SerializeField] public float moveAcceleration = 0;
     public Vector2 velocity = Vector2.zero;
+    float fallingDamage = 0;
+    float VyMaxBeforeDamage = 0;
     private Vector2 dir = Vector2.right;
     public float move = 0;
 
@@ -68,6 +69,7 @@ public class Slime : MonoBehaviourPunCallbacks
         Flip();
         Health_Management();
         Charge_Management();
+        FallDmg_Management();
 
         /* DEBUG */
         if (isControlled)
@@ -98,6 +100,14 @@ public class Slime : MonoBehaviourPunCallbacks
             {
                 rb.velocity = new Vector2(0, jumpForce);
             }
+        }
+    }
+
+    private void FallDmg_Management()
+    {
+        if (rb.velocity.y < -5)
+        {
+            fallingDamage = Mathf.Abs(rb.velocity.y) + 5;
         }
     }
 
@@ -201,9 +211,10 @@ public class Slime : MonoBehaviourPunCallbacks
     {
         if (collision.gameObject.tag == "Jumpable" && collision.gameObject != head.gameObject)
         {
-            if (rb.velocity.y < -10)
+            if (fallingDamage != 0)
             {
-                curHealth -= rb.velocity.y / 2;
+                curHealth -= fallingDamage;
+                fallingDamage = 0;
             }
             isGrounded = true;
         }
