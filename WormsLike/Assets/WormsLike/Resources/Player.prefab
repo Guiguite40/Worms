@@ -49,6 +49,7 @@ MonoBehaviour:
   slimePrefab: {fileID: 3845015423529556887, guid: 2a44fb03f147f5249be98eb76e2d49a7, type: 3}
   slimes: []
   inv: {fileID: -6890893481750907789}
+  teleportationPS: {fileID: 7637729008833882193, guid: a0df9281c89a6e547a4398d9e7692e0a, type: 3}
   slimeLimit: 3
   team: 1
   phase_placement: 0
