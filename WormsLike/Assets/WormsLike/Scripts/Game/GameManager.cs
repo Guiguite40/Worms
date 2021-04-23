@@ -54,6 +54,8 @@ namespace DTerrain
         [SerializeField] GameObject damageBoxPrefab;
         [SerializeField] Text uiTimer;
         [SerializeField] Text uiTurn;
+        //[SerializeField] Text textGameTime;
+        [SerializeField] MapDestroy mapDestroy;
 
         int currentBluePlayerIndex = 0;
         int currentRedPlayerIndex = 0;
@@ -88,6 +90,7 @@ namespace DTerrain
         float timerMovementsLeft = 3f;
         float timerSendInfo = 0.1f;
         float timerPlayerTurn = 60f;
+        float timerAllGame = 0;
         float timerMap = 3f;
         bool isPlayerTurnSetup = false;
         bool crateSpawned = false;
@@ -319,6 +322,10 @@ namespace DTerrain
                 case GamePhaseState.GAME:
                     //currentGameStateText.text = "game";
 
+                    if (IsLocalPlayerMaster())
+                        timerAllGame += Time.deltaTime;
+                    //textGameTime.text = timerAllGame.ToString();
+
                     switch (turnState)
                     {
                         case TurnState.TEAM:
@@ -486,6 +493,8 @@ namespace DTerrain
                                         {
                                             if (!crateSpawned)
                                             {
+                                                if (timerAllGame >= 40)
+                                                    mapDestroy.SetMortSubite();
                                                 SpawnCrate();
                                                 crateSpawned = true;
                                             }
@@ -496,6 +505,7 @@ namespace DTerrain
                                         CameraManager.instance.ResetCam();
                                         GetCurrentPlayer().UnSetCharacterControlled();
                                     }
+
                                     break;
 
 
@@ -799,6 +809,7 @@ namespace DTerrain
                     stream.SendNext(currentBluePlayerIndex);
                     stream.SendNext(currentRedPlayerIndex);
                     stream.SendNext(allSlimesPlaced);
+                    //stream.SendNext(timerAllGame);
 
                     if (gamePhaseState == GamePhaseState.START)
                     {
@@ -844,6 +855,7 @@ namespace DTerrain
                     currentBluePlayerIndex = (int)stream.ReceiveNext();
                     currentRedPlayerIndex = (int)stream.ReceiveNext();
                     allSlimesPlaced = (Dictionary<string, bool>)stream.ReceiveNext();
+                    //timerAllGame = (float)stream.ReceiveNext();
 
                     if (gamePhaseState == GamePhaseState.START)
                     {
@@ -1025,5 +1037,13 @@ namespace DTerrain
         {
             return p1.NickName.CompareTo(p2.NickName);
         }
+
+        public bool GetIsMortSubite()
+		{
+            if (timerAllGame >= 40)
+                return true;
+
+            return false;
+		}
     }
 }
