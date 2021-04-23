@@ -288,6 +288,7 @@ namespace DTerrain
 
                     if (IsLocalPlayerTurn())
                     {
+                        uiTurn.text = "place your slime :";
                         //itsHisTurnText.text = "true";
                         SetCurrentPlayerPlayingName();
                         if (Input.GetMouseButtonUp(0))
@@ -305,8 +306,9 @@ namespace DTerrain
                             SendValueToMaster("allSlimePlaced", PhotonNetwork.LocalPlayer.NickName);
                         }
                     }
-                    //else
-                        //itsHisTurnText.text = "false";
+                    else
+                        uiTurn.text = "";
+                    //itsHisTurnText.text = "false";
 
                     if (IsLocalPlayerMaster())
                     {
@@ -421,7 +423,7 @@ namespace DTerrain
                                             {
                                                 GetCurrentPlayer().ControlCharacter();
                                                 CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
-                                                SendValueToMaster("camera");
+                                                //SendValueToMaster("camera");
                                             }
                                             else
                                             {
@@ -441,16 +443,17 @@ namespace DTerrain
                                         GetCurrentPlayer().SetHasAttacked(false);
                                         timerMovementsLeft = 3f;
                                         ResetTimers(true);
-
-                                        SendValueToMaster("timerMovementsLeft");
-
+                                        //if (IsLocalPlayerTurn())
+                                            //SendValueToMaster("timerMovementsLeft");
+                                        CameraManager.instance.ResetCam();
                                         //dataPos.text = timerMovementsLeft.ToString();
-                                        if (IsLocalPlayerMaster())
+                                        /*if (IsLocalPlayerMaster())
                                         {
                                             SetPlayerPhaseState(PlayerPhaseState.MAP, true, false);
                                         }
                                         else
-                                            SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true
+                                            SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true*/
+                                        SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true
                                     }
                                     else
                                     {
@@ -463,7 +466,14 @@ namespace DTerrain
                                             GetCurrentPlayer().ControlCharacter();
                                             CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             SendValueToMaster("camera");
+                                            if(!IsLocalPlayerMaster())
+                                                SendValueToMaster("timerMovementsLeft");                                          
                                         }
+
+                                        if (PhotonNetwork.IsMasterClient)
+                                            if (int.Parse(uiTimer.text) <= 0.3)
+                                                playerPhaseState = PlayerPhaseState.MAP;
+                                                //SetPlayerPhaseState(PlayerPhaseState.MAP, false, false);
                                     }
                                     break;
 
@@ -482,19 +492,26 @@ namespace DTerrain
                                         SetNextPlayerNTeamTurn();
                                         SendValueToMaster("currentPlayer");
                                         SendValueToMaster("currentPlayTeam");
-                                        timerMap = 3f;
+                                        if (timerAllGame >= 40)
+                                            timerMap = 5f;
+                                        else
+                                            timerMap = 3f;
                                         ResetTimers(true);
                                         //dataPos.text = timerMap.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.START_PHASE, false, true);
                                     }
                                     else
                                     {
+                                        CameraManager.instance.ResetCam();
+                                        if (IsLocalPlayerMaster())
+                                            if (timerAllGame >= 40)
+                                                mapDestroy.SetMortSubite();
+
                                         if (IsLocalPlayerTurn())
                                         {
                                             if (!crateSpawned)
                                             {
-                                                if (timerAllGame >= 40)
-                                                    mapDestroy.SetMortSubite();
+
                                                 SpawnCrate();
                                                 crateSpawned = true;
                                             }
@@ -502,7 +519,7 @@ namespace DTerrain
                                             //dataPos.text = timerMap.ToString();
                                         }
                                         ResetTimers(false);
-                                        CameraManager.instance.ResetCam();
+                                        //CameraManager.instance.ResetCam();
                                         GetCurrentPlayer().UnSetCharacterControlled();
                                     }
 
@@ -541,7 +558,10 @@ namespace DTerrain
             timerMovementsLeft = 3f;
             if (_resetTimerMap)
             {
-                timerMap = 3f;
+                if(timerAllGame >= 40)
+                    timerMap = 5f;
+                else
+                    timerMap = 3f;
                 crateSpawned = false;
             }
 
@@ -840,7 +860,7 @@ namespace DTerrain
                         stream.SendNext(uiTimer.text);
                         stream.SendNext(uiTurn.text);
                         stream.SendNext(Camera.main.transform.position);
-                        stream.SendNext(Camera.main.orthographicSize);
+                        //stream.SendNext(Camera.main.orthographicSize);
                     }
                 }
             }
@@ -887,7 +907,7 @@ namespace DTerrain
                         uiTimer.text = (string)stream.ReceiveNext();
                         uiTurn.text = (string)stream.ReceiveNext();
                         Camera.main.transform.position = (Vector3)stream.ReceiveNext();
-                        Camera.main.orthographicSize = (float)stream.ReceiveNext();
+                        //Camera.main.orthographicSize = (float)stream.ReceiveNext();
                     }
                 }
             }
@@ -962,10 +982,10 @@ namespace DTerrain
         {
             if (IsRedTurn())
             {
-                if (currentRedPlayerIndex < listPlayerRed.Count - 1)
-                    currentRedPlayerIndex++;
-                else
-                    currentRedPlayerIndex = 0;
+                    if (currentRedPlayerIndex < listPlayerRed.Count - 1)
+                        currentRedPlayerIndex++;
+                    else
+                        currentRedPlayerIndex = 0;
 
                 SendValueToMaster("redPlayerIndex");
 
@@ -973,10 +993,11 @@ namespace DTerrain
             }
             else if (IsBlueTurn())
             {
-                if (currentBluePlayerIndex < listPlayerBlue.Count - 1)
-                    currentBluePlayerIndex++;
-                else
-                    currentBluePlayerIndex = 0;
+
+               if (currentBluePlayerIndex < listPlayerBlue.Count - 1)
+                   currentBluePlayerIndex++;
+               else
+                   currentBluePlayerIndex = 0;
 
                 SendValueToMaster("bluePlayerIndex");
 
