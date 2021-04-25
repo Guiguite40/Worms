@@ -52,7 +52,7 @@ public class CameraManager : MonoBehaviour
 
     public void SetCamOnTarget(Vector3 _pos)
 	{
-        Camera.main.orthographicSize = 7f;
+        //Camera.main.orthographicSize = 7f;
         Camera.main.transform.position = new Vector3(_pos.x, _pos.y, Camera.main.transform.position.z);
     }
 
