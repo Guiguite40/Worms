@@ -7,7 +7,7 @@ using Photon.Pun;
 public class Player : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject slimePrefab = null;
-    [SerializeField] List<Slime> slimes = new List<Slime>();
+    [SerializeField] public List<Slime> slimes = new List<Slime>();
     [SerializeField] Inventory inv = null;
     [SerializeField] GameObject teleportationPS = null;
 
