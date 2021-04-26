@@ -34,6 +34,8 @@ public class Player : MonoBehaviourPunCallbacks
     bool isAllSlimePlaced = false;
     bool hasAttacked = false;
 
+    bool actionDone = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -171,6 +173,24 @@ public class Player : MonoBehaviourPunCallbacks
                         move = Input.GetAxisRaw("Horizontal");
                         if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
                             item.rb.velocity = new Vector2(0, item.jumpForce);
+
+                        if (UI.Instance.isItemSelected)
+                        {
+                            if (!hasAttacked)
+                            {
+                                if (UI.Instance.inventoryOpened == false)
+                                {
+                                    if (Input.GetMouseButtonDown(0))
+                                    {
+                                        if (currentCharacter != null)
+                                        {
+                                            timeToRelease = 0;
+                                            UseItem(itemSelected);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     else
                         if (move != 0)
@@ -213,11 +233,9 @@ public class Player : MonoBehaviourPunCallbacks
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
-        if (inv.IsItemUseable(_itemSelected))
+        if (!actionDone)
         {
-            inv.UseItem(_itemSelected);
-
-            switch (inv.items[_itemSelected].type)
+            if (inv.IsItemUseable(_itemSelected))
             {
                 case Enums.Type.Weapon:
                     StartCoroutine(LaunchAttack(_itemSelected));
@@ -229,9 +247,9 @@ public class Player : MonoBehaviourPunCallbacks
                     hasAttacked = true;
                     break;
 
-                case Enums.Type.Utility:
-                    StartCoroutine(UsingUtilitary(_itemSelected));
-                    break;
+                    case Enums.Type.ChargableWeapon:
+                        StartCoroutine(ChargeCalculation(_itemSelected));
+                        break;
 
                 default:
                     break;
@@ -343,6 +361,7 @@ public class Player : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.5f);
         currentCharacter.SetPos(MousePos());
         GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
+        StartCoroutine(EndTurn(5)); // End turn call
         yield return null;
         hasAttacked = true;
     }
@@ -398,5 +417,16 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+    }
+
+    IEnumerator EndTurn(int _waitingTime)
+    {
+        UI.Instance.isItemSelected = false;
+        itemSelected = 0;
+        UI.Instance.SetCursor(Enums.CursorType.Normal);
+        // ! Set to UI remaining time !
+        yield return new WaitForSeconds(_waitingTime);
+
+        yield return null;
     }
 }
