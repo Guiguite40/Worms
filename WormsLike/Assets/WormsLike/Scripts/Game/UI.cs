@@ -100,13 +100,19 @@ public class UI : MonoBehaviour
 
     public void SetCursor(Enums.CursorType _cur)
     {
-        if (_cur == Enums.CursorType.Normal)
+        switch (_cur)
         {
+            case Enums.CursorType.Normal:
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-        }
-        else
-        {
-            Cursor.SetCursor(CursorTextures[(int)_cur - 1], new Vector2(512 / 2, 512 / 2), CursorMode.Auto);
+                break;
+            //case Enums.CursorType.Red:
+            //Cursor.SetCursor(CursorTextures[0], new Vector2(512 / 2, 512 / 2), CursorMode.Auto);
+            //    break;
+            //case Enums.CursorType.Blue:
+            //Cursor.SetCursor(CursorTextures[1], new Vector2(512 / 2, 512 / 2), CursorMode.Auto);
+                break;
+            default:
+                break;
         }
     }
 }
