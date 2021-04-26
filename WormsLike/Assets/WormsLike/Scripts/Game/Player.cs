@@ -244,22 +244,29 @@ public class Player : MonoBehaviourPunCallbacks
         {
             if (inv.IsItemUseable(_itemSelected))
             {
-                case Enums.Type.Weapon:
-                    StartCoroutine(LaunchAttack(_itemSelected));
-                    hasAttacked = true;
-                    break;
+                inv.UseItem(_itemSelected);
 
-                case Enums.Type.ChargableWeapon:
-                    StartCoroutine(ChargeCalculation(_itemSelected));
-                    hasAttacked = true;
-                    break;
+                switch (inv.items[_itemSelected].type)
+                {
+                    case Enums.Type.Weapon:
+                        StartCoroutine(LaunchAttack(_itemSelected));
+                        hasAttacked = true;
+
+                        break;
 
                     case Enums.Type.ChargableWeapon:
                         StartCoroutine(ChargeCalculation(_itemSelected));
+                        hasAttacked = true;
+
                         break;
 
-                default:
-                    break;
+                    case Enums.Type.Utility:
+                        StartCoroutine(UsingUtilitary(_itemSelected));
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
         else
@@ -316,7 +323,7 @@ public class Player : MonoBehaviourPunCallbacks
                     photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
                 else
                     photonView.RPC("SpawnWeaponClient", RpcTarget.MasterClient, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
-              
+
 
                 EndTurn(); // End turn call
             }
@@ -358,9 +365,10 @@ public class Player : MonoBehaviourPunCallbacks
                     StartCoroutine(Teleportation());
                 }
                 else if (_utilitary == Enums.ItemsList.Parachute)
-                {                  
+                {
                     int idSlime = currentCharacter.gameObject.GetPhotonView().ViewID;
                     photonView.RPC("DisplayParachute", RpcTarget.AllBuffered, idSlime);
+                }
                 else if (_utilitary == Enums.ItemsList.SkipTurn)
                 {
                     EndTurn(); // End turn call
