@@ -45,12 +45,12 @@ public class Player : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        foreach (var item in slimes)
+        foreach (Slime slime in slimes)
         {
-            if (item.GetComponent<Slime>().isDead)
+            if (slime.GetComponent<Slime>().isDead)
             {
-                slimes.Remove(item);
-                Destroy(item);
+                slimes.Remove(slime);
+                Destroy(slime);
                 break;
             }
         }
@@ -94,11 +94,11 @@ public class Player : MonoBehaviourPunCallbacks
         currentCharacter = null;
         if (slimes.Count - 1 >= _index)
         {
-            foreach (var item in slimes)
+            foreach (Slime slime in slimes)
             {
-                if (item.isControlled == true)
+                if (slime.isControlled == true)
                 {
-                    item.isControlled = false;
+                    slime.isControlled = false;
                 }
             }
             slimes[_index].isControlled = true;
@@ -114,10 +114,10 @@ public class Player : MonoBehaviourPunCallbacks
     public void UnSetCharacterControlled()
     {
         currentCharacter = null;
-        foreach (var item in slimes)
+        foreach (Slime slime in slimes)
         {
-            if (item.isControlled == true)
-                item.isControlled = false;
+            if (slime.isControlled == true)
+                slime.isControlled = false;
         }
     }
 
@@ -164,15 +164,16 @@ public class Player : MonoBehaviourPunCallbacks
         if (photonView.IsMine == true)
         {
             float move = 0;
-            foreach (var item in slimes)
+
+            foreach (Slime slime in slimes)
             {
-                if (!item.isDead)
+                if (!slime.isDead)
                 {
-                    if (item.isControlled)
+                    if (slime.isControlled)
                     {
                         move = Input.GetAxisRaw("Horizontal");
-                        if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
-                            item.rb.velocity = new Vector2(0, item.jumpForce);
+                        if (Input.GetKeyDown(KeyCode.UpArrow) && slime.GetComponent<Slime>().isGrounded && !slime.GetComponent<Slime>().isDead)
+                            slime.rb.velocity = new Vector2(0, slime.jumpForce);
 
                         if (UI.Instance.isItemSelected)
                         {
@@ -191,6 +192,12 @@ public class Player : MonoBehaviourPunCallbacks
                                 }
                             }
                         }
+
+                        if (Input.GetKeyDown(KeyCode.I))
+                        {
+                            UI.Instance.InventoryTouchPressed();
+                        }
+
                     }
                     else
                         if (move != 0)
@@ -200,8 +207,8 @@ public class Player : MonoBehaviourPunCallbacks
                     if (move != 0)
                     move = 0;
 
-                item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
-                item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
+                slime.velocity.x = Mathf.MoveTowards(slime.velocity.x, slime.maxSpeed * move, slime.moveAcceleration * Time.deltaTime);
+                slime.rb.velocity = new Vector2(slime.velocity.x, slime.rb.velocity.y);
             }
         }
     }
@@ -335,6 +342,10 @@ public class Player : MonoBehaviourPunCallbacks
                 {
                     StartCoroutine(Teleportation());
                 }
+                else if (_utilitary == Enums.ItemsList.SkipTurn)
+                {
+                    StartCoroutine(EndTurn(0)); // End turn call
+                }
             }
         }
         yield return null;
@@ -390,9 +401,11 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator EndTurn(int _waitingTime)
     {
+        UI.Instance.CloseInventory();
         UI.Instance.isItemSelected = false;
         itemSelected = 0;
         UI.Instance.SetCursor(Enums.CursorType.Normal);
+
         // ! Set to UI remaining time !
         yield return new WaitForSeconds(_waitingTime);
 

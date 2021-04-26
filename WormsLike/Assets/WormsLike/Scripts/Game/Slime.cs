@@ -47,6 +47,8 @@ public class Slime : MonoBehaviourPunCallbacks
     public bool isControlled = false;
     public int team = 0;
 
+    public bool fallDamageActived = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -105,9 +107,12 @@ public class Slime : MonoBehaviourPunCallbacks
 
     private void FallDmg_Management()
     {
-        if (rb.velocity.y < -5)
+        if (fallDamageActived)
         {
-            fallingDamage = Mathf.Abs(rb.velocity.y) + 5;
+            if (rb.velocity.y < -5)
+            {
+                fallingDamage = Mathf.Abs(rb.velocity.y) + 5;
+            }
         }
     }
 
