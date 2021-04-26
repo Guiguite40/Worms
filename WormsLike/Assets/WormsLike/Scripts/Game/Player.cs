@@ -109,19 +109,6 @@ public class Player : MonoBehaviourPunCallbacks
     public void SelectWeapon(Enums.ItemsList _item)
     {
         itemSelected = _item;
-
-        if (_item == Enums.ItemsList.JetPack
-            || _item == Enums.ItemsList.Parachute
-            || _item == Enums.ItemsList.Shield
-            || _item == Enums.ItemsList.Teleportation
-            || _item == Enums.ItemsList.SkipTurn)
-        {
-            UI.Instance.SetCursor(Enums.CursorType.Blue);
-        }
-        else
-        {
-            UI.Instance.SetCursor(Enums.CursorType.Red);
-        }
     }
 
     public void UnSetCharacterControlled()
@@ -187,16 +174,19 @@ public class Player : MonoBehaviourPunCallbacks
                         if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
                             item.rb.velocity = new Vector2(0, item.jumpForce);
 
-                        if (!hasAttacked)
+                        if (UI.Instance.isItemSelected)
                         {
-                            if (UI.Instance.inventoryOpened == false)
+                            if (!hasAttacked)
                             {
-                                if (Input.GetMouseButtonDown(0))
+                                if (UI.Instance.inventoryOpened == false)
                                 {
-                                    if (currentCharacter != null)
+                                    if (Input.GetMouseButtonDown(0))
                                     {
-                                        timeToRelease = 0;
-                                        UseItem(itemSelected);
+                                        if (currentCharacter != null)
+                                        {
+                                            timeToRelease = 0;
+                                            UseItem(itemSelected);
+                                        }
                                     }
                                 }
                             }
@@ -400,9 +390,12 @@ public class Player : MonoBehaviourPunCallbacks
 
     IEnumerator EndTurn(int _waitingTime)
     {
+        UI.Instance.isItemSelected = false;
+        itemSelected = 0;
+        UI.Instance.SetCursor(Enums.CursorType.Normal);
         // ! Set to UI remaining time !
         yield return new WaitForSeconds(_waitingTime);
-        UI.Instance.SetCursor(Enums.CursorType.Normal);
+
         yield return null;
     }
 }
