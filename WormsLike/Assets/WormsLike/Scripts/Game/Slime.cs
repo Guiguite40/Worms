@@ -69,12 +69,6 @@ public class Slime : MonoBehaviourPunCallbacks
         Health_Management();
         Charge_Management();
 
-        /* DEBUG */
-        if (isControlled)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-                curHealth -= 10;
-        }
         if (transform.position.y < -2)
         {
             curHealth = 0;
@@ -99,6 +93,14 @@ public class Slime : MonoBehaviourPunCallbacks
                 rb.velocity = new Vector2(0, jumpForce);
             }
         }
+    }
+
+    private void FallDmg_Management()
+    {
+        //if (rb.velocity.y < -5)
+        //{
+        //    fallingDamage = Mathf.Abs(rb.velocity.y) + 5;
+        //}
     }
 
     private void Flip()
@@ -138,31 +140,15 @@ public class Slime : MonoBehaviourPunCallbacks
     {
         healthText.text = healthDisplayed.ToString("0");
 
-        /* HEALTH */
         if (healthDisplayed < curHealth)
             healthCd += 0.001f * Time.deltaTime;
         else
             healthCd += 0.001f * Time.deltaTime;
+
         healthDisplayed = Mathf.Lerp(healthDisplayed, curHealth, healthCd);
+
         if (healthCd >= 1f)
             healthCd = 0f;
-        //healthBar.fillAmount = curHealth / maxHealth;
-        //healthBarDiff.fillAmount = healthDisplayed / maxHealth;
-
-        /* COLORS */
-        //if (healthDisplayed >= 35 && healthBar.color != greenColor)
-        //{
-        //    healthBar.color = greenColor;
-        //}
-        //else if (healthDisplayed < 35 && healthBar.color != redColor)
-        //{
-        //    healthBar.color = redColor;
-        //}
-        //// Health diff color
-        //if (healthBarDiff.color != orangeColor)
-        //{
-        //    healthBarDiff.color = orangeColor;
-        //}
 
         if (curHealth <= 0)
         {
