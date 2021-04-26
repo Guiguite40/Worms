@@ -186,21 +186,6 @@ public class Player : MonoBehaviourPunCallbacks
                         move = Input.GetAxisRaw("Horizontal");
                         if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
                             item.rb.velocity = new Vector2(0, item.jumpForce);
-
-                        if (!hasAttacked)
-                        {
-                            if (UI.Instance.inventoryOpened == false)
-                            {
-                                if (Input.GetMouseButtonDown(0))
-                                {
-                                    if (currentCharacter != null)
-                                    {
-                                        timeToRelease = 0;
-                                        UseItem(itemSelected);
-                                    }
-                                }
-                            }
-                        }
                     }
                     else
                         if (move != 0)
@@ -212,6 +197,21 @@ public class Player : MonoBehaviourPunCallbacks
 
                 item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
                 item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
+            }
+
+            if (!hasAttacked)
+            {
+                if (UI.Instance.inventoryOpened == false)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        if (currentCharacter != null)
+                        {
+                            timeToRelease = 0;
+                            UseItem(itemSelected);
+                        }
+                    }
+                }
             }
         }
     }
