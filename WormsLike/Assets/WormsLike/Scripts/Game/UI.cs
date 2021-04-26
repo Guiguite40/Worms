@@ -48,11 +48,6 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            inventoryOpened = !inventoryOpened;
-        }
-
         if (inventoryOpened)
         {
             if (!inv.activeInHierarchy)
@@ -95,6 +90,14 @@ public class UI : MonoBehaviour
                 itemButtons[i].GetComponentInChildren<Text>().text = _inv.items[(Enums.ItemsList)i].ammo.ToString();
             }
         }
+    }
+
+   public void InventoryTouchPressed()
+    {
+        if (inventoryOpened)
+            inventoryOpened = false;
+        else if (!inventoryOpened)
+            inventoryOpened = true;
     }
 
     public void OpenInventory()
