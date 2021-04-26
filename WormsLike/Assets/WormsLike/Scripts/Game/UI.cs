@@ -106,7 +106,7 @@ public class UI : MonoBehaviour
         }
         else
         {
-            Cursor.SetCursor(CursorTextures[(int)_cur - 1], new Vector2(0, 0), CursorMode.Auto);
+            Cursor.SetCursor(CursorTextures[(int)_cur - 1], new Vector2(512 / 2, 512 / 2), CursorMode.Auto);
         }
     }
 }
