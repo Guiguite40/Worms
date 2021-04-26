@@ -304,7 +304,7 @@ public class Player : MonoBehaviourPunCallbacks
 
                 photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
 
-                StartCoroutine(EndTurn(3)); // End turn call
+                EndTurn(); // End turn call
             }
             yield return null;
         }
@@ -336,7 +336,7 @@ public class Player : MonoBehaviourPunCallbacks
 
                     photonView.RPC("SpawnUtility", RpcTarget.AllBuffered, idutilitary, startPos.x, startPos.y);
 
-                    StartCoroutine(EndTurn(3)); // End turn call
+                    EndTurn(); // End turn call
                 }
                 else if (_utilitary == Enums.ItemsList.Teleportation)
                 {
@@ -344,7 +344,7 @@ public class Player : MonoBehaviourPunCallbacks
                 }
                 else if (_utilitary == Enums.ItemsList.SkipTurn)
                 {
-                    StartCoroutine(EndTurn(0)); // End turn call
+                    EndTurn(); // End turn call
                 }
             }
         }
@@ -357,7 +357,7 @@ public class Player : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.5f);
         currentCharacter.SetPos(MousePos());
         GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
-        StartCoroutine(EndTurn(5)); // End turn call
+        EndTurn(); // End turn call
         yield return null;
     }
 
@@ -399,16 +399,11 @@ public class Player : MonoBehaviourPunCallbacks
     {
     }
 
-    IEnumerator EndTurn(int _waitingTime)
+    public void EndTurn()
     {
         UI.Instance.CloseInventory();
         UI.Instance.isItemSelected = false;
         itemSelected = 0;
         UI.Instance.SetCursor(Enums.CursorType.Normal);
-
-        // ! Set to UI remaining time !
-        yield return new WaitForSeconds(_waitingTime);
-
-        yield return null;
     }
 }
