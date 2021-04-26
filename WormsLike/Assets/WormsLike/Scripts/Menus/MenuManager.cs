@@ -228,13 +228,15 @@ public class MenuManager : MonoBehaviourPunCallbacks
         hash.Add("pw", impFieldPasswordText.text);
         hash.Add("gm", 0);
         hash.Add("m", 0);
+        hash.Add("nbs", 2);
         roomOption.CustomRoomProperties = hash;
 
-        string[] lobbySettings = new string[4];
+        string[] lobbySettings = new string[5];
         lobbySettings[0] = "pm";
         lobbySettings[1] = "pw";
         lobbySettings[2] = "gm";
         lobbySettings[3] = "m";
+        lobbySettings[4] = "nbs";
         roomOption.CustomRoomPropertiesForLobby = lobbySettings;
 
         PhotonNetwork.CreateRoom(impFieldRoomName.text, roomOption);

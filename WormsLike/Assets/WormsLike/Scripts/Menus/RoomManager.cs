@@ -34,6 +34,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 	[SerializeField] private GridLayoutGroup grid;
 
 	int indexGamemode;
+	int nbSlimes = 2;
 	int mapIndex = 0;
 	int lastMapIndex = 3;
 	byte playerMax;
@@ -127,6 +128,9 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 			indexGamemode = 0;
 		else if ((int)PhotonNetwork.CurrentRoom.CustomProperties["gm"] == 1)
 			indexGamemode = 1;
+
+		nbSlimes = (int)PhotonNetwork.CurrentRoom.CustomProperties["nbs"];
+		mapIndex = (int)PhotonNetwork.CurrentRoom.CustomProperties["m"];
 	}
 
 	void UpdateParameters()
@@ -161,11 +165,13 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 			textMap.text = "map 3";
 		if (mapIndex == lastMapIndex)
 			textMap.text = "map 4";
+
+		PhotonNetwork.CurrentRoom.CustomProperties["m"] = mapIndex;
 	}
 
 	void UpdateGamemode()
 	{
-		if (indexGamemode == 0)
+		/*if (indexGamemode == 0)
 		{
 			textGamemode.text = "Team deathmatch";
 			PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 0;
@@ -176,7 +182,10 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 			textGamemode.text = "Forts";
 			PhotonNetwork.CurrentRoom.CustomProperties["gm"] = 1;
 			//print("gamemode = 1 : " + textGamemode.text);
-		}
+		}*/
+
+		PhotonNetwork.CurrentRoom.CustomProperties["nbs"] = nbSlimes;
+		textGamemode.text = nbSlimes.ToString();
 	}
 
 	public void UpdateButtons()
@@ -191,15 +200,20 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 		else
 			buttonMinusPlayerMax.interactable = true;
 
-		if (indexGamemode == 0)
+		if (/*indexGamemode == 0*/ nbSlimes == 2)
 		{
 			buttonMinusGamemode.interactable = false;
 			buttonPlusGamemode.interactable = true;
 		}
-		else if (indexGamemode == 1)
+		else if (/*indexGamemode == 1*/ nbSlimes == 6)
 		{
 			buttonMinusGamemode.interactable = true;
 			buttonPlusGamemode.interactable = false;
+		}
+		else
+		{
+			buttonMinusGamemode.interactable = true;
+			buttonPlusGamemode.interactable = true;
 		}
 
 		if (mapIndex == lastMapIndex)
@@ -253,6 +267,16 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 		}
 
 		UpdateServerInfo();
+	}
+
+	public void IncrementNbSlimes()
+	{
+		nbSlimes++;
+	}
+
+	public void DecrementNbSlimes()
+	{
+		nbSlimes--;
 	}
 
 	public void NextMap()
@@ -322,13 +346,16 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 		{
 			int gm = indexGamemode;
 			int map = mapIndex;
+			int nbSlimesMax = nbSlimes;
 			stream.SendNext(gm);
 			stream.SendNext(map);
+			stream.SendNext(nbSlimesMax);
 		}
 		else
 		{
 			indexGamemode = (int)stream.ReceiveNext();
 			mapIndex = (int)stream.ReceiveNext();
+			nbSlimes = (int)stream.ReceiveNext();
 		}
 	}
 

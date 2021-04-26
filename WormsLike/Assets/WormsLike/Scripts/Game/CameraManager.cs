@@ -52,25 +52,7 @@ public class CameraManager : MonoBehaviour
 
     public void SetCamOnTarget(Vector3 _pos)
 	{
-        /*Vector3 targetPos = new Vector3(_pos.x, _pos.y, Camera.main.transform.position.z);
-        if ((targetPos - Camera.main.transform.position).magnitude > 0.5f)
-        {
-            Camera.main.transform.position += (targetPos - Camera.main.transform.position) * targetCamSpeed * Time.deltaTime;
-        }
-        else
-            Camera.main.transform.position = targetPos;
-
-        if (Camera.main.orthographicSize <= 19 && Camera.main.orthographicSize >= 6)
-            Camera.main.orthographicSize += zoomSpeed * Time.deltaTime;
-        else
-        {
-            if (Camera.main.orthographicSize > 19)
-                Camera.main.orthographicSize = 19;
-            else if (Camera.main.orthographicSize < 6)
-                Camera.main.orthographicSize = 6f;
-        }*/
-
-        Camera.main.orthographicSize = 7f;
+        //Camera.main.orthographicSize = 7f;
         Camera.main.transform.position = new Vector3(_pos.x, _pos.y, Camera.main.transform.position.z);
     }
 
@@ -92,7 +74,7 @@ public class CameraManager : MonoBehaviour
 
         if (Camera.main.orthographicSize > 6)
         {
-            Camera.main.orthographicSize -= 4 * Time.deltaTime;
+            Camera.main.orthographicSize -= 4.5f * Time.deltaTime;
         }
         else
             Camera.main.orthographicSize = 6f;
