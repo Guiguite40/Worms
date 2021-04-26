@@ -76,7 +76,7 @@ public class Slime : MonoBehaviourPunCallbacks
         /* DEBUG */
         if (isControlled)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Delete))
                 curHealth -= 10;
         }
         if (transform.position.y < -2)
