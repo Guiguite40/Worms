@@ -6,6 +6,9 @@ using Photon.Pun;
 
 public class UI : MonoBehaviour
 {
+    [Header("Cursor")]
+    [SerializeField] private List<Texture2D> CursorTextures; // 0=red, 1=blue
+    [Header("Others")]
     [SerializeField] public GameObject inv = null;
     [SerializeField] public List<Button> itemButtons = new List<Button>();
 
@@ -93,5 +96,17 @@ public class UI : MonoBehaviour
     {
         if (inventoryOpened)
             inventoryOpened = false;
+    }
+
+    public void SetCursor(Enums.CursorType _cur)
+    {
+        if (_cur == Enums.CursorType.Normal)
+        {
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+        else
+        {
+            Cursor.SetCursor(CursorTextures[(int)_cur - 1], new Vector2(0, 0), CursorMode.Auto);
+        }
     }
 }

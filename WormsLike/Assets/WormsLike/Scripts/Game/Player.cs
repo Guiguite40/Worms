@@ -34,6 +34,8 @@ public class Player : MonoBehaviourPunCallbacks
     bool isAllSlimePlaced = false;
     bool hasAttacked = false;
 
+    bool actionDone = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -107,6 +109,19 @@ public class Player : MonoBehaviourPunCallbacks
     public void SelectWeapon(Enums.ItemsList _item)
     {
         itemSelected = _item;
+
+        if (_item == Enums.ItemsList.JetPack
+            || _item == Enums.ItemsList.Parachute
+            || _item == Enums.ItemsList.Shield
+            || _item == Enums.ItemsList.Teleportation
+            || _item == Enums.ItemsList.SkipTurn)
+        {
+            UI.Instance.SetCursor(Enums.CursorType.Blue);
+        }
+        else
+        {
+            UI.Instance.SetCursor(Enums.CursorType.Red);
+        }
     }
 
     public void UnSetCharacterControlled()
@@ -213,33 +228,36 @@ public class Player : MonoBehaviourPunCallbacks
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
-        if (inv.IsItemUseable(_itemSelected))
+        if (!actionDone)
         {
-            inv.UseItem(_itemSelected);
-
-            switch (inv.items[_itemSelected].type)
+            if (inv.IsItemUseable(_itemSelected))
             {
-                case Enums.Type.Weapon:
-                    StartCoroutine(LaunchAttack(_itemSelected));
-                    break;
+                inv.UseItem(_itemSelected);
 
-                case Enums.Type.ChargableWeapon:
-                    StartCoroutine(ChargeCalculation(_itemSelected));
-                    break;
+                switch (inv.items[_itemSelected].type)
+                {
+                    case Enums.Type.Weapon:
+                        StartCoroutine(LaunchAttack(_itemSelected));
+                        break;
 
-                case Enums.Type.Utility:
-                    StartCoroutine(UsingUtilitary(_itemSelected));
-                    break;
+                    case Enums.Type.ChargableWeapon:
+                        StartCoroutine(ChargeCalculation(_itemSelected));
+                        break;
 
-                default:
-                    break;
+                    case Enums.Type.Utility:
+                        StartCoroutine(UsingUtilitary(_itemSelected));
+                        break;
+
+                    default:
+                        break;
+                }
+
+                hasAttacked = true;
             }
-
-            hasAttacked = true;
-        }
-        else
-        {
-            Debug.Log("No ammo");
+            else
+            {
+                Debug.Log("No ammo");
+            }
         }
     }
 
@@ -288,6 +306,8 @@ public class Player : MonoBehaviourPunCallbacks
                 int idweapon = explosive.GetPhotonView().ViewID;
 
                 photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
+
+                StartCoroutine(EndTurn(3)); // End turn call
             }
             yield return null;
         }
@@ -318,6 +338,8 @@ public class Player : MonoBehaviourPunCallbacks
                     int idutilitary = utilitary.GetPhotonView().ViewID;
 
                     photonView.RPC("SpawnUtility", RpcTarget.AllBuffered, idutilitary, startPos.x, startPos.y);
+
+                    StartCoroutine(EndTurn(3)); // End turn call
                 }
                 else if (_utilitary == Enums.ItemsList.Teleportation)
                 {
@@ -334,6 +356,7 @@ public class Player : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.5f);
         currentCharacter.SetPos(MousePos());
         GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
+        StartCoroutine(EndTurn(5)); // End turn call
         yield return null;
     }
 
@@ -373,5 +396,13 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+    }
+
+    IEnumerator EndTurn(int _waitingTime)
+    {
+        // ! Set to UI remaining time !
+        yield return new WaitForSeconds(_waitingTime);
+        UI.Instance.SetCursor(Enums.CursorType.Normal);
+        yield return null;
     }
 }

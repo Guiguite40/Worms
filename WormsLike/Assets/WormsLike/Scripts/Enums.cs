@@ -2,6 +2,14 @@ using UnityEngine;
 
 public class Enums
 {
+    public enum CursorType
+    {
+        Normal,
+        Red,
+        Blue
+    }
+
+
     public enum Type
     {
         Weapon,
