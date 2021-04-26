@@ -50,7 +50,6 @@ MonoBehaviour:
   slimes: []
   inv: {fileID: -6890893481750907789}
   teleportationPS: {fileID: 7637729008833882193, guid: a0df9281c89a6e547a4398d9e7692e0a, type: 3}
-  parachute: {fileID: 3744739548233506996, guid: 04fd51e49467b9a4d87cbad4acee9bc0, type: 3}
   slimeLimit: 3
   team: 1
   phase_placement: 0

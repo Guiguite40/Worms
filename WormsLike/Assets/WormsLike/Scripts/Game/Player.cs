@@ -10,7 +10,6 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] List<Slime> slimes = new List<Slime>();
     [SerializeField] Inventory inv = null;
     [SerializeField] GameObject teleportationPS = null;
-    [SerializeField] GameObject parachute = null;
 
     [HideInInspector] public int slimeLimit = 3;
     public int team = 0;
@@ -191,7 +190,7 @@ public class Player : MonoBehaviourPunCallbacks
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
-                        if (currentCharacter != null)
+                        if (currentCharacter != null && currentCharacter.parachuteOpen == false)
                         {
                             timeToRelease = 0;
                             UseItem(itemSelected);
@@ -222,10 +221,12 @@ public class Player : MonoBehaviourPunCallbacks
             {
                 case Enums.Type.Weapon:
                     StartCoroutine(LaunchAttack(_itemSelected));
+                    hasAttacked = true;
                     break;
 
                 case Enums.Type.ChargableWeapon:
                     StartCoroutine(ChargeCalculation(_itemSelected));
+                    hasAttacked = true;
                     break;
 
                 case Enums.Type.Utility:
@@ -235,8 +236,6 @@ public class Player : MonoBehaviourPunCallbacks
                 default:
                     break;
             }
-
-            hasAttacked = true;
         }
         else
         {
@@ -322,14 +321,16 @@ public class Player : MonoBehaviourPunCallbacks
                     int idutilitary = utilitary.GetPhotonView().ViewID;
 
                     photonView.RPC("SpawnUtility", RpcTarget.AllBuffered, idutilitary, startPos.x, startPos.y);
+                    hasAttacked = true;
                 }
                 else if (_utilitary == Enums.ItemsList.Teleportation)
                 {
                     StartCoroutine(Teleportation());
                 }
                 else if (_utilitary == Enums.ItemsList.Parachute)
-                {
-                    Utility.OpenParachute(currentCharacter.rb, parachute);
+                {                  
+                    int idSlime = currentCharacter.gameObject.GetPhotonView().ViewID;
+                    photonView.RPC("DisplayParachute", RpcTarget.AllBuffered, idSlime);
                 }
             }
         }
@@ -343,6 +344,7 @@ public class Player : MonoBehaviourPunCallbacks
         currentCharacter.SetPos(MousePos());
         GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
         yield return null;
+        hasAttacked = true;
     }
 
     [PunRPC]
@@ -373,6 +375,15 @@ public class Player : MonoBehaviourPunCallbacks
     public void SpawnWeaponClient(int idWeapon, float posX, float posY, float targetPosX, float targetPosY, float _charge)
     {
         photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idWeapon, posX, posY, targetPosX, targetPosY, _charge);
+    }
+
+    [PunRPC]
+    public void DisplayParachute(int idSlime)
+    {
+        GameObject mySlime = PhotonView.Find(idSlime).gameObject;
+        Slime curSlime = mySlime.GetComponent<Slime>();
+        curSlime.parachuteOpen = true;
+        curSlime.rb.drag = 12;
     }
 
     [PunRPC]

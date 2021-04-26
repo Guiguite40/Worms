@@ -47,6 +47,9 @@ public class Slime : MonoBehaviourPunCallbacks
     public bool isControlled = false;
     public int team = 0;
 
+    [SerializeField] GameObject parachute = null;
+    public bool parachuteOpen = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -74,6 +77,18 @@ public class Slime : MonoBehaviourPunCallbacks
         if (transform.position.y < -2)
         {
             curHealth = 0;
+        }
+
+        if (parachuteOpen == true)
+        {
+            parachute.SetActive(true);
+        }
+
+        if (isGrounded == true && parachuteOpen == true)
+        {
+            parachuteOpen = false;
+            rb.drag = 0;
+            parachute.SetActive(false);
         }
     }
 

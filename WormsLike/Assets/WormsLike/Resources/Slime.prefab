@@ -452,7 +452,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   head: {fileID: 7473121283977166446}
-  feet: {fileID: 0}
   SpRenderer: {fileID: 3845015423529556881}
   filter:
     useTriggers: 0
@@ -490,6 +489,8 @@ MonoBehaviour:
   characterColor: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
   isControlled: 0
   team: 1
+  parachute: {fileID: 5781791293972726038}
+  parachuteOpen: 0
 --- !u!70 &3845015423529556883
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -709,6 +710,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3845015423529556880}
     m_Modifications:
+    - target: {fileID: -4722770103717655810, guid: 04fd51e49467b9a4d87cbad4acee9bc0, type: 3}
+      propertyPath: ammo
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3278325740680388626, guid: 04fd51e49467b9a4d87cbad4acee9bc0, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -757,14 +762,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Parachute
       objectReference: {fileID: 0}
-    - target: {fileID: 7144694537545256311, guid: 04fd51e49467b9a4d87cbad4acee9bc0, type: 3}
-      propertyPath: m_Color.a
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04fd51e49467b9a4d87cbad4acee9bc0, type: 3}
 --- !u!4 &6065412569173416104 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3278325740680388626, guid: 04fd51e49467b9a4d87cbad4acee9bc0, type: 3}
+  m_PrefabInstance: {fileID: 8742154816324860090}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5781791293972726038 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2985697371384691116, guid: 04fd51e49467b9a4d87cbad4acee9bc0, type: 3}
   m_PrefabInstance: {fileID: 8742154816324860090}
   m_PrefabAsset: {fileID: 0}
