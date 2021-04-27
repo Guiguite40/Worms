@@ -1128,7 +1128,7 @@ namespace DTerrain
 		{
             if(_team == "blue")
 			{
-                listPlayerBlue.Remove(listPlayerBlue[_index]);
+                listPlayersBlue.Remove(listPlayersBlue[_index]);
             }
             else if(_team == "red")
 			{
@@ -1153,25 +1153,51 @@ namespace DTerrain
 
         bool GetBlueLose()
 		{
+            bool remove = false;
+            int removeIndex = -1;
             for(int i = 0; i < listPlayersBlue.Count; i++)
 			{
-                if (!listPlayersBlue[i].GetHasLose())
+                if (!listPlayersBlue[i].GetHasLose() && !remove)
                     return false;
                 else
-                    photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
+				{
+                    remove = true;
+                    removeIndex = i;
+				}
+                    //photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
             }
+
+            if(remove)
+			{
+                photonView.RPC("RemovePlayer", RpcTarget.All, "blue", removeIndex);
+                return false;
+            }
+
             return true;
 		}
 
         bool GetRedLose()
         {
+            bool remove = false;
+            int removeIndex = -1;
             for (int i = 0; i < listPlayersRed.Count; i++)
             {
                 if (!listPlayersRed[i].GetHasLose())
                     return false;
                 else
-                    photonView.RPC("RemovePlayer", RpcTarget.All, "red", i);
+                {
+                    remove = true;
+                    removeIndex = i;
+                }
+                //photonView.RPC("RemovePlayer", RpcTarget.All, "red", i);
             }
+
+            if (remove)
+            {
+                photonView.RPC("RemovePlayer", RpcTarget.All, "red", removeIndex);
+                return false;
+            }
+
             return true;
         }
 
