@@ -339,23 +339,20 @@ namespace DTerrain
 
                                     if (IsLocalPlayerTurn())
                                     {
-                                        //itsHisTurnText.text = "true";
                                         uiTurn.text = "It's your turn";
                                         SetCurrentPlayerPlayingName();
                                     }
                                     else
                                     {
-                                        //itsHisTurnText.text = "false";
                                         uiTurn.text = "";
                                     }
-
-                                    //currentTurnStateText.text = "start";
 
                                     if (!isPlayerTurnSetup)
                                     {
                                         if (slimeIndex == slimeIndexMax)
                                             slimeIndex = 0;
 
+                                        ResetTimers(true);
                                         isPlayerTurnSetup = true;
                                     }
                                     else
@@ -365,7 +362,6 @@ namespace DTerrain
                                             timerPlayerStart = 3f;
                                             ResetTimers(true);
                                             SendValueToMaster("timerPlayerStart");
-                                            //dataPos.text = timerPlayerStart.ToString();
                                             SetPlayerPhaseState(PlayerPhaseState.ACTION, false, true); //true
                                         }
                                         else
@@ -373,18 +369,11 @@ namespace DTerrain
                                             if (IsLocalPlayerTurn())
                                             {
                                                 timerPlayerStart -= Time.deltaTime;
-                                                //dataPos.text = timerPlayerStart.ToString();
 
                                                 GetCurrentPlayer().SetCharacterControlled(slimeIndex);
                                                 CameraManager.instance.MoveCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
 
                                                 SendValueToMaster("camera");
-                                            }
-                                            else
-                                            {
-                                                //uiTurn.text = "It's the  turn of " + GetCurrentPlayerName();
-                                                //uiTurn.text = "It's the  turn of other team";
-                                                //SendValueToMaster("uiTurn");
                                             }
                                         }
                                     }
@@ -401,7 +390,6 @@ namespace DTerrain
                                         SendValueToMaster("timerPlayerTurn");
                                         uiTimer.text = ((int)timerPlayerTurn).ToString();
                                         SendValueToMaster("uiTimer");
-                                        //dataPos.text = timerPlayerTurn.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //DAMAGE //true
                                     }
                                     else
@@ -418,12 +406,10 @@ namespace DTerrain
                                             timerPlayerTurn -= Time.deltaTime;
                                             uiTimer.text = ((int)timerPlayerTurn).ToString();
                                             SendValueToMaster("uiTimer");
-                                            //dataPos.text = timerPlayerTurn.ToString();
                                             if (!GetCurrentPlayer().GetHasAttacked())
                                             {
                                                 GetCurrentPlayer().ControlCharacter();
                                                 CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
-                                                //SendValueToMaster("camera");
                                             }
                                             else
                                             {
@@ -443,16 +429,7 @@ namespace DTerrain
                                         GetCurrentPlayer().SetHasAttacked(false);
                                         timerMovementsLeft = 3f;
                                         ResetTimers(true);
-                                        //if (IsLocalPlayerTurn())
-                                        //SendValueToMaster("timerMovementsLeft");
                                         CameraManager.instance.ResetCam();
-                                        //dataPos.text = timerMovementsLeft.ToString();
-                                        /*if (IsLocalPlayerMaster())
-                                        {
-                                            SetPlayerPhaseState(PlayerPhaseState.MAP, true, false);
-                                        }
-                                        else
-                                            SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true*/
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true
                                     }
                                     else
@@ -462,7 +439,6 @@ namespace DTerrain
                                             timerMovementsLeft -= Time.deltaTime;
                                             uiTimer.text = ((int)timerMovementsLeft).ToString();
                                             SendValueToMaster("uiTimer");
-                                            //dataPos.text = timerMovementsLeft.ToString();
                                             GetCurrentPlayer().ControlCharacter();
                                             CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             SendValueToMaster("camera");
@@ -470,10 +446,9 @@ namespace DTerrain
                                                 SendValueToMaster("timerMovementsLeft");
                                         }
 
-                                        if (PhotonNetwork.IsMasterClient)
+                                        /*if (PhotonNetwork.IsMasterClient)
                                             if (int.Parse(uiTimer.text) <= 0.3)
-                                                playerPhaseState = PlayerPhaseState.MAP;
-                                        //SetPlayerPhaseState(PlayerPhaseState.MAP, false, false);
+                                                playerPhaseState = PlayerPhaseState.MAP;*/
                                     }
                                     break;
 
@@ -492,34 +467,37 @@ namespace DTerrain
                                         SetNextPlayerNTeamTurn();
                                         SendValueToMaster("currentPlayer");
                                         SendValueToMaster("currentPlayTeam");
-                                        if (timerAllGame >= 40)
+                                        /*if (timerAllGame >= 40)
                                             timerMap = 5f;
                                         else
-                                            timerMap = 3f;
+                                            timerMap = 3f;*/
                                         ResetTimers(true);
-                                        //dataPos.text = timerMap.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.START_PHASE, false, true);
                                     }
                                     else
                                     {
                                         CameraManager.instance.ResetCam();
-                                        if (IsLocalPlayerMaster())
+                                        /*if (IsLocalPlayerMaster())
                                             if (timerAllGame >= 40)
-                                                mapDestroy.SetMortSubite();
+                                                mapDestroy.SetMortSubite();*/
 
                                         if (IsLocalPlayerTurn())
                                         {
                                             if (!crateSpawned)
                                             {
-
+                                                if (timerAllGame >= 40)
+                                                {
+                                                    timerMap = 5f;
+                                                    mapDestroy.SetMortSubite();
+                                                }
+                                                else
+                                                    timerMap = 3f;
                                                 SpawnCrate();
                                                 crateSpawned = true;
                                             }
                                             timerMap -= Time.deltaTime;
-                                            //dataPos.text = timerMap.ToString();
                                         }
                                         ResetTimers(false);
-                                        //CameraManager.instance.ResetCam();
                                         GetCurrentPlayer().UnSetCharacterControlled();
                                     }
 
@@ -566,6 +544,23 @@ namespace DTerrain
             }
 
             //dataPos.text = "all timers reset";
+            uiTimer.text = "";
+            uiTurn.text = "";
+            SendValueToMaster("uiTimer");
+        }
+
+        void ResetTimer()
+        {
+            timerPlayerStart = 3f;
+            timerPlayerTurn = 60f;
+            //isPlayerTurnSetup = false;
+            timerMovementsLeft = 3f;
+                if (timerAllGame >= 40)
+                    timerMap = 5f;
+                else
+                    timerMap = 3f;
+                crateSpawned = false;
+
             uiTimer.text = "";
             uiTurn.text = "";
             SendValueToMaster("uiTimer");

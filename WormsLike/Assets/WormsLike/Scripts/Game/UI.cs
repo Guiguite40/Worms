@@ -93,12 +93,12 @@ public class UI : MonoBehaviour
     }
 
    public void InventoryTouchPressed()
-    {
+   {
         if (inventoryOpened)
             inventoryOpened = false;
         else if (!inventoryOpened)
             inventoryOpened = true;
-    }
+   }
 
     public void OpenInventory()
     {
