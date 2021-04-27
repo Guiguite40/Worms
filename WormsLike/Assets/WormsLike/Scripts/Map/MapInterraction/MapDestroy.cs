@@ -47,19 +47,6 @@ namespace DTerrain
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && mapTurn == false && PhotonNetwork.IsMasterClient)
-            {
-                mapTurn = true;
-                shipDescent = true;
-
-                leftPosX = LeftMapKiller.transform.position.x;
-                RightPosX = RightMapKiller.transform.position.x;
-
-                PosY = LeftMapKiller.transform.position.y;
-
-                photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
-            }
-
             if (mapTurn == true)
             {
                 MapMortSubite();

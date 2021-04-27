@@ -728,7 +728,7 @@ MonoBehaviour:
   itemsList: 4
   invImage: {fileID: 8281486339991966419, guid: 7007e9303b4df3447ba9475067d22a15, type: 3}
   infiniteAmmo: 0
-  ammo: 3
+  ammo: 4
   selected: 0
 --- !u!114 &4145380131838184885
 MonoBehaviour:

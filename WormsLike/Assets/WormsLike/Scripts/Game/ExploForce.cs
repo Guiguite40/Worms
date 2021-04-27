@@ -8,15 +8,18 @@ public static class Rigidbody2DExt
     {
         var explosionDir = rb.position - explosionPosition;
         var explosionDistance = explosionDir.magnitude;
+        explosionDir = explosionDir.normalized;
 
-        if (upwardsModifier == 0)
-            explosionDir /= explosionDistance;
-        else
-        {
-            explosionDir.y += upwardsModifier;
-            explosionDir.Normalize();
-        }
+        rb.AddForce((1 - (explosionDistance / explosionRadius)) * explosionForce * explosionDir);
 
-        rb.AddForce(Mathf.Lerp(0, explosionForce, (1 - explosionDistance)) * explosionDir, mode);
+        //if (upwardsModifier == 0)
+        //    explosionDir /= explosionDistance;
+        //else
+        //{
+        //    explosionDir.y += upwardsModifier;
+        //    explosionDir.Normalize();
+        //}
+
+        //rb.AddForce(Mathf.Lerp(0, explosionForce, (1 - explosionDistance)) * explosionDir, mode);
     }
 }
