@@ -1974,6 +1974,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1818413873}
     - target: {fileID: 5979688290120108674, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
+      propertyPath: victoryScreen
+      value: 
+      objectReference: {fileID: 366041934}
+    - target: {fileID: 5979688290120108674, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
       propertyPath: itsHisTurnText
       value: 
       objectReference: {fileID: 886257277}
@@ -1985,6 +1989,10 @@ PrefabInstance:
       propertyPath: healthBoxPrefab
       value: 
       objectReference: {fileID: 6309667246824479687, guid: 1a51c14f547c3174597d07d245877697, type: 3}
+    - target: {fileID: 5979688290120108674, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
+      propertyPath: victoryScreenText
+      value: 
+      objectReference: {fileID: 564091057}
     - target: {fileID: 5979688290120108674, guid: 04a5969aeaf129141b9fc8b08a895420, type: 3}
       propertyPath: currentGameStateText
       value: 

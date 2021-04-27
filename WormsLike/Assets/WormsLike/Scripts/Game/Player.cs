@@ -33,8 +33,9 @@ public class Player : MonoBehaviourPunCallbacks
     float timeToRelease = 0;
     bool isAllSlimePlaced = false;
     bool hasAttacked = false;
-
+    bool hasLose = false;
     bool actionDone = false;
+    bool slimeSetup = false;
 
     // Start is called before the first frame update
     void Start()
@@ -56,6 +57,13 @@ public class Player : MonoBehaviourPunCallbacks
         }
         ControlCharacter();
 
+
+        if (slimes.Count > 0)
+            slimeSetup = true;
+
+        if (slimes.Count <= 0 && slimeSetup)
+            hasLose = true;
+
         if (currentCharacter != null)
         {
             currentCharacter.charge = charge;
@@ -71,6 +79,17 @@ public class Player : MonoBehaviourPunCallbacks
 
         if (itemSelected != UI.Instance.GetItemSelected())
             itemSelected = UI.Instance.GetItemSelected();
+    }
+
+    public void KillAllSlimes()
+	{
+        foreach (Slime slime in slimes)
+        {
+            slime.GetComponent<Slime>().isDead = true;
+            slimes.Remove(slime);
+            Destroy(slime);
+        }
+        SetHasLose();
     }
 
     public void SetupPlayerState(string _currentTeam, int _nbCharacterLimit)
@@ -409,4 +428,14 @@ public class Player : MonoBehaviourPunCallbacks
         itemSelected = 0;
         UI.Instance.SetCursor(Enums.CursorType.Normal);
     }
+
+    public void SetHasLose()
+	{
+        hasLose = true;
+	}
+
+    public bool GetHasLose()
+	{
+        return hasLose;
+	}
 }

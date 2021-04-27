@@ -56,6 +56,8 @@ namespace DTerrain
         [SerializeField] Text uiTurn;
         //[SerializeField] Text textGameTime;
         [SerializeField] MapDestroy mapDestroy;
+        [SerializeField] GameObject victoryScreen;
+        [SerializeField] Text victoryScreenText;
 
         int currentBluePlayerIndex = 0;
         int currentRedPlayerIndex = 0;
@@ -72,6 +74,7 @@ namespace DTerrain
         string currentlocalPlayerPlayingName = "none";
         bool bluePointPlaced = false;
         bool redPointPlaced = false;
+        bool isCanvasClosed = false;
 
         ///////////////
         float timerStart = 5f;
@@ -129,6 +132,8 @@ namespace DTerrain
 
         void Start()
         {
+            victoryScreen.SetActive(false);
+
             SetupStartValue();
             uiTurn.text = "";
             uiTimer.text = "";
@@ -169,7 +174,7 @@ namespace DTerrain
                 else if (currentPlayTeam == "red")
                     currentlocalPlayerPlayingName = listPlayerRed[currentRedPlayerIndex].NickName;
                 SendValue("currentPlayer", RpcTarget.OthersBuffered);
-            }
+            }        
         }
 
         void nextStateinputs()
@@ -191,6 +196,13 @@ namespace DTerrain
         void Update()
         {
             nextStateinputs();
+            TeamVictory();
+
+            if(!isCanvasClosed)
+			{
+                victoryScreen.SetActive(false);
+                isCanvasClosed = true;
+			}
 
             if (IsLocalPlayerMaster())
             {
@@ -274,8 +286,7 @@ namespace DTerrain
                             SendValueToMaster("currentPlayTeam");
                         }
                     }
-                    //else
-                    //itsHisTurnText.text = "false";
+
                     break;
 
                 case GamePhaseState.SLIME_PLACEMENT:
@@ -334,7 +345,6 @@ namespace DTerrain
 
                             switch (playerPhaseState)
                             {
-
                                 case PlayerPhaseState.START_PHASE:
 
                                     if (IsLocalPlayerTurn())
@@ -579,32 +589,6 @@ namespace DTerrain
                 GameObject damageBox = PhotonNetwork.Instantiate(damageBoxPrefab.name, new Vector3(posX, 25f, 0), Quaternion.identity);
             }
         }
-
-        /*IEnumerator InstantiatePlayer()
-        {
-            //Debug.Log("Waiting other players");
-            yield return new WaitForSeconds(1);
-
-            GameObject newPlayer = playerPrefab;
-            PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
-            newPlayer.GetComponent<Player>().isTurn = true;
-            newPlayer.GetComponent<Player>().phase_game = true;
-            newPlayer.GetComponent<Player>().team = 1;
-
-            yield return null;
-        }
-
-        void SetPlayerTurn(string _playerTeam, int _playerListIndex)
-        {
-            if (_playerTeam == "blue")
-            {
-                listPlayersBlue[_playerListIndex].SetIsTurn(true);
-            }
-            else if (_playerTeam == "red")
-            {
-                listPlayersRed[_playerListIndex].SetIsTurn(true);
-            }
-        }*/
 
         void SendValueToMaster(string _valueToSend)
         {
@@ -953,9 +937,25 @@ namespace DTerrain
         Player GetCurrentPlayer()
         {
             if (IsRedTurn())
-                return listPlayersRed[currentRedPlayerIndex];
+            {
+                if (listPlayersRed[currentRedPlayerIndex] != null)
+                    return listPlayersRed[currentRedPlayerIndex];
+                else
+                {
+                    Debug.LogError("red player dead, pass turn");
+                    return null;
+                }
+            }
             else if (IsBlueTurn())
-                return listPlayersBlue[currentBluePlayerIndex];
+            {
+                if (listPlayersBlue[currentBluePlayerIndex] != null)
+                    return listPlayersBlue[currentBluePlayerIndex];
+                else
+                {
+                    Debug.LogError("blue player dead, pass turn");
+                    return null;
+                }
+            }
             else
             {
                 if (strStartTeam == "red")
@@ -1084,6 +1084,100 @@ namespace DTerrain
 
             return slimes;
         }
-    }
 
+		public override void OnDisconnected(Photon.Realtime.DisconnectCause cause)
+		{
+            Debug.LogError(cause);
+            for (int i = 0; i < listPlayerBlue.Count; i++)
+            {
+                if (listPlayerBlue[i] == PhotonNetwork.LocalPlayer)
+                {
+                    listPlayersBlue[i].KillAllSlimes();
+                    photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
+                }
+            }
+
+            for (int i = 0; i < listPlayerRed.Count; i++)
+            {
+                if (listPlayerRed[i] == PhotonNetwork.LocalPlayer)
+                {
+                    listPlayersRed[i].KillAllSlimes();
+                    photonView.RPC("RemovePlayer", RpcTarget.All, "red", i);
+                }
+            }
+        }
+
+        [PunRPC]
+        void RemovePlayer(string _team, int _index)
+		{
+            if(_team == "blue")
+			{
+                listPlayerBlue.Remove(listPlayerBlue[_index]);
+            }
+            else if(_team == "red")
+			{
+                listPlayersRed.Remove(listPlayersRed[_index]);
+            }
+		}
+
+        void SetVictoryScreen(bool _state, bool _hasLose)
+		{
+            if (_state == true)
+            {
+                victoryScreen.SetActive(true);
+                gamePhaseState = GamePhaseState.END_GAME;
+                if (_hasLose)
+                    victoryScreenText.text = "Lose";
+                else
+                    victoryScreenText.text = "Victory";
+            }
+            else
+                victoryScreen.SetActive(false);
+        }
+
+        bool GetBlueLose()
+		{
+            for(int i = 0; i < listPlayersBlue.Count; i++)
+			{
+                if (!listPlayersBlue[i].GetHasLose())
+                    return false;
+                else
+                    photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
+            }
+            return true;
+		}
+
+        bool GetRedLose()
+        {
+            for (int i = 0; i < listPlayersRed.Count; i++)
+            {
+                if (!listPlayersRed[i].GetHasLose())
+                    return false;
+                else
+                    photonView.RPC("RemovePlayer", RpcTarget.All, "red", i);
+            }
+            return true;
+        }
+
+        void TeamVictory()
+		{
+            if(GetBlueLose())
+			{
+                Debug.LogError("blue loose");
+                if((string)PhotonNetwork.LocalPlayer.CustomProperties["t"] == "blue")
+                    SetVictoryScreen(true, true);
+                else
+                    SetVictoryScreen(true, false);
+            }
+
+            if (GetRedLose())
+            {
+                Debug.LogError("red loose");
+                if ((string)PhotonNetwork.LocalPlayer.CustomProperties["t"] == "red")
+                    SetVictoryScreen(true, true);
+                else
+                    SetVictoryScreen(true, false);
+            }
+        }
+    }
 }
