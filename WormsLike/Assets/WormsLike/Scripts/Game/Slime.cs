@@ -160,7 +160,13 @@ public class Slime : MonoBehaviourPunCallbacks
 
     public Vector3 GetPos()
     {
-        return transform.position;
+        if (this == null)
+        {
+            DTerrain.GameManager.instance.SetIsPassTurn();
+            return Vector3.zero;
+        }
+        else
+            return transform.position;
     }
 
     private void Health_Management()
