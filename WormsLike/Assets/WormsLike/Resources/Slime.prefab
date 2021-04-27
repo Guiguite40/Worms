@@ -385,6 +385,7 @@ Transform:
   - {fileID: 3845015423444133006}
   - {fileID: 676858883500947167}
   - {fileID: 6065412569173416104}
+  - {fileID: 1608628164438224898}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -491,6 +492,7 @@ MonoBehaviour:
   team: 1
   parachute: {fileID: 5781791293972726038}
   parachuteOpen: 0
+  fallDamageActived: 1
 --- !u!70 &3845015423529556883
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -614,7 +616,7 @@ Transform:
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 3845015423529556880}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!198 &2171166562126004721
 ParticleSystem:

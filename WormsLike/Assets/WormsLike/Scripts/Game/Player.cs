@@ -191,13 +191,7 @@ public class Player : MonoBehaviourPunCallbacks
                                     }
                                 }
                             }
-                        }
-
-                        if (Input.GetKeyDown(KeyCode.I))
-                        {
-                            UI.Instance.InventoryTouchPressed();
-                        }
-
+                        }                 
                     }
                     else
                         if (move != 0)
