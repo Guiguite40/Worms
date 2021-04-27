@@ -97,6 +97,7 @@ namespace DTerrain
         float timerMap = 3f;
         bool isPlayerTurnSetup = false;
         bool crateSpawned = false;
+        bool isPassTurn = false;
         int slimeIndex = 0;
         int slimeIndexMax;
 
@@ -393,7 +394,7 @@ namespace DTerrain
                                 case PlayerPhaseState.ACTION:
                                     //currentTurnStateText.text = "actions";
 
-                                    if (timerPlayerTurn <= 0 || isPassTurn())
+                                    if (timerPlayerTurn <= 0 || IsPassTurn())
                                     {
                                         timerPlayerTurn = 60f;
                                         ResetTimers(true);
@@ -926,10 +927,18 @@ namespace DTerrain
                 return false;
         }
 
-        bool isPassTurn()
+        public void SetIsPassTurn()
+		{
+            isPassTurn = true;
+		}
+
+        bool IsPassTurn()
         {
-            if (Input.GetKeyUp(KeyCode.N))
+            if (Input.GetKeyUp(KeyCode.N) || isPassTurn)
+            {
+                isPassTurn = false;
                 return true;
+            }
 
             return false;
         }
@@ -942,6 +951,7 @@ namespace DTerrain
                     return listPlayersRed[currentRedPlayerIndex];
                 else
                 {
+                    isPassTurn = true;
                     Debug.LogError("red player dead, pass turn");
                     return null;
                 }
@@ -952,6 +962,7 @@ namespace DTerrain
                     return listPlayersBlue[currentBluePlayerIndex];
                 else
                 {
+                    isPassTurn = true;
                     Debug.LogError("blue player dead, pass turn");
                     return null;
                 }
@@ -1047,6 +1058,11 @@ namespace DTerrain
                 PhotonNetwork.Disconnect();
                 PhotonNetwork.LoadLevel("MainMenu");
             }*/
+        }
+
+        public void SetSlimeIndexMax(int _nb)
+		{
+            slimeIndexMax = _nb;
         }
 
         static int SortByNickname(Photon.Realtime.Player p1, Photon.Realtime.Player p2)

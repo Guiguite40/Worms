@@ -123,6 +123,12 @@ public class Player : MonoBehaviourPunCallbacks
             slimes[_index].isControlled = true;
             currentCharacter = slimes[_index];
         }
+        else
+        {
+            currentCharacter = slimes[slimes.Count - 1];
+            slimes[slimes.Count - 1].isControlled = true;
+            DTerrain.GameManager.instance.SetSlimeIndexMax(slimes.Count - 1);
+		}
     }
 
     public void SelectWeapon(Enums.ItemsList _item)
