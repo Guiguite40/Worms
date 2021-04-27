@@ -143,6 +143,9 @@ public class Player : MonoBehaviourPunCallbacks
                     myTeam = 2;
 
                 photonView.RPC("SpawnSlime", RpcTarget.AllBuffered, id, parentId, MousePos().x, MousePos().y, myTeam);
+
+                if(slimes.Count == slimeLimit)
+                    isAllSlimePlaced = true;
             }
         }
         else

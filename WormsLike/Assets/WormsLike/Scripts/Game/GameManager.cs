@@ -124,7 +124,7 @@ namespace DTerrain
             nbPlayer = PhotonNetwork.CurrentRoom.PlayerCount;
             //nbSlimePerPlayer = 6 / nbPlayer;
             nbSlimePerPlayer = (int)PhotonNetwork.CurrentRoom.CustomProperties["nbs"];
-            slimeIndexMax = nbSlimePerPlayer - 1;
+            slimeIndexMax = nbSlimePerPlayer; // - 1
         }
 
         void Start()
@@ -399,7 +399,7 @@ namespace DTerrain
                                         timerPlayerTurn = 60f;
                                         ResetTimers(true);
                                         SendValueToMaster("timerPlayerTurn");
-                                        uiTimer.text = timerPlayerTurn.ToString();
+                                        uiTimer.text = ((int)timerPlayerTurn).ToString();
                                         SendValueToMaster("uiTimer");
                                         //dataPos.text = timerPlayerTurn.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //DAMAGE //true
@@ -416,7 +416,7 @@ namespace DTerrain
                                             }
 
                                             timerPlayerTurn -= Time.deltaTime;
-                                            uiTimer.text = timerPlayerTurn.ToString();
+                                            uiTimer.text = ((int)timerPlayerTurn).ToString();
                                             SendValueToMaster("uiTimer");
                                             //dataPos.text = timerPlayerTurn.ToString();
                                             if (!GetCurrentPlayer().GetHasAttacked())
@@ -460,7 +460,7 @@ namespace DTerrain
                                         if (IsLocalPlayerTurn())
                                         {
                                             timerMovementsLeft -= Time.deltaTime;
-                                            uiTimer.text = timerMovementsLeft.ToString();
+                                            uiTimer.text = ((int)timerMovementsLeft).ToString();
                                             SendValueToMaster("uiTimer");
                                             //dataPos.text = timerMovementsLeft.ToString();
                                             GetCurrentPlayer().ControlCharacter();
