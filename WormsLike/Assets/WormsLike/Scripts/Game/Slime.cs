@@ -49,7 +49,6 @@ public class Slime : MonoBehaviourPunCallbacks
 
     [SerializeField] GameObject parachute = null;
     public bool parachuteOpen = false;
-    public bool fallDamageActived = true;
 
     // Start is called before the first frame update
     void Start()
@@ -75,12 +74,6 @@ public class Slime : MonoBehaviourPunCallbacks
         Charge_Management();
         FallDmg_Management();
 
-        /* DEBUG */
-        if (isControlled)
-        {
-            if (Input.GetKeyDown(KeyCode.Delete))
-                curHealth -= 10;
-        }
         if (transform.position.y < -2)
         {
             curHealth = 0;
@@ -121,13 +114,10 @@ public class Slime : MonoBehaviourPunCallbacks
 
     private void FallDmg_Management()
     {
-        if (fallDamageActived)
-        {
-            if (rb.velocity.y < -10)
-            {
-                fallingDamage = Mathf.Abs(rb.velocity.y) - 3;
-            }
-        }
+        //if (rb.velocity.y < -5)
+        //{
+        //    fallingDamage = Mathf.Abs(rb.velocity.y) + 5;
+        //}
     }
 
     private void Flip()

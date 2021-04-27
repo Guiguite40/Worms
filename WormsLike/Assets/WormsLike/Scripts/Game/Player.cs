@@ -7,7 +7,7 @@ using Photon.Pun;
 public class Player : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject slimePrefab = null;
-    [SerializeField] public List<Slime> slimes = new List<Slime>();
+    [SerializeField] List<Slime> slimes = new List<Slime>();
     [SerializeField] Inventory inv = null;
     [SerializeField] GameObject teleportationPS = null;
 
@@ -34,8 +34,6 @@ public class Player : MonoBehaviourPunCallbacks
     bool isAllSlimePlaced = false;
     bool hasAttacked = false;
 
-    bool actionDone = false;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -45,12 +43,12 @@ public class Player : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        foreach (Slime slime in slimes)
+        foreach (var item in slimes)
         {
-            if (slime.GetComponent<Slime>().isDead)
+            if (item.GetComponent<Slime>().isDead)
             {
-                slimes.Remove(slime);
-                Destroy(slime);
+                slimes.Remove(item);
+                Destroy(item);
                 break;
             }
         }
@@ -94,11 +92,11 @@ public class Player : MonoBehaviourPunCallbacks
         currentCharacter = null;
         if (slimes.Count - 1 >= _index)
         {
-            foreach (Slime slime in slimes)
+            foreach (var item in slimes)
             {
-                if (slime.isControlled == true)
+                if (item.isControlled == true)
                 {
-                    slime.isControlled = false;
+                    item.isControlled = false;
                 }
             }
             slimes[_index].isControlled = true;
@@ -114,10 +112,10 @@ public class Player : MonoBehaviourPunCallbacks
     public void UnSetCharacterControlled()
     {
         currentCharacter = null;
-        foreach (Slime slime in slimes)
+        foreach (var item in slimes)
         {
-            if (slime.isControlled == true)
-                slime.isControlled = false;
+            if (item.isControlled == true)
+                item.isControlled = false;
         }
     }
 
@@ -164,40 +162,15 @@ public class Player : MonoBehaviourPunCallbacks
         if (photonView.IsMine == true)
         {
             float move = 0;
-
-            foreach (Slime slime in slimes)
+            foreach (var item in slimes)
             {
-                if (!slime.isDead)
+                if (!item.isDead)
                 {
-                    if (slime.isControlled)
+                    if (item.isControlled)
                     {
                         move = Input.GetAxisRaw("Horizontal");
-                        if (Input.GetKeyDown(KeyCode.UpArrow) && slime.GetComponent<Slime>().isGrounded && !slime.GetComponent<Slime>().isDead)
-                            slime.rb.velocity = new Vector2(0, slime.jumpForce);
-
-                        if (UI.Instance.isItemSelected)
-                        {
-                            if (!hasAttacked)
-                            {
-                                if (UI.Instance.inventoryOpened == false)
-                                {
-                                    if (Input.GetMouseButtonDown(0))
-                                    {
-                                        if (currentCharacter != null)
-                                        {
-                                            timeToRelease = 0;
-                                            UseItem(itemSelected);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (Input.GetKeyDown(KeyCode.I))
-                        {
-                            UI.Instance.InventoryTouchPressed();
-                        }
-
+                        if (Input.GetKeyDown(KeyCode.UpArrow) && item.GetComponent<Slime>().isGrounded && !item.GetComponent<Slime>().isDead)
+                            item.rb.velocity = new Vector2(0, item.jumpForce);
                     }
                     else
                         if (move != 0)
@@ -207,8 +180,8 @@ public class Player : MonoBehaviourPunCallbacks
                     if (move != 0)
                     move = 0;
 
-                slime.velocity.x = Mathf.MoveTowards(slime.velocity.x, slime.maxSpeed * move, slime.moveAcceleration * Time.deltaTime);
-                slime.rb.velocity = new Vector2(slime.velocity.x, slime.rb.velocity.y);
+                item.velocity.x = Mathf.MoveTowards(item.velocity.x, item.maxSpeed * move, item.moveAcceleration * Time.deltaTime);
+                item.rb.velocity = new Vector2(item.velocity.x, item.rb.velocity.y);
             }
 
             if (!hasAttacked)
@@ -240,33 +213,28 @@ public class Player : MonoBehaviourPunCallbacks
 
     void UseItem(Enums.ItemsList _itemSelected)
     {
-        if (!actionDone)
+        if (inv.IsItemUseable(_itemSelected))
         {
-            if (inv.IsItemUseable(_itemSelected))
+            inv.UseItem(_itemSelected);
+
+            switch (inv.items[_itemSelected].type)
             {
-                inv.UseItem(_itemSelected);
+                case Enums.Type.Weapon:
+                    StartCoroutine(LaunchAttack(_itemSelected));
+                    hasAttacked = true;
+                    break;
 
-                switch (inv.items[_itemSelected].type)
-                {
-                    case Enums.Type.Weapon:
-                        StartCoroutine(LaunchAttack(_itemSelected));
-                        hasAttacked = true;
+                case Enums.Type.ChargableWeapon:
+                    StartCoroutine(ChargeCalculation(_itemSelected));
+                    hasAttacked = true;
+                    break;
 
-                        break;
+                case Enums.Type.Utility:
+                    StartCoroutine(UsingUtilitary(_itemSelected));
+                    break;
 
-                    case Enums.Type.ChargableWeapon:
-                        StartCoroutine(ChargeCalculation(_itemSelected));
-                        hasAttacked = true;
-
-                        break;
-
-                    case Enums.Type.Utility:
-                        StartCoroutine(UsingUtilitary(_itemSelected));
-                        break;
-
-                    default:
-                        break;
-                }
+                default:
+                    break;
             }
         }
         else
@@ -323,9 +291,6 @@ public class Player : MonoBehaviourPunCallbacks
                     photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
                 else
                     photonView.RPC("SpawnWeaponClient", RpcTarget.MasterClient, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
-
-
-                EndTurn(); // End turn call
             }
             yield return null;
         }
@@ -357,21 +322,15 @@ public class Player : MonoBehaviourPunCallbacks
 
                     photonView.RPC("SpawnUtility", RpcTarget.AllBuffered, idutilitary, startPos.x, startPos.y);
                     hasAttacked = true;
-
-                    EndTurn(); // End turn call
                 }
                 else if (_utilitary == Enums.ItemsList.Teleportation)
                 {
                     StartCoroutine(Teleportation());
                 }
                 else if (_utilitary == Enums.ItemsList.Parachute)
-                {
+                {                  
                     int idSlime = currentCharacter.gameObject.GetPhotonView().ViewID;
                     photonView.RPC("DisplayParachute", RpcTarget.AllBuffered, idSlime);
-                }
-                else if (_utilitary == Enums.ItemsList.SkipTurn)
-                {
-                    EndTurn(); // End turn call
                 }
             }
         }
@@ -384,7 +343,6 @@ public class Player : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.5f);
         currentCharacter.SetPos(MousePos());
         GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
-        EndTurn(); // End turn call
         yield return null;
         hasAttacked = true;
     }
@@ -440,13 +398,5 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-    }
-
-    public void EndTurn()
-    {
-        UI.Instance.CloseInventory();
-        UI.Instance.isItemSelected = false;
-        itemSelected = 0;
-        UI.Instance.SetCursor(Enums.CursorType.Normal);
     }
 }

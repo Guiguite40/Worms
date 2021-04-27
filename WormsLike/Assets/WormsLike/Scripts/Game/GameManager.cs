@@ -275,7 +275,7 @@ namespace DTerrain
                         }
                     }
                     //else
-                    //itsHisTurnText.text = "false";
+                        //itsHisTurnText.text = "false";
                     break;
 
                 case GamePhaseState.SLIME_PLACEMENT:
@@ -444,7 +444,7 @@ namespace DTerrain
                                         timerMovementsLeft = 3f;
                                         ResetTimers(true);
                                         //if (IsLocalPlayerTurn())
-                                        //SendValueToMaster("timerMovementsLeft");
+                                            //SendValueToMaster("timerMovementsLeft");
                                         CameraManager.instance.ResetCam();
                                         //dataPos.text = timerMovementsLeft.ToString();
                                         /*if (IsLocalPlayerMaster())
@@ -466,14 +466,14 @@ namespace DTerrain
                                             GetCurrentPlayer().ControlCharacter();
                                             CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             SendValueToMaster("camera");
-                                            if (!IsLocalPlayerMaster())
-                                                SendValueToMaster("timerMovementsLeft");
+                                            if(!IsLocalPlayerMaster())
+                                                SendValueToMaster("timerMovementsLeft");                                          
                                         }
 
                                         if (PhotonNetwork.IsMasterClient)
                                             if (int.Parse(uiTimer.text) <= 0.3)
                                                 playerPhaseState = PlayerPhaseState.MAP;
-                                        //SetPlayerPhaseState(PlayerPhaseState.MAP, false, false);
+                                                //SetPlayerPhaseState(PlayerPhaseState.MAP, false, false);
                                     }
                                     break;
 
@@ -558,7 +558,7 @@ namespace DTerrain
             timerMovementsLeft = 3f;
             if (_resetTimerMap)
             {
-                if (timerAllGame >= 40)
+                if(timerAllGame >= 40)
                     timerMap = 5f;
                 else
                     timerMap = 3f;
@@ -982,10 +982,10 @@ namespace DTerrain
         {
             if (IsRedTurn())
             {
-                if (currentRedPlayerIndex < listPlayerRed.Count - 1)
-                    currentRedPlayerIndex++;
-                else
-                    currentRedPlayerIndex = 0;
+                    if (currentRedPlayerIndex < listPlayerRed.Count - 1)
+                        currentRedPlayerIndex++;
+                    else
+                        currentRedPlayerIndex = 0;
 
                 SendValueToMaster("redPlayerIndex");
 
@@ -994,10 +994,10 @@ namespace DTerrain
             else if (IsBlueTurn())
             {
 
-                if (currentBluePlayerIndex < listPlayerBlue.Count - 1)
-                    currentBluePlayerIndex++;
-                else
-                    currentBluePlayerIndex = 0;
+               if (currentBluePlayerIndex < listPlayerBlue.Count - 1)
+                   currentBluePlayerIndex++;
+               else
+                   currentBluePlayerIndex = 0;
 
                 SendValueToMaster("bluePlayerIndex");
 
@@ -1060,35 +1060,11 @@ namespace DTerrain
         }
 
         public bool GetIsMortSubite()
-        {
+		{
             if (timerAllGame >= 40)
                 return true;
 
             return false;
-        }
-
-        public List<Slime> GetEverySlimes()
-        {
-            List<Slime> slimes = new List<Slime>();
-
-            for (int i = 0; i < listPlayersBlue.Count - 1; i++)
-            {
-                for (int j = 0; j < listPlayersBlue[i].slimes.Count - 1; j++)
-                {
-                    slimes.Add(listPlayersBlue[i].slimes[j]);
-                }
-            }
-
-            for (int i = 0; i < listPlayersRed.Count - 1; i++)
-            {
-                for (int j = 0; j < listPlayersRed[i].slimes.Count - 1; j++)
-                {
-                    slimes.Add(listPlayersRed[i].slimes[j]);
-                }
-            }
-
-            return slimes;
-        }
+		}
     }
-
 }

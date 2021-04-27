@@ -78,22 +78,6 @@ namespace DTerrain
             }
         }
 
-        public void RepulseObjects()
-        {
-            List<Slime> tmpSlimes = new List<Slime>();
-            tmpSlimes = GameManager.instance.GetEverySlimes();
-
-            foreach (var item in tmpSlimes)
-            {
-               if (item.GetPos().x >= rb.transform.position.x - circleSize && item.GetPos().x <= rb.transform.position.x + circleSize
-                    && item.GetPos().y >= rb.transform.position.y - circleSize && item.GetPos().y <= rb.transform.position.y + circleSize)
-                {
-                    //float direction = rb.transform.position
-                    //item.transform.position += new Vector3(0, 0, 0);
-                }
-            }
-        }
-
         public void OnTriggerEnter2D(Collider2D collision)
         {
             if (!collision.gameObject.CompareTag("Bullet"))
