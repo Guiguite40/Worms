@@ -96,21 +96,15 @@ namespace DTerrain
             }
         }
 
-        private void ZoneDamage(Vector3 pos, int size)
+        private void ZoneDamage(Vector3 pos, int size, float damage)
         {
             Vector2 myPos = new Vector2(pos.x, pos.y);
             Collider2D[] hitColliders = Physics2D.OverlapCircleAll(myPos, size);
-            foreach (Collider2D hitCollider in hitColliders)
+            foreach (Collider2D Collider in hitColliders)
             {
-                if (hitCollider.gameObject.tag == "Player")
+                if (Collider.gameObject.tag == "Player")
                 {
-                    //hitCollider.gameObject.GetComponent<Rigidbody2D>().AddExplosionForce(300f, pos, size);
-
-                    Vector3 dist = pos - hitCollider.gameObject.transform.position;
-
-                    Debug.LogError(dist);
-
-                    //hitCollider.gameObject.GetComponent<Slime>().Hit(dmg);
+                    Debug.LogError(Collider.gameObject.GetPhotonView().ViewID);
                 }
             }
         }
@@ -219,7 +213,7 @@ namespace DTerrain
         public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
         {
             DestroyMapCircle(pos, size);
-            //ZoneDamage(pos, size);
+            ZoneDamage(pos, size, dmg);
         }
 
         [PunRPC]

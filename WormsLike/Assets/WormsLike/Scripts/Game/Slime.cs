@@ -47,6 +47,8 @@ public class Slime : MonoBehaviourPunCallbacks
     public bool isControlled = false;
     public int team = 0;
 
+    [SerializeField] GameObject parachute = null;
+    public bool parachuteOpen = false;
     public bool fallDamageActived = true;
 
     // Start is called before the first frame update
@@ -82,6 +84,18 @@ public class Slime : MonoBehaviourPunCallbacks
         if (transform.position.y < -2)
         {
             curHealth = 0;
+        }
+
+        if (parachuteOpen == true)
+        {
+            parachute.SetActive(true);
+        }
+
+        if (isGrounded == true && parachuteOpen == true)
+        {
+            parachuteOpen = false;
+            rb.drag = 0;
+            parachute.SetActive(false);
         }
     }
 
@@ -153,31 +167,15 @@ public class Slime : MonoBehaviourPunCallbacks
     {
         healthText.text = healthDisplayed.ToString("0");
 
-        /* HEALTH */
         if (healthDisplayed < curHealth)
             healthCd += 0.001f * Time.deltaTime;
         else
             healthCd += 0.001f * Time.deltaTime;
+
         healthDisplayed = Mathf.Lerp(healthDisplayed, curHealth, healthCd);
+
         if (healthCd >= 1f)
             healthCd = 0f;
-        //healthBar.fillAmount = curHealth / maxHealth;
-        //healthBarDiff.fillAmount = healthDisplayed / maxHealth;
-
-        /* COLORS */
-        //if (healthDisplayed >= 35 && healthBar.color != greenColor)
-        //{
-        //    healthBar.color = greenColor;
-        //}
-        //else if (healthDisplayed < 35 && healthBar.color != redColor)
-        //{
-        //    healthBar.color = redColor;
-        //}
-        //// Health diff color
-        //if (healthBarDiff.color != orangeColor)
-        //{
-        //    healthBarDiff.color = orangeColor;
-        //}
 
         if (curHealth <= 0)
         {
