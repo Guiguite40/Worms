@@ -393,7 +393,19 @@ public class Player : MonoBehaviourPunCallbacks
                 }
                 else if (_utilitary == Enums.ItemsList.SkipTurn)
                 {
+                    hasAttacked = true;
                     EndTurn(); // End turn call
+                }
+                else if (_utilitary == Enums.ItemsList.Shield)
+                {
+                    currentCharacter.isInvicible = true;
+                    hasAttacked = true;
+                    EndTurn(); // End turn call
+                }
+                else if (_utilitary == Enums.ItemsList.JetPack)
+                {
+                    currentCharacter.timerJetpack = 0f;
+                    currentCharacter.jetpackOn = true;
                 }
             }
         }
@@ -406,9 +418,9 @@ public class Player : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0.5f);
         currentCharacter.SetPos(MousePos());
         GameObject ps1 = PhotonNetwork.Instantiate("PS/" + teleportationPS.name, currentCharacter.transform.position, teleportationPS.transform.rotation);
+        hasAttacked = true;
         EndTurn(); // End turn call
         yield return null;
-        hasAttacked = true;
     }
 
     [PunRPC]
