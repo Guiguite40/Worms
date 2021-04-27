@@ -69,7 +69,7 @@ namespace DTerrain
 
         public void SetMortSubite()
 		{
-            if (mapTurn == false && PhotonNetwork.IsMasterClient)
+            if (mapTurn == false /*&& PhotonNetwork.IsMasterClient*/)
             {
                 mapTurn = true;
                 shipDescent = true;
