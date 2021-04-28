@@ -114,7 +114,7 @@ namespace DTerrain
                     MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
 
-                    Destroy(gameObject);
+                    PhotonNetwork.Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }
             }
