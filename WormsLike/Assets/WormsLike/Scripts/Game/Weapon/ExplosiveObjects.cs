@@ -65,7 +65,7 @@ namespace DTerrain
 
             if (explodeVelocityNull == true)
             {
-                if (rb.velocity == new Vector2(0f, 0f))
+                if (rb.velocity.x <= 0.2f && rb.velocity.y <= 0.2f)
                 {
                     Debug.Log("Explosion : on velocity null");
                     RepulseObjects();
@@ -114,7 +114,7 @@ namespace DTerrain
                     MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
 
-                    Destroy(gameObject);
+                    PhotonNetwork.Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }
             }
