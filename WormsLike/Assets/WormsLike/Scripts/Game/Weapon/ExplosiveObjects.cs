@@ -88,8 +88,9 @@ namespace DTerrain
                if (item.GetPos().x >= rb.transform.position.x - circleSize && item.GetPos().x <= rb.transform.position.x + circleSize
                     && item.GetPos().y >= rb.transform.position.y - circleSize && item.GetPos().y <= rb.transform.position.y + circleSize)
                 {
-                    //float direction = rb.transform.position
-                    //item.transform.position += new Vector3(0, 0, 0);
+                    Vector2 direction = item.GetPos() - rb.transform.position;
+                    item.rb.AddExplosionForce(10, rb.transform.position, circleSize, 5);
+
                 }
             }
         }
@@ -115,6 +116,7 @@ namespace DTerrain
         {
             Debug.Log("Explosion");
             GameObject explosion = PhotonNetwork.Instantiate(explosionPrefab.name, gameObject.transform.position, Quaternion.identity);
+            RepulseObjects();
             yield return null;
         }
     }
