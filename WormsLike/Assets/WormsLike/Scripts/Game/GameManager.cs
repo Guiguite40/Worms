@@ -56,6 +56,8 @@ namespace DTerrain
         [SerializeField] Text uiTurn;
         //[SerializeField] Text textGameTime;
         [SerializeField] MapDestroy mapDestroy;
+        [SerializeField] GameObject victoryScreen;
+        [SerializeField] Text victoryScreenText;
 
         int currentBluePlayerIndex = 0;
         int currentRedPlayerIndex = 0;
@@ -72,6 +74,7 @@ namespace DTerrain
         string currentlocalPlayerPlayingName = "none";
         bool bluePointPlaced = false;
         bool redPointPlaced = false;
+        bool isCanvasClosed = false;
 
         ///////////////
         float timerStart = 5f;
@@ -94,6 +97,7 @@ namespace DTerrain
         float timerMap = 3f;
         bool isPlayerTurnSetup = false;
         bool crateSpawned = false;
+        bool isPassTurn = false;
         int slimeIndex = 0;
         int slimeIndexMax;
 
@@ -124,11 +128,13 @@ namespace DTerrain
             nbPlayer = PhotonNetwork.CurrentRoom.PlayerCount;
             //nbSlimePerPlayer = 6 / nbPlayer;
             nbSlimePerPlayer = (int)PhotonNetwork.CurrentRoom.CustomProperties["nbs"];
-            slimeIndexMax = nbSlimePerPlayer - 1;
+            slimeIndexMax = nbSlimePerPlayer; // - 1
         }
 
         void Start()
         {
+            victoryScreen.SetActive(false);
+
             SetupStartValue();
             uiTurn.text = "";
             uiTimer.text = "";
@@ -169,7 +175,7 @@ namespace DTerrain
                 else if (currentPlayTeam == "red")
                     currentlocalPlayerPlayingName = listPlayerRed[currentRedPlayerIndex].NickName;
                 SendValue("currentPlayer", RpcTarget.OthersBuffered);
-            }
+            }        
         }
 
         void nextStateinputs()
@@ -191,6 +197,13 @@ namespace DTerrain
         void Update()
         {
             nextStateinputs();
+            TeamVictory();
+
+            if(!isCanvasClosed)
+			{
+                victoryScreen.SetActive(false);
+                isCanvasClosed = true;
+			}
 
             if (IsLocalPlayerMaster())
             {
@@ -274,8 +287,7 @@ namespace DTerrain
                             SendValueToMaster("currentPlayTeam");
                         }
                     }
-                    //else
-                    //itsHisTurnText.text = "false";
+
                     break;
 
                 case GamePhaseState.SLIME_PLACEMENT:
@@ -334,28 +346,24 @@ namespace DTerrain
 
                             switch (playerPhaseState)
                             {
-
                                 case PlayerPhaseState.START_PHASE:
 
                                     if (IsLocalPlayerTurn())
                                     {
-                                        //itsHisTurnText.text = "true";
                                         uiTurn.text = "It's your turn";
                                         SetCurrentPlayerPlayingName();
                                     }
                                     else
                                     {
-                                        //itsHisTurnText.text = "false";
                                         uiTurn.text = "";
                                     }
-
-                                    //currentTurnStateText.text = "start";
 
                                     if (!isPlayerTurnSetup)
                                     {
                                         if (slimeIndex == slimeIndexMax)
                                             slimeIndex = 0;
 
+                                        ResetTimers(true);
                                         isPlayerTurnSetup = true;
                                     }
                                     else
@@ -365,7 +373,6 @@ namespace DTerrain
                                             timerPlayerStart = 3f;
                                             ResetTimers(true);
                                             SendValueToMaster("timerPlayerStart");
-                                            //dataPos.text = timerPlayerStart.ToString();
                                             SetPlayerPhaseState(PlayerPhaseState.ACTION, false, true); //true
                                         }
                                         else
@@ -373,18 +380,11 @@ namespace DTerrain
                                             if (IsLocalPlayerTurn())
                                             {
                                                 timerPlayerStart -= Time.deltaTime;
-                                                //dataPos.text = timerPlayerStart.ToString();
 
                                                 GetCurrentPlayer().SetCharacterControlled(slimeIndex);
                                                 CameraManager.instance.MoveCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
 
                                                 SendValueToMaster("camera");
-                                            }
-                                            else
-                                            {
-                                                //uiTurn.text = "It's the  turn of " + GetCurrentPlayerName();
-                                                //uiTurn.text = "It's the  turn of other team";
-                                                //SendValueToMaster("uiTurn");
                                             }
                                         }
                                     }
@@ -394,14 +394,13 @@ namespace DTerrain
                                 case PlayerPhaseState.ACTION:
                                     //currentTurnStateText.text = "actions";
 
-                                    if (timerPlayerTurn <= 0 || isPassTurn())
+                                    if (timerPlayerTurn <= 0 || IsPassTurn())
                                     {
                                         timerPlayerTurn = 60f;
                                         ResetTimers(true);
                                         SendValueToMaster("timerPlayerTurn");
-                                        uiTimer.text = timerPlayerTurn.ToString();
+                                        uiTimer.text = ((int)timerPlayerTurn).ToString();
                                         SendValueToMaster("uiTimer");
-                                        //dataPos.text = timerPlayerTurn.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //DAMAGE //true
                                     }
                                     else
@@ -416,14 +415,12 @@ namespace DTerrain
                                             }
 
                                             timerPlayerTurn -= Time.deltaTime;
-                                            uiTimer.text = timerPlayerTurn.ToString();
+                                            uiTimer.text = ((int)timerPlayerTurn).ToString();
                                             SendValueToMaster("uiTimer");
-                                            //dataPos.text = timerPlayerTurn.ToString();
                                             if (!GetCurrentPlayer().GetHasAttacked())
                                             {
                                                 GetCurrentPlayer().ControlCharacter();
                                                 CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
-                                                //SendValueToMaster("camera");
                                             }
                                             else
                                             {
@@ -443,16 +440,7 @@ namespace DTerrain
                                         GetCurrentPlayer().SetHasAttacked(false);
                                         timerMovementsLeft = 3f;
                                         ResetTimers(true);
-                                        //if (IsLocalPlayerTurn())
-                                        //SendValueToMaster("timerMovementsLeft");
                                         CameraManager.instance.ResetCam();
-                                        //dataPos.text = timerMovementsLeft.ToString();
-                                        /*if (IsLocalPlayerMaster())
-                                        {
-                                            SetPlayerPhaseState(PlayerPhaseState.MAP, true, false);
-                                        }
-                                        else
-                                            SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true*/
                                         SetPlayerPhaseState(PlayerPhaseState.MAP, false, true); //true
                                     }
                                     else
@@ -460,9 +448,8 @@ namespace DTerrain
                                         if (IsLocalPlayerTurn())
                                         {
                                             timerMovementsLeft -= Time.deltaTime;
-                                            uiTimer.text = timerMovementsLeft.ToString();
+                                            uiTimer.text = ((int)timerMovementsLeft).ToString();
                                             SendValueToMaster("uiTimer");
-                                            //dataPos.text = timerMovementsLeft.ToString();
                                             GetCurrentPlayer().ControlCharacter();
                                             CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             SendValueToMaster("camera");
@@ -470,10 +457,9 @@ namespace DTerrain
                                                 SendValueToMaster("timerMovementsLeft");
                                         }
 
-                                        if (PhotonNetwork.IsMasterClient)
+                                        /*if (PhotonNetwork.IsMasterClient)
                                             if (int.Parse(uiTimer.text) <= 0.3)
-                                                playerPhaseState = PlayerPhaseState.MAP;
-                                        //SetPlayerPhaseState(PlayerPhaseState.MAP, false, false);
+                                                playerPhaseState = PlayerPhaseState.MAP;*/
                                     }
                                     break;
 
@@ -492,34 +478,37 @@ namespace DTerrain
                                         SetNextPlayerNTeamTurn();
                                         SendValueToMaster("currentPlayer");
                                         SendValueToMaster("currentPlayTeam");
-                                        if (timerAllGame >= 40)
+                                        /*if (timerAllGame >= 40)
                                             timerMap = 5f;
                                         else
-                                            timerMap = 3f;
+                                            timerMap = 3f;*/
                                         ResetTimers(true);
-                                        //dataPos.text = timerMap.ToString();
                                         SetPlayerPhaseState(PlayerPhaseState.START_PHASE, false, true);
                                     }
                                     else
                                     {
                                         CameraManager.instance.ResetCam();
-                                        if (IsLocalPlayerMaster())
+                                        /*if (IsLocalPlayerMaster())
                                             if (timerAllGame >= 40)
-                                                mapDestroy.SetMortSubite();
+                                                mapDestroy.SetMortSubite();*/
 
                                         if (IsLocalPlayerTurn())
                                         {
                                             if (!crateSpawned)
                                             {
-
+                                                if (timerAllGame >= 40)
+                                                {
+                                                    timerMap = 5f;
+                                                    mapDestroy.SetMortSubite();
+                                                }
+                                                else
+                                                    timerMap = 3f;
                                                 SpawnCrate();
                                                 crateSpawned = true;
                                             }
                                             timerMap -= Time.deltaTime;
-                                            //dataPos.text = timerMap.ToString();
                                         }
                                         ResetTimers(false);
-                                        //CameraManager.instance.ResetCam();
                                         GetCurrentPlayer().UnSetCharacterControlled();
                                     }
 
@@ -571,6 +560,23 @@ namespace DTerrain
             SendValueToMaster("uiTimer");
         }
 
+        void ResetTimer()
+        {
+            timerPlayerStart = 3f;
+            timerPlayerTurn = 60f;
+            //isPlayerTurnSetup = false;
+            timerMovementsLeft = 3f;
+                if (timerAllGame >= 40)
+                    timerMap = 5f;
+                else
+                    timerMap = 3f;
+                crateSpawned = false;
+
+            uiTimer.text = "";
+            uiTurn.text = "";
+            SendValueToMaster("uiTimer");
+        }
+
         void SpawnCrate()
         {
             int randCrate = Random.Range(0, 2);
@@ -584,32 +590,6 @@ namespace DTerrain
                 GameObject damageBox = PhotonNetwork.Instantiate(damageBoxPrefab.name, new Vector3(posX, 25f, 0), Quaternion.identity);
             }
         }
-
-        /*IEnumerator InstantiatePlayer()
-        {
-            //Debug.Log("Waiting other players");
-            yield return new WaitForSeconds(1);
-
-            GameObject newPlayer = playerPrefab;
-            PhotonNetwork.Instantiate(newPlayer.name, newPlayer.transform.position, newPlayer.transform.rotation);
-            newPlayer.GetComponent<Player>().isTurn = true;
-            newPlayer.GetComponent<Player>().phase_game = true;
-            newPlayer.GetComponent<Player>().team = 1;
-
-            yield return null;
-        }
-
-        void SetPlayerTurn(string _playerTeam, int _playerListIndex)
-        {
-            if (_playerTeam == "blue")
-            {
-                listPlayersBlue[_playerListIndex].SetIsTurn(true);
-            }
-            else if (_playerTeam == "red")
-            {
-                listPlayersRed[_playerListIndex].SetIsTurn(true);
-            }
-        }*/
 
         void SendValueToMaster(string _valueToSend)
         {
@@ -947,10 +927,18 @@ namespace DTerrain
                 return false;
         }
 
-        bool isPassTurn()
+        public void SetIsPassTurn()
+		{
+            isPassTurn = true;
+		}
+
+        bool IsPassTurn()
         {
-            if (Input.GetKeyUp(KeyCode.N))
+            if (Input.GetKeyUp(KeyCode.N) || isPassTurn)
+            {
+                isPassTurn = false;
                 return true;
+            }
 
             return false;
         }
@@ -958,9 +946,27 @@ namespace DTerrain
         Player GetCurrentPlayer()
         {
             if (IsRedTurn())
-                return listPlayersRed[currentRedPlayerIndex];
+            {
+                if (listPlayersRed[currentRedPlayerIndex] != null)
+                    return listPlayersRed[currentRedPlayerIndex];
+                else
+                {
+                    isPassTurn = true;
+                    Debug.LogError("red player dead, pass turn");
+                    return null;
+                }
+            }
             else if (IsBlueTurn())
-                return listPlayersBlue[currentBluePlayerIndex];
+            {
+                if (listPlayersBlue[currentBluePlayerIndex] != null)
+                    return listPlayersBlue[currentBluePlayerIndex];
+                else
+                {
+                    isPassTurn = true;
+                    Debug.LogError("blue player dead, pass turn");
+                    return null;
+                }
+            }
             else
             {
                 if (strStartTeam == "red")
@@ -1054,6 +1060,11 @@ namespace DTerrain
             }*/
         }
 
+        public void SetSlimeIndexMax(int _nb)
+		{
+            slimeIndexMax = _nb;
+        }
+
         static int SortByNickname(Photon.Realtime.Player p1, Photon.Realtime.Player p2)
         {
             return p1.NickName.CompareTo(p2.NickName);
@@ -1089,6 +1100,126 @@ namespace DTerrain
 
             return slimes;
         }
-    }
 
+		public override void OnDisconnected(Photon.Realtime.DisconnectCause cause)
+		{
+            Debug.LogError(cause);
+            for (int i = 0; i < listPlayerBlue.Count; i++)
+            {
+                if (listPlayerBlue[i] == PhotonNetwork.LocalPlayer)
+                {
+                    listPlayersBlue[i].KillAllSlimes();
+                    photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
+                }
+            }
+
+            for (int i = 0; i < listPlayerRed.Count; i++)
+            {
+                if (listPlayerRed[i] == PhotonNetwork.LocalPlayer)
+                {
+                    listPlayersRed[i].KillAllSlimes();
+                    photonView.RPC("RemovePlayer", RpcTarget.All, "red", i);
+                }
+            }
+        }
+
+        [PunRPC]
+        void RemovePlayer(string _team, int _index)
+		{
+            if(_team == "blue")
+			{
+                listPlayersBlue.Remove(listPlayersBlue[_index]);
+            }
+            else if(_team == "red")
+			{
+                listPlayersRed.Remove(listPlayersRed[_index]);
+            }
+		}
+
+        void SetVictoryScreen(bool _state, bool _hasLose)
+		{
+            if (_state == true)
+            {
+                victoryScreen.SetActive(true);
+                gamePhaseState = GamePhaseState.END_GAME;
+                if (_hasLose)
+                    victoryScreenText.text = "Lose";
+                else
+                    victoryScreenText.text = "Victory";
+            }
+            else
+                victoryScreen.SetActive(false);
+        }
+
+        bool GetBlueLose()
+		{
+            bool remove = false;
+            int removeIndex = -1;
+            for(int i = 0; i < listPlayersBlue.Count; i++)
+			{
+                if (!listPlayersBlue[i].GetHasLose() && !remove)
+                    return false;
+                else
+				{
+                    remove = true;
+                    removeIndex = i;
+				}
+                    //photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
+            }
+
+            if(remove)
+			{
+                photonView.RPC("RemovePlayer", RpcTarget.All, "blue", removeIndex);
+                return false;
+            }
+
+            return true;
+		}
+
+        bool GetRedLose()
+        {
+            bool remove = false;
+            int removeIndex = -1;
+            for (int i = 0; i < listPlayersRed.Count; i++)
+            {
+                if (!listPlayersRed[i].GetHasLose())
+                    return false;
+                else
+                {
+                    remove = true;
+                    removeIndex = i;
+                }
+                //photonView.RPC("RemovePlayer", RpcTarget.All, "red", i);
+            }
+
+            if (remove)
+            {
+                photonView.RPC("RemovePlayer", RpcTarget.All, "red", removeIndex);
+                return false;
+            }
+
+            return true;
+        }
+
+        void TeamVictory()
+		{
+            if(GetBlueLose())
+			{
+                Debug.LogError("blue loose");
+                if((string)PhotonNetwork.LocalPlayer.CustomProperties["t"] == "blue")
+                    SetVictoryScreen(true, true);
+                else
+                    SetVictoryScreen(true, false);
+            }
+
+            if (GetRedLose())
+            {
+                Debug.LogError("red loose");
+                if ((string)PhotonNetwork.LocalPlayer.CustomProperties["t"] == "red")
+                    SetVictoryScreen(true, true);
+                else
+                    SetVictoryScreen(true, false);
+            }
+        }
+    }
 }

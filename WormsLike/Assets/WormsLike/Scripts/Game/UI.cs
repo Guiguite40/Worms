@@ -48,6 +48,11 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Instance.InventoryTouchPressed();
+        }
+
         if (inventoryOpened)
         {
             if (!inv.activeInHierarchy)
@@ -93,12 +98,12 @@ public class UI : MonoBehaviour
     }
 
    public void InventoryTouchPressed()
-    {
+   {
         if (inventoryOpened)
             inventoryOpened = false;
         else if (!inventoryOpened)
             inventoryOpened = true;
-    }
+   }
 
     public void OpenInventory()
     {

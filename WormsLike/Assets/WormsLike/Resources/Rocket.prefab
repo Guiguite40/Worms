@@ -120,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 973a7923e1236324b8669a07a38b4337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooter: {fileID: 0}
+  airStrike: 0
   startPos: {x: -4.4351854, y: 1.5049459, z: 0}
   targetPos: {x: -1.6944447, y: 2.850741, z: 0}
   speed: 2
