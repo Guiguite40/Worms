@@ -61,6 +61,7 @@ MonoBehaviour:
   charge: 0
   chargeMax: 10
   speed: 5
+  turnDone: 0
 --- !u!114 &-6890893481750907789
 MonoBehaviour:
   m_ObjectHideFlags: 0
