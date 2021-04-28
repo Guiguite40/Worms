@@ -11,6 +11,7 @@ public static class Rigidbody2DExt
         float explosionDistance = explosionDir.magnitude;
         explosionDir = explosionDir.normalized;
 
+        rb.gameObject.GetComponent<Slime>().Hit(10);
         rb.AddForce((1 - (explosionDistance / explosionRadius)) * explosionForce * explosionDir * rb.mass);
 
         //if (upwardsModifier == 0)
