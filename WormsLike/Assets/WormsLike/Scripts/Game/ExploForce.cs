@@ -6,11 +6,12 @@ public static class Rigidbody2DExt
 {
     public static void AddExplosionForce(this Rigidbody2D rb, float explosionForce, Vector2 explosionPosition, float explosionRadius, float upwardsModifier = 0.0F, ForceMode2D mode = ForceMode2D.Force)
     {
-        var explosionDir = rb.position - explosionPosition;
-        var explosionDistance = explosionDir.magnitude;
+        Debug.LogError("ExploForce called");
+        Vector2 explosionDir = rb.position - explosionPosition;
+        float explosionDistance = explosionDir.magnitude;
         explosionDir = explosionDir.normalized;
 
-        rb.AddForce((1 - (explosionDistance / explosionRadius)) * explosionForce * explosionDir);
+        rb.AddForce((1 - (explosionDistance / explosionRadius)) * explosionForce * explosionDir * rb.mass);
 
         //if (upwardsModifier == 0)
         //    explosionDir /= explosionDistance;

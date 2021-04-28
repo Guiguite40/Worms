@@ -40,7 +40,6 @@ public class Player : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -211,7 +210,6 @@ public class Player : MonoBehaviourPunCallbacks
                                 {
                                     if (Input.GetMouseButtonDown(0))
                                     {
-                                        Debug.LogError("plop");
                                         if (currentCharacter != null)
                                         {
                                             timeToRelease = 0;
@@ -466,8 +464,6 @@ public class Player : MonoBehaviourPunCallbacks
 
     public void EndTurn()
     {
-        Debug.LogError("endturn");
-
         UI.Instance.CloseInventory();
         UI.Instance.isItemSelected = false;
         itemSelected = 0;

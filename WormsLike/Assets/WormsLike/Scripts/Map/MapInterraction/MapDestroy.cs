@@ -91,7 +91,7 @@ namespace DTerrain
             {
                 if (Collider.gameObject.tag == "Player")
                 {
-                    Debug.LogError(Collider.gameObject.GetPhotonView().ViewID);
+                    //Debug.LogError(Collider.gameObject.GetPhotonView().ViewID);
                 }
             }
         }
