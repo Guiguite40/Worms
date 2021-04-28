@@ -77,7 +77,7 @@ public class UI : MonoBehaviour
         {
             UI.Instance.SetCursor(Enums.CursorType.Blue);
         }
-
+        Debug.LogError("Item Selected");
         isItemSelected = true;
     }
 

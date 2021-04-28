@@ -417,13 +417,14 @@ namespace DTerrain
                                             timerPlayerTurn -= Time.deltaTime;
                                             uiTimer.text = ((int)timerPlayerTurn).ToString();
                                             SendValueToMaster("uiTimer");
-                                            if (!GetCurrentPlayer().GetHasAttacked())
+                                            if (!GetCurrentPlayer().GetHasTurnDone())
                                             {
                                                 GetCurrentPlayer().ControlCharacter();
                                                 CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             }
                                             else
                                             {
+                                                GetCurrentPlayer().turnDone = false;
                                                 SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, false, true); //true
                                             }
                                         }
