@@ -31,13 +31,15 @@ public class UI : MonoBehaviour
     private void Awake()
     {
         // if the singleton hasn't been initialized yet
-        if (instance != null && instance != this)
+        if (instance == null)
         {
-            Destroy(this.gameObject);
+            instance = this;
         }
-
-        instance = this;
-        DontDestroyOnLoad(this.gameObject);
+        else
+        {
+            Destroy(gameObject);
+        }
+        //DontDestroyOnLoad(this.gameObject);
     }
 
     // Start is called before the first frame update
