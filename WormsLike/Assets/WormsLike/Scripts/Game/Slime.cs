@@ -142,7 +142,7 @@ public class Slime : MonoBehaviourPunCallbacks
     {
         if (fallDamageActived)
         {
-            if (rb.velocity.y < -10)
+            if (rb.velocity.y < -20)
             {
                 fallingDamage = Mathf.Abs(rb.velocity.y) - 3;
             }
