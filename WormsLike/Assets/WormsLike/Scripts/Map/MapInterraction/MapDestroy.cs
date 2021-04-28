@@ -58,8 +58,8 @@ namespace DTerrain
                 {
                     if (PhotonNetwork.IsMasterClient)
                         photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
-                    else
-                        photonView.RPC("MapSyncClient", RpcTarget.MasterClient, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
+                    //else
+                    //    photonView.RPC("MapSyncClient", RpcTarget.MasterClient, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
 
                     ExplosiveObjectsPosition.RemoveAt(i);
                     ExplosiveObjectsSize.RemoveAt(i);
@@ -80,19 +80,6 @@ namespace DTerrain
                 PosY = LeftMapKiller.transform.position.y;
 
                 photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
-            }
-        }
-
-        private void ZoneDamage(Vector3 pos, int size, float damage)
-        {
-            Vector2 myPos = new Vector2(pos.x, pos.y);
-            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(myPos, size);
-            foreach (Collider2D Collider in hitColliders)
-            {
-                if (Collider.gameObject.tag == "Player")
-                {
-                    //Debug.LogError(Collider.gameObject.GetPhotonView().ViewID);
-                }
             }
         }
 
@@ -200,7 +187,6 @@ namespace DTerrain
         public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
         {
             DestroyMapCircle(pos, size);
-            ZoneDamage(pos, size, dmg);
         }
 
         [PunRPC]
