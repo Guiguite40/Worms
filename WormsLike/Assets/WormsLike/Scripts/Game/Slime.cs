@@ -99,6 +99,7 @@ public class Slime : MonoBehaviourPunCallbacks
             parachuteOpen = false;
             rb.drag = 0;
             parachute.SetActive(false);
+            GetComponentInParent<Player>().SetHasAttacked(false);
         }
 
         if (Input.GetKey(KeyCode.Space) && jetpackOn == true)
@@ -108,7 +109,10 @@ public class Slime : MonoBehaviourPunCallbacks
         }
 
         if (jetpackOn == true && timerJetpack >= 5f)
+        {
             jetpackOn = false;
+            GetComponentInParent<Player>().SetHasAttacked(false);
+        }
 
         if (!isControlled)
             jetpackOn = false;
