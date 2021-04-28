@@ -324,12 +324,7 @@ public class Player : MonoBehaviourPunCallbacks
 
                 GameObject explosive = PhotonNetwork.Instantiate(inv.itemPrefabs[(int)_item].name, startPos, Quaternion.identity);
                 int idweapon = explosive.GetPhotonView().ViewID;
-
-                if (PhotonNetwork.IsMasterClient)
-                    photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
-                else
-                    photonView.RPC("SpawnWeaponClient", RpcTarget.MasterClient, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
-
+                photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idweapon, startPos.x, startPos.y, targetPos.x, targetPos.y, _charge);
 
                 EndTurn(); // End turn call
             }
@@ -431,12 +426,6 @@ public class Player : MonoBehaviourPunCallbacks
         explosive.startPos = new Vector3(posX, posY, 0f);
         explosive.targetPos = new Vector3(targetPosX, targetPosY, 0f);
         explosive.charge = _charge;
-    }
-
-    [PunRPC]
-    public void SpawnWeaponClient(int idWeapon, float posX, float posY, float targetPosX, float targetPosY, float _charge)
-    {
-        photonView.RPC("SpawnWeapon", RpcTarget.AllBuffered, idWeapon, posX, posY, targetPosX, targetPosY, _charge);
     }
 
     [PunRPC]

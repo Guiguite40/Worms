@@ -47,19 +47,6 @@ namespace DTerrain
 
 		void Update()
 		{
-			if (Input.GetKeyDown(KeyCode.Space) && mapTurn == false && PhotonNetwork.IsMasterClient)
-			{
-				mapTurn = true;
-				shipDescent = true;
-
-				leftPosX = LeftMapKiller.transform.position.x;
-				RightPosX = RightMapKiller.transform.position.x;
-
-				PosY = LeftMapKiller.transform.position.y;
-
-				photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
-			}
-
 			if (mapTurn == true)
 			{
 				MapMortSubite();
@@ -93,19 +80,6 @@ namespace DTerrain
 				PosY = LeftMapKiller.transform.position.y;
 
 				photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
-			}
-		}
-
-		private void ZoneDamage(Vector3 pos, int size, float damage)
-		{
-			Vector2 myPos = new Vector2(pos.x, pos.y);
-			Collider2D[] hitColliders = Physics2D.OverlapCircleAll(myPos, size);
-			foreach (Collider2D Collider in hitColliders)
-			{
-				if (Collider.gameObject.tag == "Player")
-				{
-					Debug.LogError(Collider.gameObject.GetPhotonView().ViewID);
-				}
 			}
 		}
 
@@ -216,7 +190,6 @@ namespace DTerrain
 		public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
 		{
 			DestroyMapCircle(pos, size);
-			ZoneDamage(pos, size, dmg);
 		}
 
 		[PunRPC]
