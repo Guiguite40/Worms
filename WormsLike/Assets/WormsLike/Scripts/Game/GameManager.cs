@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using UnityEngine.SceneManagement;
 
 namespace DTerrain
 {
@@ -97,6 +98,7 @@ namespace DTerrain
         float timerMap = 3f;
         bool isPlayerTurnSetup = false;
         bool crateSpawned = false;
+        bool mortSubiteSet = false;
         bool isPassTurn = false;
         int slimeIndex = 0;
         int slimeIndexMax;
@@ -479,31 +481,39 @@ namespace DTerrain
                                         SetNextPlayerNTeamTurn();
                                         SendValueToMaster("currentPlayer");
                                         SendValueToMaster("currentPlayTeam");
-                                        /*if (timerAllGame >= 40)
-                                            timerMap = 5f;
-                                        else
-                                            timerMap = 3f;*/
                                         ResetTimers(true);
                                         SetPlayerPhaseState(PlayerPhaseState.START_PHASE, false, true);
                                     }
                                     else
                                     {
                                         CameraManager.instance.ResetCam();
-                                        /*if (IsLocalPlayerMaster())
-                                            if (timerAllGame >= 40)
-                                                mapDestroy.SetMortSubite();*/
+
+                                        if(IsLocalPlayerMaster())
+										{
+                                            if(!mortSubiteSet)
+											{
+                                                if (timerAllGame >= 40)
+                                                {
+                                                    timerMap = 7f;
+                                                    mapDestroy.SetMortSubite();
+                                                }
+                                                else
+                                                    timerMap = 3f;
+                                                mortSubiteSet = true;
+                                            }
+										}
 
                                         if (IsLocalPlayerTurn())
                                         {
                                             if (!crateSpawned)
                                             {
-                                                if (timerAllGame >= 40)
+                                                /*if (timerAllGame >= 40)
                                                 {
-                                                    timerMap = 5f;
+                                                    timerMap = 7f;
                                                     mapDestroy.SetMortSubite();
                                                 }
                                                 else
-                                                    timerMap = 3f;
+                                                    timerMap = 3f;*/
                                                 SpawnCrate();
                                                 crateSpawned = true;
                                             }
@@ -549,10 +559,11 @@ namespace DTerrain
             if (_resetTimerMap)
             {
                 if (timerAllGame >= 40)
-                    timerMap = 5f;
+                    timerMap = 7f;
                 else
                     timerMap = 3f;
                 crateSpawned = false;
+                mortSubiteSet = false;
             }
 
             //dataPos.text = "all timers reset";
@@ -1048,8 +1059,8 @@ namespace DTerrain
 
         public void OnClickReturnToMenu()
         {
+            PhotonNetwork.NetworkStatisticsReset();
             PhotonNetwork.LoadLevel("Lobby");
-
             /*if(IsLocalPlayerMaster())
             {
                 PhotonNetwork.LoadLevel("Lobby");
