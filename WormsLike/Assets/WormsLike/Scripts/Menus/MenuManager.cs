@@ -220,6 +220,12 @@ public class MenuManager : MonoBehaviourPunCallbacks
 
         //SetupPlayerCustomProperties();
 
+        string access;
+        if (isGamePrivate)
+            access = "private";
+        else
+            access = "public";
+
         RoomOptions roomOption = new RoomOptions();
         roomOption.MaxPlayers = nbPlayerMax;
 
@@ -229,14 +235,16 @@ public class MenuManager : MonoBehaviourPunCallbacks
         hash.Add("gm", 0);
         hash.Add("m", 0);
         hash.Add("nbs", 2);
+        hash.Add("a", access);
         roomOption.CustomRoomProperties = hash;
 
-        string[] lobbySettings = new string[5];
+        string[] lobbySettings = new string[6];
         lobbySettings[0] = "pm";
         lobbySettings[1] = "pw";
         lobbySettings[2] = "gm";
         lobbySettings[3] = "m";
         lobbySettings[4] = "nbs";
+        lobbySettings[5] = "a";
         roomOption.CustomRoomPropertiesForLobby = lobbySettings;
 
         PhotonNetwork.CreateRoom(impFieldRoomName.text, roomOption);
@@ -367,7 +375,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
     public void OnClickQuikJoin()
     {
         //SetupPlayerCustomProperties();
-        PhotonNetwork.JoinRandomRoom();
+        ExitGames.Client.Photon.Hashtable hash = new ExitGames.Client.Photon.Hashtable();
+        hash.Add("a", "public");
+        PhotonNetwork.JoinRandomRoom(hash, 0);
     }
 
     public override void OnJoinedRoom()
