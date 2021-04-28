@@ -38,6 +38,7 @@ public class Slime : MonoBehaviourPunCallbacks
     float healthDisplayed = 0;
     float healthCd = 0;
     public bool isDead = false;
+    public bool isInvicible = false;
     [SerializeField] Color blueColor = Color.clear;
     [SerializeField] Color greenColor = Color.clear;
     [SerializeField] Color orangeColor = Color.clear;
@@ -49,6 +50,8 @@ public class Slime : MonoBehaviourPunCallbacks
 
     [SerializeField] GameObject parachute = null;
     public bool parachuteOpen = false;
+    public bool jetpackOn = false;
+    public float timerJetpack = 0;
     public bool fallDamageActived = true;
 
     // Start is called before the first frame update
@@ -96,7 +99,23 @@ public class Slime : MonoBehaviourPunCallbacks
             parachuteOpen = false;
             rb.drag = 0;
             parachute.SetActive(false);
+            GetComponentInParent<Player>().SetHasAttacked(false);
         }
+
+        if (Input.GetKey(KeyCode.Space) && jetpackOn == true)
+        {
+            timerJetpack += Time.deltaTime;
+            rb.AddForce(new Vector2(0, 2f));
+        }
+
+        if (jetpackOn == true && timerJetpack >= 5f)
+        {
+            jetpackOn = false;
+            GetComponentInParent<Player>().SetHasAttacked(false);
+        }
+
+        if (!isControlled)
+            jetpackOn = false;
     }
 
     public void SetMove(float _move)
@@ -123,7 +142,7 @@ public class Slime : MonoBehaviourPunCallbacks
     {
         if (fallDamageActived)
         {
-            if (rb.velocity.y < -10)
+            if (rb.velocity.y < -20)
             {
                 fallingDamage = Mathf.Abs(rb.velocity.y) - 3;
             }
@@ -213,7 +232,14 @@ public class Slime : MonoBehaviourPunCallbacks
 
     public void Hit(float damage)
     {
-        curHealth -= damage;
+        if (isInvicible)
+        {
+            isInvicible = false;
+        }
+        else
+        {
+            curHealth -= damage;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

@@ -177,7 +177,7 @@ namespace DTerrain
                 else if (currentPlayTeam == "red")
                     currentlocalPlayerPlayingName = listPlayerRed[currentRedPlayerIndex].NickName;
                 SendValue("currentPlayer", RpcTarget.OthersBuffered);
-            }        
+            }
         }
 
         void nextStateinputs()
@@ -201,11 +201,11 @@ namespace DTerrain
             nextStateinputs();
             TeamVictory();
 
-            if(!isCanvasClosed)
-			{
+            if (!isCanvasClosed)
+            {
                 victoryScreen.SetActive(false);
                 isCanvasClosed = true;
-			}
+            }
 
             if (IsLocalPlayerMaster())
             {
@@ -419,13 +419,14 @@ namespace DTerrain
                                             timerPlayerTurn -= Time.deltaTime;
                                             uiTimer.text = ((int)timerPlayerTurn).ToString();
                                             SendValueToMaster("uiTimer");
-                                            if (!GetCurrentPlayer().GetHasAttacked())
+                                            if (!GetCurrentPlayer().GetHasTurnDone())
                                             {
                                                 GetCurrentPlayer().ControlCharacter();
                                                 CameraManager.instance.SetCamOnTarget(GetCurrentPlayer().GetCurrentCharacter().GetPos());
                                             }
                                             else
                                             {
+                                                GetCurrentPlayer().turnDone = false;
                                                 SetPlayerPhaseState(PlayerPhaseState.MOVEMENTS_LEFT, false, true); //true
                                             }
                                         }
@@ -577,11 +578,11 @@ namespace DTerrain
             timerPlayerTurn = 60f;
             //isPlayerTurnSetup = false;
             timerMovementsLeft = 3f;
-                if (timerAllGame >= 40)
-                    timerMap = 5f;
-                else
-                    timerMap = 3f;
-                crateSpawned = false;
+            if (timerAllGame >= 40)
+                timerMap = 5f;
+            else
+                timerMap = 3f;
+            crateSpawned = false;
 
             uiTimer.text = "";
             uiTurn.text = "";
@@ -939,9 +940,9 @@ namespace DTerrain
         }
 
         public void SetIsPassTurn()
-		{
+        {
             isPassTurn = true;
-		}
+        }
 
         bool IsPassTurn()
         {
@@ -1072,7 +1073,7 @@ namespace DTerrain
         }
 
         public void SetSlimeIndexMax(int _nb)
-		{
+        {
             slimeIndexMax = _nb;
         }
 
@@ -1093,27 +1094,31 @@ namespace DTerrain
         {
             List<Slime> slimes = new List<Slime>();
 
-            for (int i = 0; i < listPlayersBlue.Count - 1; i++)
+            foreach (Player player in listPlayersBlue)
             {
-                for (int j = 0; j < listPlayersBlue[i].slimes.Count - 1; j++)
+                foreach (Slime slime in player.slimes)
                 {
-                    slimes.Add(listPlayersBlue[i].slimes[j]);
+                    Debug.LogError("add slime blue");
+                    slimes.Add(slime);
                 }
             }
 
-            for (int i = 0; i < listPlayersRed.Count - 1; i++)
+            foreach (Player player in listPlayersRed)
             {
-                for (int j = 0; j < listPlayersRed[i].slimes.Count - 1; j++)
+                foreach (Slime slime in player.slimes)
                 {
-                    slimes.Add(listPlayersRed[i].slimes[j]);
+                    Debug.LogError("add slime red");
+                    slimes.Add(slime);
                 }
             }
+
+            Debug.LogError("Slimes count : " + slimes.Count);
 
             return slimes;
         }
 
-		public override void OnDisconnected(Photon.Realtime.DisconnectCause cause)
-		{
+        public override void OnDisconnected(Photon.Realtime.DisconnectCause cause)
+        {
             Debug.LogError(cause);
             for (int i = 0; i < listPlayerBlue.Count; i++)
             {
@@ -1136,19 +1141,19 @@ namespace DTerrain
 
         [PunRPC]
         void RemovePlayer(string _team, int _index)
-		{
-            if(_team == "blue")
-			{
+        {
+            if (_team == "blue")
+            {
                 listPlayersBlue.Remove(listPlayersBlue[_index]);
             }
-            else if(_team == "red")
-			{
+            else if (_team == "red")
+            {
                 listPlayersRed.Remove(listPlayersRed[_index]);
             }
-		}
+        }
 
         void SetVictoryScreen(bool _state, bool _hasLose)
-		{
+        {
             if (_state == true)
             {
                 victoryScreen.SetActive(true);
@@ -1163,29 +1168,29 @@ namespace DTerrain
         }
 
         bool GetBlueLose()
-		{
+        {
             bool remove = false;
             int removeIndex = -1;
-            for(int i = 0; i < listPlayersBlue.Count; i++)
-			{
+            for (int i = 0; i < listPlayersBlue.Count; i++)
+            {
                 if (!listPlayersBlue[i].GetHasLose() && !remove)
                     return false;
                 else
-				{
+                {
                     remove = true;
                     removeIndex = i;
-				}
-                    //photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
+                }
+                //photonView.RPC("RemovePlayer", RpcTarget.All, "blue", i);
             }
 
-            if(remove)
-			{
+            if (remove)
+            {
                 photonView.RPC("RemovePlayer", RpcTarget.All, "blue", removeIndex);
                 return false;
             }
 
             return true;
-		}
+        }
 
         bool GetRedLose()
         {
@@ -1213,11 +1218,11 @@ namespace DTerrain
         }
 
         void TeamVictory()
-		{
-            if(GetBlueLose())
-			{
+        {
+            if (GetBlueLose())
+            {
                 Debug.LogError("blue loose");
-                if((string)PhotonNetwork.LocalPlayer.CustomProperties["t"] == "blue")
+                if ((string)PhotonNetwork.LocalPlayer.CustomProperties["t"] == "blue")
                     SetVictoryScreen(true, true);
                 else
                     SetVictoryScreen(true, false);

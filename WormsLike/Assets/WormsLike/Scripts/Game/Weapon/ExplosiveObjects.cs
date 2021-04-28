@@ -54,6 +54,8 @@ namespace DTerrain
                     else
                     {
                         Debug.Log("Explosion : after impact");
+                        RepulseObjects();
+
                         StartCoroutine(Explosion());
                         Destroy(gameObject);
                         myGo.Remove(gameObject);
@@ -66,6 +68,8 @@ namespace DTerrain
                 if (rb.velocity == new Vector2(0f, 0f))
                 {
                     Debug.Log("Explosion : on velocity null");
+                    RepulseObjects();
+
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
                     MapDestroy.ExplosiveObjectsDamage.Add(damage);
@@ -80,16 +84,18 @@ namespace DTerrain
 
         public void RepulseObjects()
         {
-            List<Slime> tmpSlimes = new List<Slime>();
-            tmpSlimes = GameManager.instance.GetEverySlimes();
+            Debug.LogError("RepulseObject Called");
 
-            foreach (var item in tmpSlimes)
+            GameObject[] tmpSlimes;
+            tmpSlimes = GameObject.FindGameObjectsWithTag("Player");
+            Debug.LogError("tmpSlimes count : " + tmpSlimes.Length);
+            //tmpSlimes = GameManager.instance.GetEverySlimes();
+
+            foreach (GameObject slime in tmpSlimes)
             {
-               if (item.GetPos().x >= rb.transform.position.x - circleSize && item.GetPos().x <= rb.transform.position.x + circleSize
-                    && item.GetPos().y >= rb.transform.position.y - circleSize && item.GetPos().y <= rb.transform.position.y + circleSize)
+                if (Vector3.Distance(slime.GetComponent<Rigidbody2D>().transform.position, rb.transform.position) < circleSize)
                 {
-                    //float direction = rb.transform.position
-                    //item.transform.position += new Vector3(0, 0, 0);
+                    slime.GetComponent<Rigidbody2D>().AddExplosionForce(10, rb.transform.position, (float)circleSize);
                 }
             }
         }
@@ -101,10 +107,13 @@ namespace DTerrain
                 if (explodeAfterImpact == true && explodeVelocityNull == false)
                 {
                     Debug.Log("Explosion : on trigger");
+                    RepulseObjects();
+
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
                     MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
+
                     Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }

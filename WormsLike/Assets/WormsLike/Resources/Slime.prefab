@@ -483,6 +483,7 @@ MonoBehaviour:
   maxHealth: 100
   curHealth: 0
   isDead: 0
+  isInvicible: 0
   blueColor: {r: 0.41037738, g: 0.6886743, b: 1, a: 1}
   greenColor: {r: 0.35294116, g: 1, b: 0.4316222, a: 1}
   orangeColor: {r: 1, g: 0.76470596, b: 0.3529412, a: 1}
@@ -492,6 +493,8 @@ MonoBehaviour:
   team: 1
   parachute: {fileID: 5781791293972726038}
   parachuteOpen: 0
+  jetpackOn: 0
+  timerJetpack: 0
   fallDamageActived: 1
 --- !u!70 &3845015423529556883
 CapsuleCollider2D:
