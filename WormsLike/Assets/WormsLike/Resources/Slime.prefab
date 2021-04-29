@@ -440,13 +440,14 @@ GameObject:
   - component: {fileID: 3845015423529556880}
   - component: {fileID: 3845015423529556881}
   - component: {fileID: 3845015423529556882}
+  - component: {fileID: -2021214597011900503}
   - component: {fileID: 3845015423529556883}
   - component: {fileID: 3845015423529556886}
   - component: {fileID: 740433114250959693}
   - component: {fileID: 2335402682407793152}
   - component: {fileID: -8289819220846954825}
   m_Layer: 0
-  m_Name: SlimeMerde
+  m_Name: Slime
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -511,7 +512,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -3520032370954788314, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
+  m_Sprite: {fileID: -315548169791424667, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -580,6 +581,25 @@ MonoBehaviour:
   jetpackOn: 0
   timerJetpack: 0
   fallDamageActived: 1
+--- !u!114 &-2021214597011900503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3845015423529556887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05a7c253dc64c93479091b14074fa2ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Slime1: {fileID: -3520032370954788314, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
+  Slime2: {fileID: 2599076516012654198, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
+  Slime3: {fileID: -8641963641073796952, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
+  Slime4: {fileID: 5627712965853855055, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
+  Slime5: {fileID: 5809229048825267548, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
+  Slime6: {fileID: -7619650165377157929, guid: 3b1aedb158199bb45af2749525a88b97, type: 3}
+  mySlime: {fileID: 3845015423529556881}
 --- !u!70 &3845015423529556883
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

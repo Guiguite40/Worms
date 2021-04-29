@@ -119,6 +119,7 @@ namespace DTerrain
 
         public IEnumerator Explosion()
         {
+            SoundManager.instance.PlaySound("menuClickExplo");
             GameObject explosion = PhotonNetwork.Instantiate(explosionPrefab.name, gameObject.transform.position, Quaternion.identity);
             yield return null;
         }

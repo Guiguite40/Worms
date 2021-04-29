@@ -111,7 +111,7 @@ public class Slime : MonoBehaviourPunCallbacks
 
         if (Input.GetKey(KeyCode.Space) && jetpackOn == true)
         {
-            timerJetpack += Time.deltaTime;
+            timerJetpack -= Time.deltaTime;
             int time = (int)timerJetpack;
             timerJetpackGO.text = time.ToString();
             rb.AddForce(new Vector2(0, 19f));

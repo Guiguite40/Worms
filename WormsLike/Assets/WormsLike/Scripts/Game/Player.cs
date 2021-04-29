@@ -420,7 +420,7 @@ public class Player : MonoBehaviourPunCallbacks
                 else if (_utilitary == Enums.ItemsList.JetPack)
                 {
                     hasAttacked = true;
-                    currentCharacter.timerJetpack = 0f;
+                    currentCharacter.timerJetpack = 10f;
                     currentCharacter.jetpackOn = true;
                 }
             }

@@ -13,6 +13,7 @@ public class SoundManager : MonoBehaviour
 
     [SerializeField] AudioClip menuClick;
     [SerializeField] AudioClip menuClickConfirm;
+    [SerializeField] AudioClip menuClickExplo;
     [SerializeField] AudioClip menuClickError;
     [SerializeField] AudioClip menuOst;
     [SerializeField] AudioClip lobbyOst;
@@ -44,6 +45,7 @@ public class SoundManager : MonoBehaviour
         listSound.Add("menuClick", menuClick);
         listSound.Add("menuClickConfirm", menuClickConfirm);
         listSound.Add("menuClickError", menuClickError);
+        listSound.Add("menuClickExplo", menuClickExplo);
 
         listMusic.Add("menuOst", menuOst);
         listMusic.Add("lobbyOst", lobbyOst);
