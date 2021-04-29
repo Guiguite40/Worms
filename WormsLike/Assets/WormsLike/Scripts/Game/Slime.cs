@@ -248,7 +248,7 @@ public class Slime : MonoBehaviourPunCallbacks
         {
             if (fallingDamage != 0)
             {
-                curHealth -= fallingDamage;
+                Hit(fallingDamage);
                 fallingDamage = 0;
             }
             isGrounded = true;
@@ -257,7 +257,7 @@ public class Slime : MonoBehaviourPunCallbacks
         if (collision.gameObject.tag == "DamageBox")
         {
             Debug.Log("damage");
-            curHealth -= 25;
+            Hit(25);
             Destroy(collision.gameObject);
         }
     }

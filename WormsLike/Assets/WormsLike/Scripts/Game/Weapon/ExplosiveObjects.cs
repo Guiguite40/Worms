@@ -53,7 +53,7 @@ namespace DTerrain
                     }
                     else
                     {
-                        Debug.Log("Explosion : after impact");
+                        //Debug.Log("Explosion : after impact");
                         RepulseObjects();
 
                         StartCoroutine(Explosion());
@@ -67,7 +67,7 @@ namespace DTerrain
             {
                 if (rb.velocity.x <= 0.2f && rb.velocity.y <= 0.2f)
                 {
-                    Debug.Log("Explosion : on velocity null");
+                    //Debug.Log("Explosion : on velocity null");
                     RepulseObjects();
 
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
@@ -84,18 +84,27 @@ namespace DTerrain
 
         public void RepulseObjects()
         {
-            Debug.LogError("RepulseObject Called");
+            //Debug.LogError("RepulseObject Called");
 
             GameObject[] tmpSlimes;
             tmpSlimes = GameObject.FindGameObjectsWithTag("Player");
-            Debug.LogError("tmpSlimes count : " + tmpSlimes.Length);
+            //Debug.LogError("tmpSlimes count : " + tmpSlimes.Length);
             //tmpSlimes = GameManager.instance.GetEverySlimes();
 
             foreach (GameObject slime in tmpSlimes)
             {
-                if (Vector3.Distance(slime.GetComponent<Rigidbody2D>().transform.position, rb.transform.position) < circleSize)
+                //Debug.LogError(Vector3.Distance(slime.transform.position, rb.transform.position));
+
+                if (Vector3.Distance(slime.transform.position, rb.transform.position) <= 1 * 1.3f)
                 {
-                    slime.GetComponent<Rigidbody2D>().AddExplosionForce(10, rb.transform.position, (float)circleSize);
+                    slime.GetComponent<Rigidbody2D>().AddExplosionForce(30, rb.transform.position, (float)circleSize);
+
+                    Vector2 explosionDir = slime.transform.position - rb.transform.position;
+                    float explosionDistance = explosionDir.magnitude;
+                    slime.GetComponent<Slime>().Hit((1 - (explosionDistance / (float)circleSize * 2f)) * damage);
+                    //Debug.LogError(explosionDistance);
+                    //Debug.LogError(circleSize);
+                    //Debug.LogError((1 - (explosionDistance / (float)circleSize * 2f)) * damage);
                 }
             }
         }
@@ -106,7 +115,7 @@ namespace DTerrain
             {
                 if (explodeAfterImpact == true && explodeVelocityNull == false)
                 {
-                    Debug.Log("Explosion : on trigger");
+                    //Debug.Log("Explosion : on trigger");
                     RepulseObjects();
 
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
@@ -114,7 +123,7 @@ namespace DTerrain
                     MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
 
-                    PhotonNetwork.Destroy(gameObject);
+                    Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }
             }
@@ -122,7 +131,7 @@ namespace DTerrain
 
         public IEnumerator Explosion()
         {
-            Debug.Log("Explosion");
+            //Debug.Log("Explosion");
             GameObject explosion = PhotonNetwork.Instantiate(explosionPrefab.name, gameObject.transform.position, Quaternion.identity);
             yield return null;
         }

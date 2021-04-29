@@ -144,6 +144,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 0
   delay: 6
+  damage: 30
 --- !u!114 &-6348670088572722203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,7 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 973a7923e1236324b8669a07a38b4337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooter: {fileID: 0}
+  airStrike: 0
   startPos: {x: 0, y: 0, z: 0}
   targetPos: {x: 0, y: 0, z: 0}
   speed: 1
