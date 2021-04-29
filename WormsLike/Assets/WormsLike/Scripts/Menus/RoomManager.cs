@@ -74,6 +74,9 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 		PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
 
 		SetRoomInfo();
+
+		SoundManager.instance.StopMusic("menuOst");
+		SoundManager.instance.PlayMusic("lobbyOst");
 	}
 
 	void Update()
@@ -244,6 +247,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 
 		PhotonNetwork.CurrentRoom.MaxPlayers = playerMax;
 		UpdateServerInfo();
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	public void DecrementPlayerMax()
@@ -253,6 +257,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 
 		PhotonNetwork.CurrentRoom.MaxPlayers = playerMax;
 		UpdateServerInfo();
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	public void SwitchGamemode()
@@ -266,29 +271,35 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 			indexGamemode = 0;
 		}
 
+		SoundManager.instance.PlaySound("menuClick");
+
 		UpdateServerInfo();
 	}
 
 	public void IncrementNbSlimes()
 	{
 		nbSlimes++;
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	public void DecrementNbSlimes()
 	{
 		nbSlimes--;
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	public void NextMap()
 	{
 		if (mapIndex < lastMapIndex)
 			mapIndex++;
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	public void PreviousMap()
 	{
 		if (mapIndex > 0)
 			mapIndex--;
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	public void UpdateServerInfo()
@@ -332,6 +343,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 			hash.Add("t", playerTeam);
 			PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
 		}
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
@@ -364,6 +376,7 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 		photonView.RPC("CreateChatMessage", RpcTarget.AllBuffered, PhotonNetwork.LocalPlayer.NickName, inputFieldChatMessage.text, (int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
 		inputFieldChatMessage.text = "";
 		inputFieldChatMessage.ActivateInputField();
+		SoundManager.instance.PlaySound("menuClick");
 	}
 
 	[PunRPC]
@@ -390,5 +403,6 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 	{
 		PhotonNetwork.Disconnect();
 		PhotonNetwork.LoadLevel("MainMenu");
+		SoundManager.instance.PlaySound("menuClickError");
 	}
 }
