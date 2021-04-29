@@ -65,6 +65,9 @@ public class MenuManager : MonoBehaviourPunCallbacks
         SetProfilPicture((int)PhotonNetwork.LocalPlayer.CustomProperties["pp"]);
         textErrorMdpToEnter.text = "";
         SetupPlayerCustomProperties();
+
+        SoundManager.instance.StopMusic("lobbyOst");
+        SoundManager.instance.PlayMusic("menuOst");
     }
 
     void Update()
@@ -462,6 +465,8 @@ public class MenuManager : MonoBehaviourPunCallbacks
     {
         CloseCanvas("all");
         OpenCanvas("parameter");
+        canvas["parameter"].GetComponentsInChildren<Slider>()[0].value = SoundManager.instance.GetSavedValueM();
+        canvas["parameter"].GetComponentsInChildren<Slider>()[1].value = SoundManager.instance.GetSavedValue();
     }
 
     public void OnClickQuit()
@@ -478,4 +483,14 @@ public class MenuManager : MonoBehaviourPunCallbacks
 	{
         return isRoomCreatedHasPassword;
 	}
+
+    public Slider GetMenuSoundSlider()
+	{
+        return canvas["parameter"].GetComponentsInChildren<Slider>()[1];
+    }
+
+    public Slider GetMenuSoundSliderM()
+    {
+        return canvas["parameter"].GetComponentsInChildren<Slider>()[0];
+    }
 }

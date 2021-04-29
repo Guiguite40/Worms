@@ -74,6 +74,9 @@ public class RoomManager : MonoBehaviourPunCallbacks, IPunObservable
 		PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
 
 		SetRoomInfo();
+
+		SoundManager.instance.StopMusic("menuOst");
+		SoundManager.instance.PlayMusic("lobbyOst");
 	}
 
 	void Update()

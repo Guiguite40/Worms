@@ -42,6 +42,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
     [SerializeField] private Button pp3;
     [SerializeField] private Button pp4;
     [SerializeField] private Button pp5;
+    [SerializeField] private GameObject parameters;
 
     string accountsFilePath = "";
     string nickname = "";
@@ -65,6 +66,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         canvas.Add("choose", goChoose);
         canvas.Add("login", goLogin);
         canvas.Add("signUp", goSignUp);
+        canvas.Add("parameter", parameters);
 
         accountCreationStep = new bool[3];
         for (int i = 0; i < 3; i++)
@@ -95,6 +97,11 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         listPp.Add(pp3);
         listPp.Add(pp4);
         listPp.Add(pp5);
+
+        DontDestroyOnLoad(parameters);
+        parameters.SetActive(false);
+
+        SoundManager.instance.PlayMusic("menuOst");
     }
 
     void Update()
@@ -136,6 +143,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         canvas["choose"].SetActive(false);
         canvas["login"].SetActive(false);
         canvas["signUp"].SetActive(false);
+        canvas["parameter"].SetActive(false);
 
         canvas[_keyName].SetActive(true);
         ResetInputsFields();
@@ -313,6 +321,16 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         SoundManager.instance.PlaySound("menuClickError");
         return false;
 	}
+
+    public void OpenParameter()
+	{
+        parameters.SetActive(true);
+	}
+
+    public void CloseParameter()
+    {
+        parameters.SetActive(false);
+    }
 
     public void SetImgColorIndex(int _index)
 	{

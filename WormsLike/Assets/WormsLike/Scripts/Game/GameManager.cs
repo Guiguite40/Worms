@@ -178,6 +178,9 @@ namespace DTerrain
                     currentlocalPlayerPlayingName = listPlayerRed[currentRedPlayerIndex].NickName;
                 SendValue("currentPlayer", RpcTarget.OthersBuffered);
             }
+
+            SoundManager.instance.StopMusic("lobbyOst");
+            SoundManager.instance.PlayMusic("gameOst");
         }
 
         void nextStateinputs()
