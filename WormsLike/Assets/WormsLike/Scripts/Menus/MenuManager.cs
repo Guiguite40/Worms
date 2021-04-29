@@ -99,6 +99,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         canvas["parameter"].SetActive(false);
 
         canvas[_keyName].SetActive(true);
+        SoundManager.instance.PlaySound("menuClick");
     }
 
     void CloseCanvas(string _keyName)
@@ -114,6 +115,7 @@ public class MenuManager : MonoBehaviourPunCallbacks
         }
         else
             canvas["_keyName"].SetActive(false);
+        SoundManager.instance.PlaySound("menuClickError");
     }
 
     public void OnClickCloseCanvas()
