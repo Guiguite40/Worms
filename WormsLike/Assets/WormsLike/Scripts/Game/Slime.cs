@@ -54,7 +54,7 @@ public class Slime : MonoBehaviourPunCallbacks
     [SerializeField] Text timerJetpackGO = null;
     public bool jetpackOn = false;
     public float timerJetpack = 0;
-    public bool fallDamageActived = true;
+    public bool fallDamageActived = false;
 
     // Start is called before the first frame update
     void Start()
@@ -155,9 +155,9 @@ public class Slime : MonoBehaviourPunCallbacks
     {
         if (fallDamageActived)
         {
-            if (rb.velocity.y < -20)
+            if (rb.velocity.y < -15)
             {
-                fallingDamage = Mathf.Abs(rb.velocity.y) - 3;
+                fallingDamage = Mathf.Abs(rb.velocity.y) - 7;
             }
         }
     }
@@ -252,6 +252,8 @@ public class Slime : MonoBehaviourPunCallbacks
         else
         {
             curHealth -= damage;
+            Debug.LogError("ID" + this.GetInstanceID() + " -> " + "Damages : " + damage);
+            Debug.LogError("ID" + this.GetInstanceID() + " -> " + "New health amount : " + curHealth);
         }
     }
 

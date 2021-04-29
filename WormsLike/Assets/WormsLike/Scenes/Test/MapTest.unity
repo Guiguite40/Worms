@@ -155,10 +155,10 @@ MonoBehaviour:
   <ChunkCountX>k__BackingField: 1
   <ChunkCountY>k__BackingField: 1
   chunkTemplate: {fileID: 5194434684234072523, guid: 37c73454f27eef44b862eb12bd4ee2a3, type: 3}
-  <OriginalTexture>k__BackingField: {fileID: 2800000, guid: 0a19f125d9e98844fa29ec6e9b087181, type: 3}
   <PPU>k__BackingField: 32
   filterMode: 0
   <SortingLayerID>k__BackingField: 0
+  myMaps: []
 --- !u!4 &44864349
 Transform:
   m_ObjectHideFlags: 0
@@ -1589,10 +1589,10 @@ MonoBehaviour:
   <ChunkCountX>k__BackingField: 64
   <ChunkCountY>k__BackingField: 64
   chunkTemplate: {fileID: 5194434684234072523, guid: 847a2e425730df3409385592b669f10a, type: 3}
-  <OriginalTexture>k__BackingField: {fileID: 2800000, guid: 0a19f125d9e98844fa29ec6e9b087181, type: 3}
   <PPU>k__BackingField: 32
   filterMode: 0
   <SortingLayerID>k__BackingField: 0
+  myMaps: []
 --- !u!1001 &1826086156
 PrefabInstance:
   m_ObjectHideFlags: 0
