@@ -53,6 +53,7 @@ public class SoundManager : MonoBehaviour
         {
             SetSliderToSavedValue(false);
             savedValue = PlayerPrefs.GetFloat("savedValue");
+            audioSource.volume = savedValue;
         }
         else
         {
@@ -64,6 +65,7 @@ public class SoundManager : MonoBehaviour
         {
             SetSliderToSavedValue(false);
             savedValueM = PlayerPrefs.GetFloat("savedValueM");
+            audioSourceMusic.volume = savedValueM;
         }
         else
         {
@@ -71,8 +73,11 @@ public class SoundManager : MonoBehaviour
             sliderSoundMusic.value = savedValueM;
         }
 
-        sliderSoundMenu = MenuManager.instance.GetMenuSoundSlider();
-        sliderSoundMenuMusic = MenuManager.instance.GetMenuSoundSliderM();
+        if (MenuManager.instance != null)
+        {
+            sliderSoundMenu = MenuManager.instance.GetMenuSoundSlider();
+            sliderSoundMenuMusic = MenuManager.instance.GetMenuSoundSliderM();
+        }
     }
 
     void Update()
@@ -83,7 +88,7 @@ public class SoundManager : MonoBehaviour
         if (sliderSoundMusic.value != savedValueM)
             SetSoundToSliderMusic(false);
 
-        if (MenuManager.instance.GetMenuSoundSlider() != null)
+        if (MenuManager.instance != null)
         {
             if (MenuManager.instance.GetMenuSoundSlider().value != savedValue)
                 SetSoundToSlider(true);
