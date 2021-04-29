@@ -50,8 +50,6 @@ public class Slime : MonoBehaviourPunCallbacks
 
     [SerializeField] GameObject parachute = null;
     public bool parachuteOpen = false;
-    [SerializeField] GameObject jetpack = null;
-    [SerializeField] Text timerJetpackGO = null;
     public bool jetpackOn = false;
     public float timerJetpack = 0;
     public bool fallDamageActived = false;
@@ -104,31 +102,20 @@ public class Slime : MonoBehaviourPunCallbacks
             GetComponentInParent<Player>().SetHasAttacked(false);
         }
 
-        if (jetpackOn == true)
-        {
-            jetpack.SetActive(true);
-        }
-
         if (Input.GetKey(KeyCode.Space) && jetpackOn == true)
         {
             timerJetpack += Time.deltaTime;
-            int time = (int)timerJetpack;
-            timerJetpackGO.text = time.ToString();
-            rb.AddForce(new Vector2(0, 19f));
+            rb.AddForce(new Vector2(0, 2f));
         }
 
-        if (jetpackOn == true && timerJetpack >= 10f)
+        if (jetpackOn == true && timerJetpack >= 5f)
         {
-            jetpack.SetActive(false);
             jetpackOn = false;
             GetComponentInParent<Player>().SetHasAttacked(false);
         }
 
         if (!isControlled)
-        {
-            jetpack.SetActive(false);
             jetpackOn = false;
-        }
     }
 
     public void SetMove(float _move)
