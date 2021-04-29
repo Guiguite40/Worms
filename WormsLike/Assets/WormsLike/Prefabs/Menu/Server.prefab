@@ -153,7 +153,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Sample map name
+  m_Text: Map 1
 --- !u!1 &4140240784084804317
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,6 +390,7 @@ MonoBehaviour:
   textRoomName: {fileID: 4140240785282746043}
   textNbPlayer: {fileID: 4140240784288827017}
   textGamemode: {fileID: 4140240784084804319}
+  textMapName: {fileID: 0}
 --- !u!1 &4140240784256568283
 GameObject:
   m_ObjectHideFlags: 0
