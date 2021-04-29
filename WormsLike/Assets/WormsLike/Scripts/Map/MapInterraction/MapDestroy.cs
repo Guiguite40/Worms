@@ -9,215 +9,216 @@ using Photon.Realtime;
 
 namespace DTerrain
 {
-	public class MapDestroy : MonoBehaviourPunCallbacks, IPunObservable
-	{
-		private int outlineSize = 4;
+    public class MapDestroy : MonoBehaviourPunCallbacks, IPunObservable
+    {
+        private int outlineSize = 4;
 
-		protected Shape destroyCircle;
-		protected Shape outlineCircle;
+        protected Shape destroyCircle;
+        protected Shape outlineCircle;
 
-		[Header("LayerMap")]
-		[SerializeField]
-		protected BasicPaintableLayer primaryLayer;
-		[SerializeField]
-		protected BasicPaintableLayer secondaryLayer;
+        [Header("LayerMap")]
+        [SerializeField]
+        protected BasicPaintableLayer primaryLayer;
+        [SerializeField]
+        protected BasicPaintableLayer secondaryLayer;
 
-		public static List<Vector3> ExplosiveObjectsPosition = new List<Vector3>();
-		public static List<int> ExplosiveObjectsSize = new List<int>();
-		public static List<float> ExplosiveObjectsDamage = new List<float>();
+        public static List<Vector3> ExplosiveObjectsPosition = new List<Vector3>();
+        public static List<int> ExplosiveObjectsSize = new List<int>();
+        public static List<float> ExplosiveObjectsDamage = new List<float>();
 
-		[Header("MapDeathMove")]
-		[SerializeField]
-		protected GameObject LeftMapKiller = null;
-		[SerializeField]
-		protected GameObject RightMapKiller = null;
-		[SerializeField]
-		protected GameObject LeftLaser = null;
-		[SerializeField]
-		protected GameObject RightLaser = null;
+        [Header("MapDeathMove")]
+        [SerializeField]
+        protected GameObject LeftMapKiller = null;
+        [SerializeField]
+        protected GameObject RightMapKiller = null;
+        [SerializeField]
+        protected GameObject LeftLaser = null;
+        [SerializeField]
+        protected GameObject RightLaser = null;
 
-		private bool mapTurn = false;
-		private bool shipDescent = false;
-		private float leftPosX = 0f, RightPosX = 0f, PosY = 0f;
+        private bool mapTurn = false;
+        private bool shipDescent = false;
+        private bool activateLaser = false;
 
-		void Start()
-		{
+        private float leftPosX = 0f, RightPosX = 0f, PosY = 0f;
 
-		}
+        void Start()
+        {
 
-		void Update()
-		{
-			if (mapTurn == true)
-			{
-				MapMortSubite();
-			}
+        }
 
-			if (ExplosiveObjectsPosition.Count() != 0)
-			{
-				for (int i = 0; i < ExplosiveObjectsPosition.Count(); i++)
-				{
-					if (PhotonNetwork.IsMasterClient)
-						photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
-					else
-						photonView.RPC("MapSyncClient", RpcTarget.MasterClient, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
+        void Update()
+        {
+            if (mapTurn == true)
+            {
+                MapMortSubite();
+            }
 
-					ExplosiveObjectsPosition.RemoveAt(i);
-					ExplosiveObjectsSize.RemoveAt(i);
-				}
-			}
-		}
+            if (activateLaser == true)
+            {
+                LeftLaser.SetActive(true);
+                RightLaser.SetActive(true);
+            }
+            else 
+            {
+                LeftLaser.SetActive(false);
+                RightLaser.SetActive(false);
+            }
 
-		public void SetMortSubite()
-		{
-			if (mapTurn == false && PhotonNetwork.IsMasterClient)
-			{
-				mapTurn = true;
-				shipDescent = true;
+            if (ExplosiveObjectsPosition.Count() != 0)
+            {
+                for (int i = 0; i < ExplosiveObjectsPosition.Count(); i++)
+                {
+                    if (PhotonNetwork.IsMasterClient)
+                        photonView.RPC("MapSync", RpcTarget.AllBuffered, ExplosiveObjectsPosition[i], ExplosiveObjectsSize[i], ExplosiveObjectsDamage[i]);
 
-				leftPosX = LeftMapKiller.transform.position.x;
-				RightPosX = RightMapKiller.transform.position.x;
+                    ExplosiveObjectsPosition.RemoveAt(i);
+                    ExplosiveObjectsSize.RemoveAt(i);
+                }
+            }
+        }
 
-				PosY = LeftMapKiller.transform.position.y;
+        public void SetMortSubite()
+        {
+            if (mapTurn == false && PhotonNetwork.IsMasterClient)
+            {
+                mapTurn = true;
+                shipDescent = true;
 
-				photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered);
-			}
-		}
+                leftPosX = LeftMapKiller.transform.position.x;
+                RightPosX = RightMapKiller.transform.position.x;
 
-		private void DestroyMapCircle(Vector3 position, int size)
-		{
-			destroyCircle = Shape.GenerateShapeCircle(size);
-			outlineCircle = Shape.GenerateShapeCircle(size + outlineSize);
+                PosY = LeftMapKiller.transform.position.y;
+            }
+        }
 
-			Vector3 p = position - primaryLayer.transform.position;
+        private void DestroyMapCircle(Vector3 position, int size)
+        {
+            destroyCircle = Shape.GenerateShapeCircle(size);
+            outlineCircle = Shape.GenerateShapeCircle(size + outlineSize);
 
-			primaryLayer?.Paint(new PaintingParameters()
-			{
-				Color = Color.clear,
-				Position = new Vector2Int((int)(p.x * primaryLayer.PPU) - size, (int)(p.y * primaryLayer.PPU) - size),
-				Shape = destroyCircle,
-				PaintingMode = PaintingMode.REPLACE_COLOR,
-				DestructionMode = DestructionMode.DESTROY
-			});
+            Vector3 p = position - primaryLayer.transform.position;
 
-			secondaryLayer?.Paint(new PaintingParameters()
-			{
-				Color = Color.clear,
-				Position = new Vector2Int((int)(p.x * secondaryLayer.PPU) - size, (int)(p.y * secondaryLayer.PPU) - size),
-				Shape = destroyCircle,
-				PaintingMode = PaintingMode.REPLACE_COLOR,
-				DestructionMode = DestructionMode.NONE
-			});
-		}
+            primaryLayer?.Paint(new PaintingParameters()
+            {
+                Color = Color.clear,
+                Position = new Vector2Int((int)(p.x * primaryLayer.PPU) - size, (int)(p.y * primaryLayer.PPU) - size),
+                Shape = destroyCircle,
+                PaintingMode = PaintingMode.REPLACE_COLOR,
+                DestructionMode = DestructionMode.DESTROY
+            });
 
-		private void DestroyMapRect(Vector3 position, int width, int height)
-		{
-			destroyCircle = Shape.GenerateShapeRect(width, height);
-			outlineCircle = Shape.GenerateShapeRect(width, height);
+            secondaryLayer?.Paint(new PaintingParameters()
+            {
+                Color = Color.clear,
+                Position = new Vector2Int((int)(p.x * secondaryLayer.PPU) - size, (int)(p.y * secondaryLayer.PPU) - size),
+                Shape = destroyCircle,
+                PaintingMode = PaintingMode.REPLACE_COLOR,
+                DestructionMode = DestructionMode.NONE
+            });
+        }
 
-			Vector3 p = position - primaryLayer.transform.position;
+        private void DestroyMapRect(Vector3 position, int width, int height)
+        {
+            destroyCircle = Shape.GenerateShapeRect(width, height);
+            outlineCircle = Shape.GenerateShapeRect(width, height);
 
-			primaryLayer?.Paint(new PaintingParameters()
-			{
-				Color = Color.clear,
-				Position = new Vector2Int((int)(p.x * primaryLayer.PPU) - width, (int)(p.y * primaryLayer.PPU) - height),
-				Shape = destroyCircle,
-				PaintingMode = PaintingMode.REPLACE_COLOR,
-				DestructionMode = DestructionMode.DESTROY
-			});
+            Vector3 p = position - primaryLayer.transform.position;
 
-			secondaryLayer?.Paint(new PaintingParameters()
-			{
-				Color = Color.clear,
-				Position = new Vector2Int((int)(p.x * secondaryLayer.PPU) - width, (int)(p.y * secondaryLayer.PPU) - height),
-				Shape = destroyCircle,
-				PaintingMode = PaintingMode.REPLACE_COLOR,
-				DestructionMode = DestructionMode.NONE
-			});
-		}
+            primaryLayer?.Paint(new PaintingParameters()
+            {
+                Color = Color.clear,
+                Position = new Vector2Int((int)(p.x * primaryLayer.PPU) - width, (int)(p.y * primaryLayer.PPU) - height),
+                Shape = destroyCircle,
+                PaintingMode = PaintingMode.REPLACE_COLOR,
+                DestructionMode = DestructionMode.DESTROY
+            });
 
-		public void MapMortSubite()
-		{
-			if (shipDescent == true)
-			{
-				if (PosY - 10f <= LeftMapKiller.transform.position.y)
-					LeftMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
+            secondaryLayer?.Paint(new PaintingParameters()
+            {
+                Color = Color.clear,
+                Position = new Vector2Int((int)(p.x * secondaryLayer.PPU) - width, (int)(p.y * secondaryLayer.PPU) - height),
+                Shape = destroyCircle,
+                PaintingMode = PaintingMode.REPLACE_COLOR,
+                DestructionMode = DestructionMode.NONE
+            });
+        }
 
-				if (PosY - 10f <= RightMapKiller.transform.position.y)
-					RightMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
+        public void MapMortSubite()
+        {
+            if (shipDescent == true)
+            {
+                if (PosY - 10f <= LeftMapKiller.transform.position.y)
+                    LeftMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
 
-				if (PosY - 10f >= RightMapKiller.transform.position.y && PosY - 10f >= LeftMapKiller.transform.position.y)
-				{
-					shipDescent = false;
-				}
-			}
-			else
-			{
-				LeftLaser.SetActive(true);
-				RightLaser.SetActive(true);
+                if (PosY - 10f <= RightMapKiller.transform.position.y)
+                    RightMapKiller.transform.position += Vector3.down * 5f * Time.deltaTime;
 
-				if (leftPosX + 5f >= LeftMapKiller.transform.position.x)
-					LeftMapKiller.transform.position += Vector3.right * 5f * Time.deltaTime;
+                if (PosY - 10f >= RightMapKiller.transform.position.y && PosY - 10f >= LeftMapKiller.transform.position.y)
+                {
+                    shipDescent = false;
+                }
+            }
+            else
+            {
+                photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered, true);
 
-				if (RightPosX - 5f <= RightMapKiller.transform.position.x)
-					RightMapKiller.transform.position += Vector3.left * 5f * Time.deltaTime;
+                if (leftPosX + 5f >= LeftMapKiller.transform.position.x)
+                    LeftMapKiller.transform.position += Vector3.right * 5f * Time.deltaTime;
 
-				if (PhotonNetwork.IsMasterClient)
-				{
-					photonView.RPC("MapSyncMortSubite", RpcTarget.AllBuffered, LeftMapKiller.transform.position, 10, 1080);
-					photonView.RPC("MapSyncMortSubite", RpcTarget.AllBuffered, RightMapKiller.transform.position, 10, 1080);
-				}
+                if (RightPosX - 5f <= RightMapKiller.transform.position.x)
+                    RightMapKiller.transform.position += Vector3.left * 5f * Time.deltaTime;
 
-				if (RightPosX - 5f >= RightMapKiller.transform.position.x && leftPosX + 5f <= LeftMapKiller.transform.position.x)
-				{
-					LeftLaser.SetActive(false);
-					RightLaser.SetActive(false);
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    photonView.RPC("MapSyncMortSubite", RpcTarget.AllBuffered, LeftMapKiller.transform.position, 10, 1080);
+                    photonView.RPC("MapSyncMortSubite", RpcTarget.AllBuffered, RightMapKiller.transform.position, 10, 1080);
+                }
 
-					if (PosY >= LeftMapKiller.transform.position.y)
-						LeftMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
+                if (RightPosX - 5f >= RightMapKiller.transform.position.x && leftPosX + 5f <= LeftMapKiller.transform.position.x)
+                {
+                    photonView.RPC("SyncMortSubite", RpcTarget.AllBuffered, false);
 
-					if (PosY >= RightMapKiller.transform.position.y)
-						RightMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
+                    if (PosY >= LeftMapKiller.transform.position.y)
+                        LeftMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
 
-					if (PosY <= RightMapKiller.transform.position.y && PosY <= LeftMapKiller.transform.position.y)
-					{
-						mapTurn = false;
-					}
-				}
-			}
-		}
+                    if (PosY >= RightMapKiller.transform.position.y)
+                        RightMapKiller.transform.position += Vector3.up * 5f * Time.deltaTime;
 
-		[PunRPC]
-		public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
-		{
-			DestroyMapCircle(pos, size);
-		}
+                    if (PosY <= RightMapKiller.transform.position.y && PosY <= LeftMapKiller.transform.position.y)
+                    {
+                        mapTurn = false;
+                    }
+                }
+            }
+        }
 
-		[PunRPC]
-		public void MapSyncClient(Vector3 pos, int size, float dmg = 0.0F)
-		{
-			photonView.RPC("MapSync", RpcTarget.AllBuffered, pos, size, dmg);
-		}
+        [PunRPC]
+        public void MapSync(Vector3 pos, int size, float dmg = 0.0F)
+        {
+            DestroyMapCircle(pos, size);
+        }
 
-		[PunRPC]
-		public void MapSyncMortSubite(Vector3 pos, int width, int height)
-		{
-			DestroyMapRect(pos, width, height);
-		}
+        [PunRPC]
+        public void MapSyncClient(Vector3 pos, int size, float dmg = 0.0F)
+        {
+            photonView.RPC("MapSync", RpcTarget.AllBuffered, pos, size, dmg);
+        }
 
-		[PunRPC]
-		public void SyncMortSubite()
-		{
-			mapTurn = true;
-			shipDescent = true;
+        [PunRPC]
+        public void MapSyncMortSubite(Vector3 pos, int width, int height)
+        {
+            DestroyMapRect(pos, width, height);
+        }
 
-			leftPosX = LeftMapKiller.transform.position.x;
-			RightPosX = RightMapKiller.transform.position.x;
+        [PunRPC]
+        public void SyncMortSubite(bool active)
+        {
+            activateLaser = active;
+        }
 
-			PosY = LeftMapKiller.transform.position.y;
-		}
-
-		public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-		{
-		}
-	}
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+        }
+    }
 }
