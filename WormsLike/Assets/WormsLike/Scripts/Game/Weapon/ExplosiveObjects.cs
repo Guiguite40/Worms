@@ -53,7 +53,6 @@ namespace DTerrain
                     }
                     else
                     {
-                        //Debug.Log("Explosion : after impact");
                         RepulseObjects();
 
                         StartCoroutine(Explosion());
@@ -65,9 +64,8 @@ namespace DTerrain
 
             if (explodeVelocityNull == true)
             {
-                if (rb.velocity.x <= 0.2f && rb.velocity.y <= 0.2f)
+                if (rb.velocity == null || timer > 3f)
                 {
-                    //Debug.Log("Explosion : on velocity null");
                     RepulseObjects();
 
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
@@ -84,17 +82,11 @@ namespace DTerrain
 
         public void RepulseObjects()
         {
-            //Debug.LogError("RepulseObject Called");
-
             GameObject[] tmpSlimes;
             tmpSlimes = GameObject.FindGameObjectsWithTag("Player");
-            //Debug.LogError("tmpSlimes count : " + tmpSlimes.Length);
-            //tmpSlimes = GameManager.instance.GetEverySlimes();
 
             foreach (GameObject slime in tmpSlimes)
             {
-                //Debug.LogError(Vector3.Distance(slime.transform.position, rb.transform.position));
-
                 if (Vector3.Distance(slime.transform.position, rb.transform.position) <= 1 * 1.3f)
                 {
                     slime.GetComponent<Rigidbody2D>().AddExplosionForce(30, rb.transform.position, (float)circleSize);
@@ -102,9 +94,6 @@ namespace DTerrain
                     Vector2 explosionDir = slime.transform.position - rb.transform.position;
                     float explosionDistance = explosionDir.magnitude;
                     slime.GetComponent<Slime>().Hit((1 - (explosionDistance / (float)circleSize * 2f)) * damage);
-                    //Debug.LogError(explosionDistance);
-                    //Debug.LogError(circleSize);
-                    //Debug.LogError((1 - (explosionDistance / (float)circleSize * 2f)) * damage);
                 }
             }
         }
@@ -115,7 +104,6 @@ namespace DTerrain
             {
                 if (explodeAfterImpact == true && explodeVelocityNull == false)
                 {
-                    //Debug.Log("Explosion : on trigger");
                     RepulseObjects();
 
                     MapDestroy.ExplosiveObjectsPosition.Add(gameObject.transform.position);
@@ -131,7 +119,6 @@ namespace DTerrain
 
         public IEnumerator Explosion()
         {
-            //Debug.Log("Explosion");
             GameObject explosion = PhotonNetwork.Instantiate(explosionPrefab.name, gameObject.transform.position, Quaternion.identity);
             yield return null;
         }
