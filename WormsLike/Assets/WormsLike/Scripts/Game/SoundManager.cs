@@ -53,6 +53,7 @@ public class SoundManager : MonoBehaviour
         {
             SetSliderToSavedValue(false);
             savedValue = PlayerPrefs.GetFloat("savedValue");
+            audioSource.volume = savedValue;
         }
         else
         {
@@ -64,6 +65,7 @@ public class SoundManager : MonoBehaviour
         {
             SetSliderToSavedValue(false);
             savedValueM = PlayerPrefs.GetFloat("savedValueM");
+            audioSourceMusic.volume = savedValueM;
         }
         else
         {
