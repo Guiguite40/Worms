@@ -281,6 +281,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 1
   delay: 0
+  damage: 10
 --- !u!114 &-353112642007628122
 MonoBehaviour:
   m_ObjectHideFlags: 0

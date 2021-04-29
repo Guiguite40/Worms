@@ -282,6 +282,7 @@ MonoBehaviour:
   explodeVelocityNull: 1
   explodeAfterImpact: 0
   delay: 0
+  damage: 60
 --- !u!114 &-4938372259254476987
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,7 +338,7 @@ MonoBehaviour:
   itemsList: 2
   invImage: {fileID: 7468386418667082883, guid: 7007e9303b4df3447ba9475067d22a15, type: 3}
   infiniteAmmo: 0
-  ammo: 15
+  ammo: 5
   selected: 0
 --- !u!114 &-2563028502764311707
 MonoBehaviour:
@@ -351,7 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 973a7923e1236324b8669a07a38b4337, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shooter: {fileID: 0}
+  airStrike: 0
   startPos: {x: 0, y: 0, z: 0}
   targetPos: {x: 0, y: 0, z: 0}
   speed: 0.7
