@@ -56,6 +56,7 @@ namespace DTerrain
                         RepulseObjects();
 
                         StartCoroutine(Explosion());
+                        SoundManager.instance.PlaySound("menuClickExplo");
                         Destroy(gameObject);
                         myGo.Remove(gameObject);
                     }
@@ -72,8 +73,7 @@ namespace DTerrain
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
                     MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
-                    Debug.Log(gameObject.name);
-
+                    SoundManager.instance.PlaySound("menuClickExplo");
                     Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }
@@ -110,7 +110,7 @@ namespace DTerrain
                     MapDestroy.ExplosiveObjectsSize.Add(circleSize);
                     MapDestroy.ExplosiveObjectsDamage.Add(damage);
                     StartCoroutine(Explosion());
-
+                    SoundManager.instance.PlaySound("menuClickExplo");
                     Destroy(gameObject);
                     myGo.Remove(gameObject);
                 }
@@ -118,8 +118,7 @@ namespace DTerrain
         }
 
         public IEnumerator Explosion()
-        {
-            SoundManager.instance.PlaySound("menuClickExplo");
+        {            
             GameObject explosion = PhotonNetwork.Instantiate(explosionPrefab.name, gameObject.transform.position, Quaternion.identity);
             yield return null;
         }

@@ -37,6 +37,7 @@ namespace DTerrain
                 firstExplode = false;
                 gameObject.GetComponent<ExplosiveObjects>().RepulseObjects();
                 StartCoroutine(gameObject.GetComponent<ExplosiveObjects>().Explosion());
+                SoundManager.instance.PlaySound("menuClickExplo");
                 Destroy(gameObject);
                 ExplosiveObjects.myGo.Remove(gameObject);
             }

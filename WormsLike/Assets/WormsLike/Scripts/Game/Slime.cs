@@ -117,7 +117,7 @@ public class Slime : MonoBehaviourPunCallbacks
             rb.AddForce(new Vector2(0, 19f));
         }
 
-        if (jetpackOn == true && timerJetpack >= 10f)
+        if (jetpackOn == true && timerJetpack <= 0f)
         {
             jetpack.SetActive(false);
             jetpackOn = false;

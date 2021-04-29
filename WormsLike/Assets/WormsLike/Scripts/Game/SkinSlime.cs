@@ -28,31 +28,34 @@ public class SkinSlime : MonoBehaviourPunCallbacks
         {
             if (item.CustomProperties.ContainsKey("pp"))
             {
-                if (item.UserId == PhotonNetwork.LocalPlayer.UserId)
+                if (photonView.IsMine)
                 {
-                    if ((int)item.CustomProperties["pp"] == 0)
+                    if (item.UserId == PhotonNetwork.LocalPlayer.UserId)
                     {
-                        mySlime.sprite = Slime1;
-                    }
-                    else if ((int)item.CustomProperties["pp"] == 1)
-                    {
-                        mySlime.sprite = Slime2;
-                    }
-                    else if ((int)item.CustomProperties["pp"] == 2)
-                    {
-                        mySlime.sprite = Slime3;
-                    }
-                    else if ((int)item.CustomProperties["pp"] == 3)
-                    {
-                        mySlime.sprite = Slime4;
-                    }
-                    else if ((int)item.CustomProperties["pp"] == 4)
-                    {
-                        mySlime.sprite = Slime5;
-                    }
-                    else if ((int)item.CustomProperties["pp"] == 5)
-                    {
-                        mySlime.sprite = Slime6;
+                        if ((int)item.CustomProperties["pp"] == 0)
+                        {
+                            mySlime.sprite = Slime1;
+                        }
+                        else if ((int)item.CustomProperties["pp"] == 1)
+                        {
+                            mySlime.sprite = Slime2;
+                        }
+                        else if ((int)item.CustomProperties["pp"] == 2)
+                        {
+                            mySlime.sprite = Slime3;
+                        }
+                        else if ((int)item.CustomProperties["pp"] == 3)
+                        {
+                            mySlime.sprite = Slime4;
+                        }
+                        else if ((int)item.CustomProperties["pp"] == 4)
+                        {
+                            mySlime.sprite = Slime5;
+                        }
+                        else if ((int)item.CustomProperties["pp"] == 5)
+                        {
+                            mySlime.sprite = Slime6;
+                        }
                     }
                 }
             }
