@@ -173,7 +173,13 @@ public class Player : MonoBehaviourPunCallbacks
             }
         }
         else
+        {
             isAllSlimePlaced = true;
+            foreach (Slime slime in slimes)
+            {
+                slime.fallDamageActived = true;
+            }
+        }
     }
 
     public bool GetAllSlimePlaced()
@@ -199,6 +205,20 @@ public class Player : MonoBehaviourPunCallbacks
                     if (slime.isControlled)
                     {
                         move = Input.GetAxisRaw("Horizontal");
+                        if (move != 0)
+                        {
+                            if (move < 0)
+                            {
+                                if (slime.GetComponent<SpriteRenderer>().flipX == true)
+                                    slime.GetComponent<SpriteRenderer>().flipX = false;
+                            }
+                            else if (move > 0)
+                            {
+                                if (slime.GetComponent<SpriteRenderer>().flipX == false)
+                                    slime.GetComponent<SpriteRenderer>().flipX = true;                                    
+                            }
+                        }
+
                         if (Input.GetKeyDown(KeyCode.UpArrow) && slime.GetComponent<Slime>().isGrounded && !slime.GetComponent<Slime>().isDead)
                             slime.rb.velocity = new Vector2(0, slime.jumpForce);
 
@@ -218,7 +238,7 @@ public class Player : MonoBehaviourPunCallbacks
                                                 timeToRelease = 0;
                                                 UseItem(itemSelected);
                                             }
-                                            else if(itemSelected != Enums.ItemsList.Teleportation)
+                                            else if (itemSelected != Enums.ItemsList.Teleportation)
                                             {
                                                 timeToRelease = 0;
                                                 UseItem(itemSelected);
