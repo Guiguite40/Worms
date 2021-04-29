@@ -305,7 +305,10 @@ namespace DTerrain
                         uiTurn.text = "place your slime :";
                         //itsHisTurnText.text = "true";
                         SetCurrentPlayerPlayingName();
-                        if (Input.GetMouseButtonUp(0))
+
+                        RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+                        if (Input.GetMouseButtonUp(0) && hit.collider == null)
                         {
                             GetCurrentPlayer().PlaceSlime();
                             SetNextPlayerNTeamTurn();
@@ -488,10 +491,10 @@ namespace DTerrain
                                     {
                                         CameraManager.instance.ResetCam();
 
-                                        if(IsLocalPlayerMaster())
-										{
-                                            if(!mortSubiteSet)
-											{
+                                        if (IsLocalPlayerMaster())
+                                        {
+                                            if (!mortSubiteSet)
+                                            {
                                                 if (timerAllGame >= 40)
                                                 {
                                                     timerMap = 7f;
@@ -501,7 +504,7 @@ namespace DTerrain
                                                     timerMap = 3f;
                                                 mortSubiteSet = true;
                                             }
-										}
+                                        }
 
                                         if (IsLocalPlayerTurn())
                                         {

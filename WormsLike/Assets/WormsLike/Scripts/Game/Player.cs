@@ -212,8 +212,17 @@ public class Player : MonoBehaviourPunCallbacks
                                     {
                                         if (currentCharacter != null)
                                         {
-                                            timeToRelease = 0;
-                                            UseItem(itemSelected);
+                                            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+                                            if (hit.collider == null && itemSelected == Enums.ItemsList.Teleportation)
+                                            {
+                                                timeToRelease = 0;
+                                                UseItem(itemSelected);
+                                            }
+                                            else if(itemSelected != Enums.ItemsList.Teleportation)
+                                            {
+                                                timeToRelease = 0;
+                                                UseItem(itemSelected);
+                                            }
                                         }
                                     }
                                 }
@@ -363,8 +372,13 @@ public class Player : MonoBehaviourPunCallbacks
                 }
                 else if (_utilitary == Enums.ItemsList.Teleportation)
                 {
-                    hasAttacked = true;
-                    StartCoroutine(Teleportation());
+                    RaycastHit2D hit = Physics2D.Raycast(MousePos(), Vector2.zero);
+
+                    if (hit.collider == null)
+                    {
+                        hasAttacked = true;
+                        StartCoroutine(Teleportation());
+                    }
                 }
                 else if (_utilitary == Enums.ItemsList.Parachute)
                 {
@@ -379,7 +393,7 @@ public class Player : MonoBehaviourPunCallbacks
                 }
                 else if (_utilitary == Enums.ItemsList.Shield)
                 {
-                    hasAttacked = true; 
+                    hasAttacked = true;
                     currentCharacter.isInvicible = true;
                     EndTurn(); // End turn call
                 }
