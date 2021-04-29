@@ -297,7 +297,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 1
   delay: 0
-  damage: 0
+  damage: 20
 --- !u!114 &2099989914205950704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -634,7 +634,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 1
   delay: 0
-  damage: 0
+  damage: 20
 --- !u!114 &2403726207070277910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1066,7 +1066,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 1
   delay: 0
-  damage: 0
+  damage: 20
 --- !u!114 &4718874448215317312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1265,7 +1265,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 1
   delay: 0
-  damage: 0
+  damage: 20
 --- !u!114 &5915828395719170413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1740,7 +1740,7 @@ MonoBehaviour:
   explodeVelocityNull: 0
   explodeAfterImpact: 1
   delay: 0
-  damage: 0
+  damage: 20
 --- !u!114 &6928779532625281813
 MonoBehaviour:
   m_ObjectHideFlags: 0
