@@ -239,6 +239,8 @@ public class Slime : MonoBehaviourPunCallbacks
         else
         {
             curHealth -= damage;
+            Debug.LogError("ID_" + this.GetInstanceID() + " -> " + "Damages : " + damage);
+            Debug.LogError("ID_" + this.GetInstanceID() + " -> " + "New health amount : " + curHealth);
         }
     }
 
