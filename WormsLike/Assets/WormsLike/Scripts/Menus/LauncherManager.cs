@@ -141,6 +141,18 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         ResetInputsFields();
     }
 
+    public void PlayMenuClick(string _clickType)
+	{
+        if(_clickType == "base")
+            SoundManager.instance.PlaySound("menuClick");
+        if (_clickType == "confirm")
+            SoundManager.instance.PlaySound("menuClickConfirm");
+        if (_clickType == "back")
+            SoundManager.instance.PlaySound("menuClickError");
+        if (_clickType == "error")
+            SoundManager.instance.PlaySound("menuClickError");
+    }
+
     void DesactiveErrorLogin()
 	{
         textLoginPseudoError.gameObject.SetActive(false);
@@ -200,7 +212,10 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         if (LoginAccountIsExist())
             Connect(false);
         else
+        {
+            SoundManager.instance.PlaySound("menuClickError");
             return;
+        }
 	}
 
     public void OnClickSignUp()
@@ -209,6 +224,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
             Connect(true);
         else
         {
+            SoundManager.instance.PlaySound("menuClickError");
             Debug.LogError("account creation failed");
             return;
         }
@@ -216,6 +232,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
 
     void Connect(bool _isSignUp)
     {
+        SoundManager.instance.PlaySound("menuClickConfirm");
         if (!_isSignUp)
             PhotonNetwork.LocalPlayer.NickName = nickname;
         else
@@ -293,6 +310,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
         }
 
         ResetAccountCreationStep();
+        SoundManager.instance.PlaySound("menuClickError");
         return false;
 	}
 
@@ -357,6 +375,7 @@ public class LauncherManager : MonoBehaviourPunCallbacks
             ifLoginPseudo.text = "";
             ifLoginMdp.text = "";
         }
+        SoundManager.instance.PlaySound("menuClickError");
         return false;
 	}
 
