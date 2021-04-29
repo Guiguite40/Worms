@@ -1201,7 +1201,7 @@ namespace DTerrain
             int removeIndex = -1;
             for (int i = 0; i < listPlayersRed.Count; i++)
             {
-                if (!listPlayersRed[i].GetHasLose())
+                if (!listPlayersRed[i].GetHasLose() && !remove)
                     return false;
                 else
                 {

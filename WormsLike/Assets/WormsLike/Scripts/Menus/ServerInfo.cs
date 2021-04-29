@@ -11,6 +11,7 @@ public class ServerInfo : MonoBehaviourPunCallbacks
     [SerializeField] private Text textRoomName;
     [SerializeField] private Text textNbPlayer;
     [SerializeField] private Text textGamemode;
+    [SerializeField] private Text textMapName;
 
     string roomName;
     int nbPlayer;
@@ -18,6 +19,7 @@ public class ServerInfo : MonoBehaviourPunCallbacks
     float currentAlphaBg;
     int id = 0;
     string password;
+    string mapName;
 
     int gamemode;
 
@@ -73,6 +75,9 @@ public class ServerInfo : MonoBehaviourPunCallbacks
             textGamemode.text = "Team deathmatch";
         else if (gamemode == 1)
             textGamemode.text = "Forts";
+
+        //mapName = _mapName;
+        //textMapName.text = mapName;
     }
 
     public int GetServerId()
@@ -114,5 +119,10 @@ public class ServerInfo : MonoBehaviourPunCallbacks
     public string GetPassword()
 	{
         return password;
+	}
+
+    public string GetMapName()
+	{
+        return mapName;
 	}
 }
